@@ -1,4 +1,1 @@
-parasite_mortality
-==================
-
-Analysis containing parasite mortality in hosts
+Repo containing parasite analyses
