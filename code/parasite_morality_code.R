@@ -59,8 +59,8 @@ b=opt1$par[2]
 x1=seq(0.0001, 75, 0.0001)
 y<-exp(a + b * log(x1)) / (1 + exp(a + b * log(x1)))
 
-plot(trun_x, hx, xlab="Num. parasites", ylab="Prob. Survival")
-lines(x1, y)
+plot(log(trun_x), hx, xlab="Num. parasites", ylab="Prob. Survival")
+lines(log(x1), y)
 
 
 # # Loss of hosts due to parasites
@@ -69,9 +69,9 @@ k=fits$estimate[1]
 mu=fits$estimate[2]
 num_racoons = length(bp)
 
-norm_factor = 0.79899 # To account for the fact that we see mortality at one
+#norm_factor = 0.79899 # To account for the fact that we see mortality at one
 hx_func = function(x){
-	exp(a + b *log( x)) / (1 + exp(a + b *log( x))) / norm_factor
+	exp(a + b *log(x)) / (1 + exp(a + b *log( x))) #/ norm_factor
 }
 
 Fx_func = function(x){
