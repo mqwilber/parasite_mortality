@@ -1,9 +1,12 @@
 library(MASS)
 
-file = "../data/worm_data.csv"
-data=read.csv(file)
+# file = "../data/worm_data.csv"
+# data=read.csv(file)
+# bp <- data$adBPtot
 
-bp <- data$adBPtot
+file = "../data/all_raccoon_data.csv"
+data=read.csv(file)
+bp <- data$worms
 
 # Count number of racs with a given parasite
 count_data = as.data.frame(table(bp))
@@ -50,12 +53,21 @@ opt1 = optim(fn = logistregfun, par = c(a=.5,b=.5),
 				x = trun_x, N=trun_pred, y=trun_obs,
 				method="BFGS")
 
+#a=opt1$par[1]
+#b=opt1$par[2]
+
+### GLM in R: Should give the same results at the direct optimization
+fits_glm = glm(cbind(trun_obs, trun_pred - trun_obs) ~
+            log(trun_x), family=binomial, weights=trun_pred)
+
+a = coef(fits_glm)[1]
+b = coef(fits_glm)[2]
+
+
 hx<-trun_obs / trun_pred
 
 # # Plotting MLE and data
 
-a=opt1$par[1]
-b=opt1$par[2]
 x1=seq(0.0001, 75, 0.0001)
 y<-exp(a + b * log(x1)) / (1 + exp(a + b * log(x1)))
 

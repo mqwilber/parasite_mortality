@@ -1,16 +1,19 @@
 library(MASS)
 
-# file = "../data/raccoon_data10_24.csv"
-# data=read.csv(file)
-# bp <- data$Weinstein
-# obs = bp[!is.na(bp)]
-file = "../data/ze_enzootic.csv"
-data = read.csv(file)
-obs = data$ZE1
-obs = round(obs)
+#file = "../data/raccoon_data10_24.csv"
+#data=read.csv(file)
+#bp <- data$Weinstein
+#obs = bp[!is.na(bp)]
+# file = "../data/ze_adults_enzootic.csv"
+# data = read.csv(file)
+# obs = data$ZE1
+# obs = round(obs)
+file = "../data/all_raccoon_data.csv"
+data=read.csv(file)
+obs <- data$worms
 
 # Bin observe data
-log_base = 10
+log_base = 2
 start = 1
 max_num = ceiling(log(max(obs), base=log_base))
 bins = c(-0.1, log_base^(start:max_num))
@@ -40,7 +43,6 @@ observed$obs[ind] = predicted$pred[ind]
 # Set observed parasites to upper bound of the group
 group_upper = log_base^(start:max_num)
 
-
 # # # Maximum likelihood function
 
 logistregfun = function(params, x, N, y){
@@ -55,12 +57,21 @@ opt1 = optim(fn = logistregfun, par = c(a=.5,b=.5),
                 x = group_upper, N=predicted$pred, y=observed$obs,
                 method="BFGS")
 
+# a = opt1$par[1]
+# b = opt1$par[2]
+
 hx = observed$obs / predicted$pred
 
-# # # Plotting MLE and data
+### GLM in R: Should give the same results at the direct optimization when you
+### drop the weights
+fits_glm = glm(cbind(observed$obs, predicted$pred - observed$obs) ~
+            log(group_upper), family=binomial, weights=predicted$pred)
 
-a = opt1$par[1]
-b = opt1$par[2]
+# Weights estimates
+a = coef(fits_glm)[1]
+b = coef(fits_glm)[2]
+
+# # # Plotting MLE and data
 x1 = seq(0.0001, max(obs), 1)
 y = exp(a + b * log(x1)) / (1 + exp(a + b * log(x1)))
 
