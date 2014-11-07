@@ -45,17 +45,17 @@ group_upper = log_base^(start:max_num)
 
 # # # Maximum likelihood function
 
-logistregfun = function(params, x, N, y){
+# logistregfun = function(params, x, N, y){
 
-    a = params[1]
-    b = params[2]
-    p.pred = exp(a + b *log(x)) / (1 + exp(a + b * log(x)))
-    -sum(dbinom(y, size=N, prob=p.pred, log=TRUE))
-}
+#     a = params[1]
+#     b = params[2]
+#     p.pred = exp(a + b *log(x)) / (1 + exp(a + b * log(x)))
+#     -sum(dbinom(y, size=N, prob=p.pred, log=TRUE))
+# }
 
-opt1 = optim(fn = logistregfun, par = c(a=.5,b=.5),
-                x = group_upper, N=predicted$pred, y=observed$obs,
-                method="BFGS")
+# opt1 = optim(fn = logistregfun, par = c(a=.5,b=.5),
+#                 x = group_upper, N=predicted$pred, y=observed$obs,
+#                 method="BFGS")
 
 # a = opt1$par[1]
 # b = opt1$par[2]
