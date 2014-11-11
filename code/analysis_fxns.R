@@ -4,7 +4,7 @@ library(MASS)
 
 hx_func = function(x, a, b){
     # Survival fxn
-    exp(a + b *log(x)) / (1 + exp(a + b *log( x))) 
+    exp(a + b *log(x)) / (1 + exp(a + b *log( x)))
 }
 
 
@@ -13,7 +13,7 @@ Fx_func = function(x, k, mu, num){
     dnbinom(x, size=k, mu=mu) * num
 }
 
-fit_model = function(obs, pred, para_number, num, k, mu, 
+fit_model = function(obs, pred, para_number, num, k, mu,
                                         plot=FALSE, weights=FALSE){
 
     # obs : Observed hosts with i parasites
@@ -25,7 +25,7 @@ fit_model = function(obs, pred, para_number, num, k, mu,
     # plot : if True plot the survival fxn
     # weights : if True, run glm with observations wiegthed by sample size
     #
-    # Returns : list of Z0 (prop, of population dead), Z1 (prop, of infected 
+    # Returns : list of Z0 (prop, of population dead), Z1 (prop, of infected
     #                population dead), a (parameter of surv. fxn),
     #                b (parameter of surv fxn)
 
@@ -43,7 +43,7 @@ fit_model = function(obs, pred, para_number, num, k, mu,
 
     # # Calculating host mortality due to parasites
     all_parasites = seq(1, max(para_number), 1)
-    numerator = c(Fx_func(0, k, mu, num), Fx_func(all_parasites, k, mu, num)) * 
+    numerator = c(Fx_func(0, k, mu, num), Fx_func(all_parasites, k, mu, num)) *
                                 c(1, hx_func(all_parasites, a, b))
     sum_numerator = sum(numerator)
 
@@ -53,14 +53,14 @@ fit_model = function(obs, pred, para_number, num, k, mu,
 
     Z0 = 1 - sum_numerator / sum_denom
 
-    Z1 = 1 - (sum(hx_func(all_parasites, a, b) * Fx_func(all_parasites, k, mu, num)) / 
+    Z1 = 1 - (sum(hx_func(all_parasites, a, b) * Fx_func(all_parasites, k, mu, num)) /
                         sum(Fx_func(all_parasites, k, mu, num)))
 
     if(plot){
 
         hx = obs / pred
         vals = seq(0.0001, max(para_number), 1)
-        plot(log(para_number), hx, xlab="log num. parasites", 
+        plot(log(para_number), hx, xlab="log num. parasites",
                 ylab="Prob. Survival", ylim=c(0,1))
         lines(log(vals), hx_func(vals, a, b))
     }
@@ -69,24 +69,31 @@ fit_model = function(obs, pred, para_number, num, k, mu,
 
 }
 
-estimate_mortality = function(para_data, plot=FALSE, weights=FALSE){
+estimate_mortality = function(para_data, plot=FALSE, weights=FALSE, trun=1000){
     # If only you had a docstring...
-    # This function computes and returns the proportion of the population lost 
-    # to parasites and the the proportion of the infected population lost to 
+    # This function computes and returns the proportion of the population lost
+    # to parasites and the the proportion of the infected population lost to
     # parasites as well as the a and b parameters of the survival function.
 
     # Fit data
     count_data = as.data.frame(table(para_data))
-    full_data = data.frame(list("para_data" = seq(0, max(para_data), 1), 
+    full_data = data.frame(list("para_data" = seq(0, max(para_data), 1),
                     "Freq" = rep(0, max(para_data) + 1)))
     full_data[as.numeric(as.vector(count_data$para_data)) + 1, "Freq"] = count_data$Freq
     obs = full_data$Freq
     num = length(para_data)
 
     # Get predicted numbers from negative binomial
-    fits = fitdistr(para_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
+    trun_data = para_data[para_data < trun]
+    print(paste("Length of trun data" , length(trun_data)))
+    fits = fitdistr(trun_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
+    notrun_fits = fitdistr(para_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
     k = fits$estimate["size"]
-    mu = fits$estimate["mu"]
+    notrun_k = notrun_fits$estimate["size"]
+    mu = notrun_fits$estimate["mu"]
+    print(paste("k of truncated fit", k, ", k no truncated fit", notrun_k))
+
+
     vec = seq(0, max(para_data), 1)
     probs = dnbinom(vec, size=k, mu=mu)
     pred = probs * length(para_data)  # Maybe set fractional raccoons to zero?
@@ -112,15 +119,15 @@ estimate_mortality = function(para_data, plot=FALSE, weights=FALSE){
     # trun_pred = trun_pred[ind1]
     # trun_x = trun_x[ind1]
 
-    return(list("fits"=fit_model(trun_obs, trun_pred, trun_x, num, k, mu, 
-                    plot=plot, weights=weights), "obs"=trun_obs, 
+    return(list("fits"=fit_model(trun_obs, trun_pred, trun_x, num, k, mu,
+                    plot=plot, weights=weights), "obs"=trun_obs,
                     "pred"=trun_pred, "para_num"=trun_x))
 
 }
 
 
-estimate_mortality_bin = function(para_data, log_base=2, start=1, 
-                                            plot=FALSE, weights=FALSE){
+estimate_mortality_bin = function(para_data, log_base=2, start=1,
+                                    plot=FALSE, weights=FALSE, trun=1000){
 
     # Bin observe data
     max_num = ceiling(log(max(para_data), base=log_base))
@@ -130,7 +137,7 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
     observed = aggregate(para_data~bins, df, length)
 
     # # Get predicted numbers from negative binomial
-    trun_obs = para_data
+    trun_obs = para_data[para_data < trun]
     fits = fitdistr(trun_obs, "negative binomial", list(size=.5, mu= 15), lower=.001)
     vec = seq(0, max(para_data), 1)
     k = fits$estimate["size"]
@@ -154,9 +161,9 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
     group_upper = log_base^(start:max_num)
 
     #return(list(observed, predicted, group_upper))
-    return(list("fits"=fit_model(observed$para_data, predicted$pred, group_upper, 
-            length(para_data), k, mu, plot=plot, weights=weights), 
-            "obs"=observed$para_data, "pred"=predicted$pred, 
+    return(list("fits"=fit_model(observed$para_data, predicted$pred, group_upper,
+            length(para_data), k, mu, plot=plot, weights=weights),
+            "obs"=observed$para_data, "pred"=predicted$pred,
             "para_num"=group_upper))
 
 }

@@ -4,11 +4,12 @@
 source("analysis_fxns.R")
 
 # Parameters
-num_hosts = 1000
-k = 1
-mu = 20
+num_hosts = 100
+k = .2
+mu = 15
 a = 6  # LD50 a
 b = -2  # LD50 b
+LD50 = exp(a / abs(b))
 
 survival_prob = function(x, a, b){
 
@@ -38,16 +39,28 @@ vals = seq(1, max(sim_data), 1)
 plot(log(vals), survival_prob(vals, a, b), 'l', xlab="log Num Parasites",
             ylab="Survival prob.")
 
-ests1 = estimate_mortality(alive_hosts, plot=TRUE, weights=FALSE)
-ests2 = estimate_mortality_bin(alive_hosts, plot=TRUE, weights=FALSE)
+trun_val = .5 * LD50
+ests1 = estimate_mortality(alive_hosts, plot=TRUE, weights=TRUE,
+            trun=trun_val)
 
-plot(ecdf(sim_data), xlab="Num, Parasites", ylab='ECDF')
-lines(ecdf(alive_hosts), pch=19, col='red')
+#ests2 = estimate_mortality_bin(alive_hosts, plot=TRUE, weights=TRUE,
+#    trun=trun_val)
+
+#plot(ecdf(sim_data), xlab="Num, Parasites", ylab='ECDF')
+#lines(ecdf(alive_hosts), pch=19, col='red')
 
 # How much death does this estimate estimate
+tcol = "#0000ff60"
+hist(sim_data, col='red', freq=FALSE)
+hist(alive_hosts, col=tcol, add=TRUE, freq=FALSE)
 
+pred = ests1$pred
+obs = ests1$obs
+para_num = ests1$para_num
 
-#hist(sim_data, col='blue', freq=FALSE)
-#hist(alive_hosts, col='red', add=TRUE, freq=FALSE)
+plot(para_num, pred, col='red')
+points(para_num, obs)
+
+legend("right", c("Predicted", "Observed"), fill=c("red", "black"))
 
 
