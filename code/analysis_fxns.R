@@ -14,7 +14,7 @@ Fx_func = function(x, k, mu, num){
 }
 
 fit_model = function(obs, pred, para_number, num, k, mu,
-                                        plot=FALSE, weights=FALSE){
+        plot=FALSE, weights=FALSE, title="Default", save=TRUE){
 
     # obs : Observed hosts with i parasites
     # pred : Predicted hosts with i parasites, should match obs
@@ -58,18 +58,27 @@ fit_model = function(obs, pred, para_number, num, k, mu,
 
     if(plot){
 
+        if(save){
+            pdf(paste(gsub(" ", "_", title), ".pdf", sep=""), width=7, height=5)
+        }
+
         hx = obs / pred
         vals = seq(0.0001, max(para_number), 1)
-        plot(log(para_number), hx, xlab="log num. parasites",
-                ylab="Prob. Survival", ylim=c(0,1))
+        plot(log(para_number), hx, xlab="Log Num. Parasites",
+                ylab="Prob. Survival of Host", ylim=c(0,1), main=title)
         lines(log(vals), hx_func(vals, a, b))
+
+        if(save){
+            dev.off()
+        }
     }
 
     return(list("Z0" = Z0, "Z1" = Z1, 'a'=a, 'b'=b))
 
 }
 
-estimate_mortality = function(para_data, plot=FALSE, weights=FALSE, trun=1000){
+estimate_mortality = function(para_data, plot=FALSE, weights=FALSE, trun=1000,
+    title="Default", force_it=FALSE, save=TRUE){
     # If only you had a docstring...
     # This function computes and returns the proportion of the population lost
     # to parasites and the the proportion of the infected population lost to
@@ -113,6 +122,11 @@ estimate_mortality = function(para_data, plot=FALSE, weights=FALSE, trun=1000){
     trun_pred = new_pred[ind_nozeros][2:sum(ind_nozeros)]
     trun_x = parasite_nums[ind_nozeros][2:sum(ind_nozeros)]
 
+    if(force_it){
+        # Finally, make sure the first group has 100% survival
+        trun_obs[1] = trun_pred[1]
+    }
+
     # Drop all values where predicted is only 1...
     # ind1 = trun_pred != 1
     # trun_obs = trun_obs[ind1]
@@ -120,14 +134,14 @@ estimate_mortality = function(para_data, plot=FALSE, weights=FALSE, trun=1000){
     # trun_x = trun_x[ind1]
 
     return(list("fits"=fit_model(trun_obs, trun_pred, trun_x, num, k, mu,
-                    plot=plot, weights=weights), "obs"=trun_obs,
+                    plot=plot, weights=weights, title=title, save=save), "obs"=trun_obs,
                     "pred"=trun_pred, "para_num"=trun_x))
 
 }
 
 
 estimate_mortality_bin = function(para_data, log_base=2, start=1,
-                                    plot=FALSE, weights=FALSE, trun=1000){
+    plot=FALSE, weights=FALSE, trun=1000, title="Default", force_it=FALSE){
 
     # Bin observe data
     max_num = ceiling(log(max(para_data), base=log_base))
@@ -136,9 +150,10 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
     df = data.frame(list("data"=para_data, "bins"=cuts))
     observed = aggregate(para_data~bins, df, length)
 
-    # # Get predicted numbers from negative binomial
+    # Get predicted numbers from negative binomial
     trun_obs = para_data[para_data < trun]
-    fits = fitdistr(trun_obs, "negative binomial", list(size=.5, mu= 15), lower=.001)
+    trun_obs = round(trun_obs)
+    fits = fitdistr(trun_obs, "negative binomial", list(size=.01, mu=mean(trun_obs)), lower=.001)
     vec = seq(0, max(para_data), 1)
     k = fits$estimate["size"]
     mu = fits$estimate["mu"]
@@ -149,6 +164,7 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
     new_cuts = cut(tbins, bins)
     pred_df = data.frame(list("data"=pred, "bins"=new_cuts))
     predicted = aggregate(pred~bins, pred_df, sum)
+    #return(list("obs"=observed, "pred"=predicted))
 
     # # Round these estimates?
     predicted$pred = round(predicted$pred)
@@ -157,12 +173,19 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
     ind = observed$para_data > predicted$pred
     observed$para_data[ind] = predicted$pred[ind]
 
+    if(force_it){
+        # The first group should have 100% survival. Force it so it does.
+        # Another hack that is required
+        observed$para_data[1] = predicted$pred[1]
+    }
+
+
     # Set observed parasites to upper bound of the group
     group_upper = log_base^(start:max_num)
 
     #return(list(observed, predicted, group_upper))
     return(list("fits"=fit_model(observed$para_data, predicted$pred, group_upper,
-            length(para_data), k, mu, plot=plot, weights=weights),
+            length(para_data), k, mu, plot=plot, weights=weights, title=title),
             "obs"=observed$para_data, "pred"=predicted$pred,
             "para_num"=group_upper))
 
