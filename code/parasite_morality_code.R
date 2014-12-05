@@ -64,7 +64,7 @@ a = coef(fits_glm)[1]
 b = coef(fits_glm)[2]
 
 
-hx<-trun_obs / trun_pred
+hx <- trun_obs / trun_pred
 
 # # Plotting MLE and data
 

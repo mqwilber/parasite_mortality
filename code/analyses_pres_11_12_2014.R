@@ -11,14 +11,14 @@ hist(raccoon_data$worms, breaks=30, col='black', border='white',
                 xlim=c(0, 150), main="")
 dev.off()
 
-raccoon_results = estimate_mortality(raccoon_data$worms, plot=T, weights=T,
-            title="Raccoon Mortality, No Truncation", force_it=FALSE)
+#raccoon_results = estimate_mortality(raccoon_data$worms, plot=T, weights=F,
+#            title="Raccoon Mortality, No Truncation", force_it=FALSE)
 
-raccoon_results_force = estimate_mortality(raccoon_data$worms, plot=T, weights=T,
-            title="Raccoon Mortality, No Truncation, with force", force_it=T)
+# raccoon_results_force = estimate_mortality(raccoon_data$worms, plot=T, weights=T,
+#             title="Raccoon Mortality, No Truncation, with force", force_it=T)
 
 raccoon_results_trun = estimate_mortality(raccoon_data$worms, plot=T, weights=T,
-            title="Raccoon Mortality, Truncation", force_it=T, trun=120)
+             title="Raccoon Mortality, Truncation", force_it=F, trun=120)
 
 # # # Plot observed vs predicted
 # # # How much death does this estimate estimate
@@ -35,15 +35,15 @@ raccoon_results_trun = estimate_mortality(raccoon_data$worms, plot=T, weights=T,
 # ## 2. Run analysis of chytrid data.  Try it with binned and unbinned
 
 # Load chytrid data; epizootic and enzootic
-epi_data = read.csv("../data/ze_epizootic.csv")
-en_data = read.csv("../data/ze_enzootic.csv")
+# epi_data = read.csv("../data/ze_epizootic.csv")
+# en_data = read.csv("../data/ze_enzootic.csv")
 
-en_results = estimate_mortality_bin(en_data$ZE1, plot=T, weights=T, trun=5000,
-                title="Enzootic Chtyrid Mortality")
+# en_results = estimate_mortality_bin(en_data$ZE1, plot=T, weights=T, trun=5000,
+#                 title="Enzootic Chtyrid Mortality")
 
-en_results_force = estimate_mortality_bin(en_data$ZE1, plot=T, weights=T,
-            trun=5000, title="Enzootic Chtyrid Mortality, Forced",
-            force_it=TRUE)
+# en_results_force = estimate_mortality_bin(en_data$ZE1, plot=T, weights=T,
+#             trun=5000, title="Enzootic Chtyrid Mortality, Forced",
+#             force_it=TRUE)
 
 
 

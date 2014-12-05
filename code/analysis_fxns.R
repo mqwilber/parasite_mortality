@@ -94,13 +94,17 @@ estimate_mortality = function(para_data, plot=FALSE, weights=FALSE, trun=1000,
 
     # Get predicted numbers from negative binomial
     trun_data = para_data[para_data < trun]
-    print(paste("Length of trun data" , length(trun_data)))
-    fits = fitdistr(trun_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
-    notrun_fits = fitdistr(para_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
-    k = fits$estimate["size"]
-    notrun_k = notrun_fits$estimate["size"]
-    mu = notrun_fits$estimate["mu"]
-    print(paste("k of truncated fit", k, ", k no truncated fit", notrun_k))
+
+    fits = mle_fit_nbd(round(para_data), 1, trun)
+    k = fits[1]
+    mu = fits[2]
+    #fits = fitdistr(trun_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
+    #notrun_fits = fitdistr(para_data, "negative binomial", list(size=.5, mu= 15), lower=.001)
+    #k = fits$estimate["size"]
+    #notrun_k = notrun_fits$estimate["size"]
+
+    #print(paste("Length of trun data" , length(trun_data)))
+    #print(paste("k of truncated fit", k, ", k no truncated fit", notrun_k))
 
 
     vec = seq(0, max(para_data), 1)
@@ -153,10 +157,14 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
     # Get predicted numbers from negative binomial
     trun_obs = para_data[para_data < trun]
     trun_obs = round(trun_obs)
-    fits = fitdistr(trun_obs, "negative binomial", list(size=.01, mu=mean(trun_obs)), lower=.001)
+
+    fits = mle_fit_nbd(round(para_data), 1, trun)
+    k = fits[1]
+    mu = fits[2]
+    #fits = fitdistr(trun_obs, "negative binomial", list(size=.01, mu=mean(trun_obs)), lower=.001)
+    # k = fits$estimate["size"]
+    # mu = fits$estimate["mu"]
     vec = seq(0, max(para_data), 1)
-    k = fits$estimate["size"]
-    mu = fits$estimate["mu"]
     probs = dnbinom(vec, size=k, mu=mu)
     pred = probs * length(para_data)
 
@@ -188,6 +196,25 @@ estimate_mortality_bin = function(para_data, log_base=2, start=1,
             length(para_data), k, mu, plot=plot, weights=weights, title=title),
             "obs"=observed$para_data, "pred"=predicted$pred,
             "para_num"=group_upper))
+
+}
+
+
+mle_fit_nbd = function(data, guess_k, trunc){
+    # NBD optimization of k with a fixed mean
+
+    fixed_mu = mean(data)
+    trun_data = data[data < trunc]
+
+    mle_func = function(k, x, mu){
+
+        -sum(dnbinom(x, size=k, mu=mu, log=TRUE))
+    }
+
+    opt1 = optim(fn = mle_func, par = c(guess_k),
+                x = trun_data, mu=fixed_mu, method="L-BFGS-B", lower=1e-5)
+
+    return(c(opt1$par[1], fixed_mu))
 
 }
 
