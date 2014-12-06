@@ -9,13 +9,29 @@ Kevin's 5 components
 
 Journal Targets: Journal of Parasitology, International journal of parasitology.
 
+Title: Parasite induced host mortality cannot be estimated using deviations from the negative binomial distribution.
+
+Authors: Mark Wilbur and Sara Weinstein 
+
 ## Outline
 
 1. Intro (SW)
-    * Why do you want to estimate parasite mortality in the first place
-    * Explain the logic behind the method (KP 1)
-    * Give examples of people that have used it (KP 2)
-
+    * Disease has major impacts on animal populations.
+       *Change population dynamics/stability (grouse/nematodes), alter predator prey interactions (Isle royal echinococcus/moose),  and cause species decline/extinction (amphibian chytrid, distemper in African predators)
+       *Parasites can potentially regulate host populations by reducing fecundity or increasing mortality.
+       *Accurate estimates of parasite induced host mortality in wild animals are important to understand what regulate both host and parasite populations and to make predictions about disease transmission in natural systems.
+    * Explain the logic behind the method: Parasite distribution  suggested as a method of estimating parasite induced host mort.(KP 1)
+       *Parasite distributions in hosts can typically be modeled using the negative binomial distribution (shaw paper).
+       *Assume parasite induced mortality is intensity dependent then we expect to see a reduction in the number of infected hosts with high worm burdens, truncating the tail of the distribution.     
+    * History of use (KP2)
+       * First proposed by Crofton (1971),
+       * Used by Royce and Rossignol (1990) with honey bee mites (with issues)
+       * Lanciani and Boyett (1980) with water mites on mosquitos
+       * adjei 1986 with lizard fish with larval tapeworms.
+       * Comparing the observed frequency of independent infection events and calculating the probability of co-occurrence, as done to estimate the mortality caused by  flounder eye copepods (author, 1964?).  From field data calculated the probability of each eye being infected alone, and assume there is no mortality associated with only one eye infection.  Use these probabilities to calculate the expected frequency of double infections, compare to observed frequency. 
+          *  a simple version of the truncated binomial idea, but parasite intensity is limited to 0,1,2- the flounder study didn't work (they say sample size), but it might be worth testing with the simulations to see if this may be an instance where this method could work.
+    *  deviations from the negative binomial distribution is still discussed and suggested amongst parasitologists as a method for estimating parasite induced host mortality.
+       * Our goal: use simulations to test for when this method can be used.
 2. The method/model (MW)
     * Outline the traditional way to estimate parasite induced-mortality
     * Start with the historical approach.
