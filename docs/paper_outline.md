@@ -17,12 +17,12 @@ Authors: Mark Wilbur and Sara Weinstein
 
 1. Intro (SW)
     * Disease has major impacts on animal populations.
-       *Change population dynamics/stability (grouse/nematodes), alter predator prey interactions (Isle royal echinococcus/moose),  and cause species decline/extinction (amphibian chytrid, distemper in African predators)
-       *Parasites can potentially regulate host populations by reducing fecundity or increasing mortality.
-       *Accurate estimates of parasite induced host mortality in wild animals are important to understand what regulate both host and parasite populations and to make predictions about disease transmission in natural systems.
+       * Change population dynamics/stability (grouse/nematodes), alter predator prey interactions (Isle royal echinococcus/moose),  and cause species decline/extinction (amphibian chytrid, distemper in African predators)
+       * Parasites can potentially regulate host populations by reducing fecundity or increasing mortality.
+       * Accurate estimates of parasite induced host mortality in wild animals are important to understand what regulate both host and parasite populations and to make predictions about disease transmission in natural systems.
     * Explain the logic behind the method: Parasite distribution  suggested as a method of estimating parasite induced host mort.(KP 1)
-       *Parasite distributions in hosts can typically be modeled using the negative binomial distribution (shaw paper).
-       *Assume parasite induced mortality is intensity dependent then we expect to see a reduction in the number of infected hosts with high worm burdens, truncating the tail of the distribution.     
+       * Parasite distributions in hosts can typically be modeled using the negative binomial distribution (shaw paper).
+       * Assume parasite induced mortality is intensity dependent then we expect to see a reduction in the number of infected hosts with high worm burdens, truncating the tail of the distribution.     
     * History of use (KP2)
        * First proposed by Crofton (1971),
        * Used by Royce and Rossignol (1990) with honey bee mites (with issues)
@@ -45,10 +45,35 @@ Authors: Mark Wilbur and Sara Weinstein
     * Why is it not working?
     * Some new fangled approaches (Bayesian/Full Likelihood approach) 
         * Show why these also have some problems
-    * Other more intensive methods for estimating pi-mortality
     * Any other suggestions for estimating pi-mortality from distributional data alone?
-    * Logic behind why it doesn't work and historical critiques  (KP 3)
-    * Give a list of alternative ways to estimate parasite-induced mortality (KP 5)
+    * Logic behind why it doesn't work- method fundamentally flawed (address historical critiques with age-intensity)(KP 3)  
+    *  Other methods for estimating parasite induced mortality (KP 5)
+       * Age -intensity data
+          * When hosts can be classified by age, a decrease in average infection intensity (or decrease in the variance/mean ratio (Gordon to Rau 1982, fish and metacercaria)) in older hosts can be due to parasite induced mortality (critical assumption) and used to estimate loss due to infection.  
+          * Examples include Henricson (1977) pleurocercoids in char 
+          * Perrin and Power (1980) Crassicauda nematodes in dolphins (also see Balbueno et al 2014 for reanalysis of data), 
+          * Cystidicola nematode in char (knudson 2002). 
+          * this age intensity method has issues  (assumptions, etc)
+    * (historical critiques)Both these intensity/distribution methods have been criticized previously because the observed patterns can be generated be a variety of mechanisms, not just parasite induced host mortality (McCallum 2000)
+          * Rousett 1996 for simulations and others, eg pacala Dobson 1988…)
+          * Anderson and Gordon 1982 for simulations of age impacts.  
+          * Sampling error- older host groups frequently under sampled ()
+          * Other mechanisms: host behavior impacts transmission, acquired immunity, etc
+          * No way to check that estimates are correct from wild population data.
+    * Other, (acceptable) ways to estimate parasite induced mortality: 
+       * when wild animal populations can’t be manipulated, marked, or followed.
+          * If infection induced mortality has been calculated in the lab, field data on parasite infections may be used to estimate wild animal mortality (Burreson 1984, Tiner 1954, more recent others)
+          * Long term data sets that correlate host mortality and worm burden (eg Hudson et al 1992b).
+          * Autopsy data on wild animals presumed to have died from the parasite can provide some information, but should only be considered if comparing these worm burdens to parasite loads in a random sample of the host population (lester 1984, Grenfell
+    * Best ways to get at parasite induced host mortality
+       * good: if wild populations can’t be manipulated but individuals can be followed, parasite impact on survival can be estimated by monitoring the survival of animals with a range of known infection intensities (Grenfell, examples).
+       * better: treat a subset of wild animals in an infected pop and then monitor the survival differences between (presumably) parasitized and unparasitized hosts (Mc 2000, Grenfell, examples)
+       * Best: In the absence of logistical/ethical constraints, the best method is to would be to capture animals from an uninfected population, infect (and sham infect the controls) and release them back into the wild and then use standard survival analyses to compare the infected and control groups (Mccallum 2000, Jaenike et al 1995).  
+       
+
+
+ 
+
 
 **Targets and TODOs**
 1. Flesh out outline for each of our respective sections.  Saturday December 13th. 
