@@ -41,13 +41,21 @@ Authors: Mark Wilber and Sara Weinstein
     2011, Lanciani 1989)
     * Lanciani (1989) point out that Crofton's method can't be used to detect
     linear effects of parasite induced mortality.  It can be used to detect
-    non-linear ones.  However, can this functional form be recovered?
-    * Adjei proposed a method to recover the functional form of non-linear
+    non-linear ones.  Can this functional form be recovered?
+    * Adjei proposed a method to recover the logit functional form of non-linear
     parasite induced mortality.  Their method proceeded in two steps. 1) They
     used the Crofton Method to estimate the negative binomial before parasite
     induced mortality. 2) They used a GLM approach to calculate the the
-    functional form of parasite induced mortality: a and b
-    * This method relies on a few critical assumptions. 1) They show that 
+    functional form of parasite induced mortality: the a and b parameters of the logit. 
+    * (Show tests of our implementation of the Crofton Method to show it gets the same answers as Crofton originally got.)
+    * This method relies on a few critical assumptions. 1) The zero class has a survival probability of one and because log(0) doesn't exist it is not included in the GLM. 2) They assume Y ~ Binomial(N_i, p_i) where N_i is the expected number of survivors based on the Crofton method and Y is the observed numbers in a crofton bin.  If observed is greater than expected than observed is set equal to expected such that fitting is not actually on the observed data (though something close to it)
+    * This method is then used to estimate the parameters a and b.  
+    * However, as there was now proof-of-concept tests of the this model, it is unclear as to the effects these assumptions have on estimating the functional form of parasite induced mortality.  Here we provide simulations to determine if this method can recover known functional forms of parasite-induced host mortality.
+
+    * Our method
+    * We propose an alternative method to calculating the functional form of parasite-induced mortality that makes far less assumptions than the Adjei method, uses similar logic as the Crofton method, and gives equal or better estimates to the true functional form than the Adjei method. 
+    * Our method relies on minimizing the chi-squared statistic (just as Crofton does).  Our first step, just like the Adjei method, is to use Crofton's method to compute the truncated NBD.  The second step is to minimize the 
+
     * Outline the traditional way to estimate parasite induced-mortality
     * Start with the historical approach.
         * Assumptions        
