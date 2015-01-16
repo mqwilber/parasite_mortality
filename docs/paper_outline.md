@@ -2,18 +2,22 @@
 
 Kevin's 5 components
 1. Explain the logic behind the method []
+
 2. Give examples of people that have used it [Easy for Crofton Method.  Not
 many people have used Adjei's method]
+
 3. Explain the logic behind why it does not work - including critiques by others
 [Crofton's method works fine.  But Adjei's method does not work]
+
 4. Show the simulations [got some preliminary sims]
+
 5. Give a list of alternative ways to estimate parasite-induced mortality [Show
 our alternative ]
 
 Journal Targets: Journal of Parasitology, International journal of parasitology.
 
-Title: Functional form of parasite induced host mortality cannot be estimated
-using deviations from the negative binomial distribution.
+Title: {Functional form of parasite induced host mortality cannot be estimated
+using deviations from the negative binomial distribution.}
 
 Authors: Mark Wilber and Sara Weinstein 
 
@@ -32,6 +36,7 @@ Authors: Mark Wilber and Sara Weinstein
        * Used by Royce and Rossignol (1990) with honey bee mites (with issues)
        * Lanciani and Boyett (1980) with water mites on mosquitos
        * adjei 1986 with lizard fish with larval tapeworms.
+       *ferguson paper fish
        * Comparing the observed frequency of independent infection events and calculating the probability of co-occurrence, as done to estimate the mortality caused by  flounder eye copepods (author, 1964?).  From field data calculated the probability of each eye being infected alone, and assume there is no mortality associated with only one eye infection.  Use these probabilities to calculate the expected frequency of double infections, compare to observed frequency. 
           *  a simple version of the truncated binomial idea, but parasite intensity is limited to 0,1,2- the flounder study didn't work (they say sample size), but it might be worth testing with the simulations to see if this may be an instance where this method could work.
     *  deviations from the negative binomial distribution is still discussed and suggested amongst parasitologists as a method for estimating parasite induced host mortality.
