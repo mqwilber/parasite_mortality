@@ -2,11 +2,15 @@
 
 Kevin's 5 components
 1. Explain the logic behind the method []
+
 2. Give examples of people that have used it [Easy for Crofton Method.  Not
 many people have used Adjei's method]
+
 3. Explain the logic behind why it does not work - including critiques by others
 [Crofton's method works fine.  But Adjei's method does not work]
+
 4. Show the simulations [got some preliminary sims]
+
 5. Give a list of alternative ways to estimate parasite-induced mortality [Show
 our alternative ]
 
