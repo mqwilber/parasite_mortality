@@ -1,17 +1,21 @@
 ## Paper Outline
 
 Kevin's 5 components
-1. Explain the logic behind the method, 
-2. Give examples of people that have used it 
+1. Explain the logic behind the method []
+2. Give examples of people that have used it [Easy for Crofton Method.  Not
+many people have used Adjei's method]
 3. Explain the logic behind why it does not work - including critiques by others
-4. Show the simulations 
-5. Give a list of alternative ways to estimate parasite-induced mortality
+[Crofton's method works fine.  But Adjei's method does not work]
+4. Show the simulations [got some preliminary sims]
+5. Give a list of alternative ways to estimate parasite-induced mortality [Show
+our alternative ]
 
 Journal Targets: Journal of Parasitology, International journal of parasitology.
 
-Title: Parasite induced host mortality cannot be estimated using deviations from the negative binomial distribution.
+Title: Functional form of parasite induced host mortality cannot be estimated
+using deviations from the negative binomial distribution.
 
-Authors: Mark Wilbur and Sara Weinstein 
+Authors: Mark Wilber and Sara Weinstein 
 
 ## Outline
 
@@ -33,6 +37,17 @@ Authors: Mark Wilbur and Sara Weinstein
     *  deviations from the negative binomial distribution is still discussed and suggested amongst parasitologists as a method for estimating parasite induced host mortality.
        * Our goal: use simulations to test for when this method can be used.
 2. The method/model (MW)
+    * Description of Crofton's method (Crofton 1971, Royce 1990, Fergunson et al
+    2011, Lanciani 1989)
+    * Lanciani (1989) point out that Crofton's method can't be used to detect
+    linear effects of parasite induced mortality.  It can be used to detect
+    non-linear ones.  However, can this functional form be recovered?
+    * Adjei proposed a method to recover the functional form of non-linear
+    parasite induced mortality.  Their method proceeded in two steps. 1) They
+    used the Crofton Method to estimate the negative binomial before parasite
+    induced mortality. 2) They used a GLM approach to calculate the the
+    functional form of parasite induced mortality: a and b
+    * This method relies on a few critical assumptions. 1) They show that 
     * Outline the traditional way to estimate parasite induced-mortality
     * Start with the historical approach.
         * Assumptions        
