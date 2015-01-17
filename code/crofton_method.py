@@ -60,20 +60,20 @@ def crofton_method(data, bin_edges, guess=None):
 
     # Fixing the boundary of guesses for k, can't be above 5
 
-    bounds = [(0, 2*N_guess), (0, 2*mu_guess), (0.001, 5)]
-    full_out = opt.fmin_l_bfgs_b(opt_fxn,
-                    np.array([N_guess, mu_guess, k_guess]),
-                    bounds=bounds, approx_grad=True, disp=0)
-    opt_params = full_out[0]
+    # bounds = [(0, 2*N_guess), (0, 2*mu_guess), (0.001, 5)]
+    # full_out = opt.fmin_l_bfgs_b(opt_fxn,
+    #                 np.array([N_guess, mu_guess, k_guess]),
+    #                 bounds=bounds, approx_grad=True, disp=0)
+    # opt_params = full_out[0]
 
-    # full_out = opt.fmin(opt_fxn, np.array([N_guess, mu_guess, k_guess]),
-    #                                 disp=0)
+    full_out = opt.fmin(opt_fxn, np.array([N_guess, mu_guess, k_guess]),
+                                    disp=0)
 
-    # opt_params = full_out
+    opt_params = full_out
     pred = [opt_params[0] * np.sum(mod.nbinom.pmf(s, opt_params[1],
         opt_params[2])) for s in splits]
 
-    return opt_params, obs, pred, splits, np.sum(np.abs(obs - pred))
+    return opt_params, obs, pred, splits, np.sum((obs - pred)**2 / pred)
 
 
 def w1_method(data, bin_edges, fix_params=None, guess=(10, 2)):
@@ -119,7 +119,8 @@ def w1_method(data, bin_edges, fix_params=None, guess=(10, 2)):
     return opt_params, obs, pred, splits, np.sum(np.abs(obs - pred))
 
 
-def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2), no_bins=False):
+def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
+                no_bins=False, crof_params=None):
     """
 
     This method first uses the Crofton method to find the best N, mu and k and
@@ -154,8 +155,12 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2), no_bins=Fals
     """
 
     # First use the crofton method
-    crof_res = crofton_method(data, crof_bin_edges)
-    N, mu, k = crof_res[0]
+
+    if crof_params:
+        N, mu, k = crof_params
+    else:
+        crof_res = crofton_method(data, crof_bin_edges)
+        N, mu, k = crof_res[0]
 
     if no_bins:
         full_bin_edges = np.arange(0, np.max(data) + 2)
@@ -180,9 +185,9 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2), no_bins=Fals
         return np.sum((obs - pred)**2 / pred)
 
     # A bounded search seems to work better.  Though there are still problems
-    # opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
-    #             bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
-    opt_params = opt.fmin(opt_fxn, np.array(guess))
+    opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
+                bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
+    # opt_params = opt.fmin(opt_fxn, np.array(guess))
     # opt_params = opt.brute(opt_fxn, ((0, 30), (-30, 0)), Ns=20)
     a, b = opt_params
 
@@ -249,7 +254,8 @@ def w3_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2)):
     return opt_params, obs, pred, splits, np.sum(np.abs(obs - pred))
 
 
-def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True):
+def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True,
+                    crof_params=None):
     """
     Implements adjei method.  Truncated negative binomial method is fit using
     Crofton Method and Adjei method is used to estimate morality function.
@@ -278,7 +284,11 @@ def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True):
         full_bin_edges = np.arange(0, np.max(data) + 2)
 
     # Use Crofton Method to truncate data.
-    (N, mu, k), obs, pred, split, _ = crofton_method(data, crof_bin_edges)
+
+    if crof_params:
+        N, mu, k = crof_params
+    else:
+        (N, mu, k), obs, pred, split, _ = crofton_method(data, crof_bin_edges)
 
     # 2. Bin empirical data and theoretical data
     empirical_binned = np.histogram(data, bins=full_bin_edges)[0]
