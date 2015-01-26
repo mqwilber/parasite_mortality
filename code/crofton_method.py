@@ -142,6 +142,9 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
         If True, over writes full_bin_edges with np.arange(0, max(data) + 2)
         This is useful when mean parasites per host is relatively low.  When
         mean parasites per host is high, use pre-defined bins.
+    crof_params : tuple
+        Must be a tuple of (N, mu, k).  Parameters of the population before
+        mortality.
 
     Return
     ------
@@ -195,6 +198,8 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
             surv_prob(s, a, b)) for s in splits]
 
     return [N, mu, k] + list(opt_params), obs, pred, splits
+
+
 
 
 def w3_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2)):
@@ -274,6 +279,9 @@ def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True,
         on the full data after the truncated negative binomial has been
         estimated on the truncated data. If you don't want any binning specify
         np.arange(0, np.max(data)  + 2) or set no_bins=True.
+    crof_params : tuple
+        Must be a tuple of (N, mu, k).  Parameters of the population before
+        mortality.
 
     """
 
@@ -310,6 +318,7 @@ def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True,
                         'pred': theor_binned})
 
     # If emp is greater than pred set to pred
+    all_data['emp_pure'] = all_data['emp']
     ind = all_data['emp'] > all_data['pred']
     all_data['emp'][ind] = all_data['pred'][ind]
 
@@ -496,6 +505,83 @@ def get_alive_and_dead(num_hosts, a, b, k, mu, percent=0.5):
 #                     surv_prob(s, a, b)) for s in splits])
 
 #     return opt_params, obs, pred, splits
+
+
+def full_params_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
+                no_bins=False, crof_params=None):
+    """
+
+    This method first uses the Crofton method to find the best N, mu and k and
+    then uses our own method to find a and b.  This seems to work much better
+    than the adjei method and it makes a lot less assumptions!
+
+    Parameters
+    ----------
+    data : array-like
+        Full data
+    full_bin_edges : array-like
+        Bin edges for the full data.  The bins should over the full data
+    crof_bin_edges : array-like
+        The bin edges for crofton.  Should only include the data range that
+        does not have parasite induced mortality
+    guess : tuple
+        Initial guess for a and b respectively
+    no_bins : bool
+        If True, over writes full_bin_edges with np.arange(0, max(data) + 2)
+        This is useful when mean parasites per host is relatively low.  When
+        mean parasites per host is high, use pre-defined bins.
+
+    Return
+    ------
+    : tuple
+
+    Notes
+    ------
+    Decided to minimize the chisquared statistic because that is what
+    historically is done.  np.abs works well too
+
+    """
+
+    # First use the crofton method
+
+    # if crof_params:
+    #     N, mu, k = crof_params
+    # else:
+    #     crof_res = crofton_method(data, crof_bin_edges)
+    #     N, mu, k = crof_res[0]
+
+    if no_bins:
+        full_bin_edges = np.arange(0, np.max(data) + 2)
+
+    obs = np.histogram(data, bins=full_bin_edges)[0]
+
+    splits = []
+    for i, b in enumerate(full_bin_edges):
+
+        if i != len(full_bin_edges) - 1:
+            splits.append(np.arange(full_bin_edges[i], full_bin_edges[i + 1]))
+
+    # Fix these parameters
+    def opt_fxn(params):
+
+        N, k, mu, a, b = params
+        pred = np.array([N * np.sum(mod.nbinom.pmf(s, mu, k) *
+                    surv_prob(s, a, b)) for s in splits])
+
+        return np.sum((obs - pred)**2 / pred)
+
+    # A bounded search seems to work better.  Though there are still problems
+    # opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
+    #             bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
+    guess = [len(data), np.mean(data), 1, 10, -2]
+    opt_params = opt.fmin(opt_fxn, np.array(guess))
+    # opt_params = opt.brute(opt_fxn, ((0, 30), (-30, 0)), Ns=20)
+    N, k, mu, a, b = opt_params
+
+    pred = [N * np.sum(mod.nbinom.pmf(s, mu, k) *
+            surv_prob(s, a, b)) for s in splits]
+
+    return [N, mu, k] + list(opt_params), obs, pred, splits
 
 
 
