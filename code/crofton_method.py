@@ -29,7 +29,9 @@ def crofton_method(data, bin_edges, guess=None):
         List specifying upper and lower bin boundaries. Upper right most bin
         boundary is inclusive; all other upper bounds are exclusive.  Example:
         You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
-        specify [0, 4, 7, 9.1].
+        specify [0, 4, 7, 9.1].  This can be a little weird, but if you want to
+        bin from [0], [1], [2], you would specify [0, 1, 2, 2.9].  You have to
+        be a bit careful with the upper bound because it is INCLUSIVE.
     guess : None or tuple
         If tuple, should be a guess for mu and k of the negative binomial
 
@@ -188,9 +190,9 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
         return np.sum((obs - pred)**2 / pred)
 
     # A bounded search seems to work better.  Though there are still problems
-    opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
-                bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
-    # opt_params = opt.fmin(opt_fxn, np.array(guess))
+    #opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
+    #            bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
+    opt_params = opt.fmin(opt_fxn, np.array(guess))
     # opt_params = opt.brute(opt_fxn, ((0, 30), (-30, 0)), Ns=20)
     a, b = opt_params
 
@@ -198,8 +200,6 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
             surv_prob(s, a, b)) for s in splits]
 
     return [N, mu, k] + list(opt_params), obs, pred, splits
-
-
 
 
 def w3_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2)):
