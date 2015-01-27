@@ -190,16 +190,16 @@ def w2_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
         return np.sum((obs - pred)**2 / pred)
 
     # A bounded search seems to work better.  Though there are still problems
-    #opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
-    #            bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
-    opt_params = opt.fmin(opt_fxn, np.array(guess))
+    opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
+               bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
+    #opt_params = opt.fmin(opt_fxn, np.array(guess))
     # opt_params = opt.brute(opt_fxn, ((0, 30), (-30, 0)), Ns=20)
     a, b = opt_params
 
     pred = [N * np.sum(mod.nbinom.pmf(s, mu, k) *
             surv_prob(s, a, b)) for s in splits]
 
-    return [N, mu, k] + list(opt_params), obs, pred, splits
+    return tuple([N, mu, k] + list(opt_params)), obs, pred, splits
 
 
 def w3_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2)):
