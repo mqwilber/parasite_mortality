@@ -578,15 +578,23 @@ def full_params_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
     # opt_params = opt.brute(opt_fxn, ((0, 30), (-30, 0)), Ns=20)
     N, k, mu, a, b = opt_params
 
-    pred = [N * np.sum(mod.nbinom.pmf(s, mu, k) *
+    pred = [N * p.sum(mod.nbinom.pmf(s, mu, k) *
             surv_prob(s, a, b)) for s in splits]
 
     return [N, mu, k] + list(opt_params), obs, pred, splits
 
 
+def scaled_bias(data, truth):
+    """
+    Scaled bias calculation from Walther and Moore 2005
+    """
+
+    return np.sum(data - truth) / (len(data) * float(truth))
 
 
+def scaled_precision(data):
+    """
+    Just the Coefficient of Variation
+    """
 
-
-
-
+    return 100 * np.std(data, ddof=1) / np.mean(data)
