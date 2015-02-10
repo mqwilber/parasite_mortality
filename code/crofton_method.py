@@ -218,7 +218,7 @@ def likelihood_method(data, crof_params=None, max_sum=1000, guess=[10, -5]):
         out_params = opt.fmin(likefxn1, [mu_guess, k_guess] + guess,
                     args=(data,))
 
-    return out_params
+    return tuple(out_params)
 
 
 def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True,
@@ -413,7 +413,7 @@ def scaled_bias(data, truth):
     Scaled bias calculation from Walther and Moore 2005
     """
 
-    return np.sum(data - truth) / (len(data) * float(truth))
+    return np.abs(np.sum(data - truth) / (len(data) * float(truth)))
 
 
 def scaled_precision(data):
@@ -447,6 +447,8 @@ def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
         b parameter of the survival function
     SAMP : int
         Number of samples for each test
+    crof_params : bool
+        If True, uses known crof params.  If False
 
     Returns
     --------
@@ -473,7 +475,7 @@ def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
             Ns.append(len(alive))
 
             if not crof_params:
-                params = tuple(cfm.crofton_method(alive, crof_bins)[0])
+                params = tuple(crofton_method(alive, crof_bins)[0])
 
             # Try First alternative method
             try:
@@ -507,9 +509,8 @@ def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
                     like_params.append(likelihood_method(alive,
                                     crof_params=(N, mu, k), guess=[a, b])[-2:])
                 else:
-                    like_params.append(likelihood_method(alive, [],
-                                        crof_bins, no_bins=True,
-                                      crof_params=params)[-2:])
+                    like_params.append(likelihood_method(alive,
+                                      crof_params=params, guess=[a, b])[-2:])
             except:
                 pass
 
@@ -551,37 +552,50 @@ def extract_parameters(plot_vals_full_sim, a, b):
     estimates_like_a = []
     estimates_like_b = []
 
+    ld50_extract = []
+
     for i in xrange(len(plot_vals_full_sim)):
 
         w2_a, w2_b = zip(*plot_vals_full_sim[i][1])
         adjei_a, adjei_b = zip(*plot_vals_full_sim[i][2])
         like_a, like_b = zip(*plot_vals_full_sim[i][3])
 
-        # Drop the fits that didn't converge...also try not dropping
+        # Drop the fits that didn't converge...also try not dropping: W2
         ind_b = ~np.bitwise_or(np.array(w2_b) == -30, np.array(w2_b) == 0)
+
+        # Drop for adjei
+        ind_b_adjei = np.array(adjei_b) >= 0
+
+        # Drop for like
+        ind_b_like = np.array(like_b) <= -100
 
         w2_a = np.array(w2_a)[ind_b]
         w2_b = np.array(w2_b)[ind_b]
-        adjei_a = np.array(adjei_a)
-        adjei_b = np.array(adjei_b)
-        like_a = np.array(like_a)
-        like_b = np.array(like_b)
-
+        adjei_a = np.array(adjei_a)[~ind_b_adjei]
+        adjei_b = np.array(adjei_b)[~ind_b_adjei]
+        like_a = np.array(like_a)[~ind_b_like]
+        like_b = np.array(like_b)[~ind_b_like]
 
         w2_a_bias = scaled_bias(w2_a, a)
         w2_a_prec = scaled_precision(w2_a)
         w2_b_bias = scaled_bias(w2_b, b)
         w2_b_prec = scaled_precision(w2_b)
+        w2_ld50_bias = scaled_bias(np.exp(w2_a / np.abs(w2_b)),
+                                    np.exp(a / np.abs(b)))
 
         adjei_a_bias = scaled_bias(adjei_a, a)
         adjei_a_prec = scaled_precision(adjei_a)
         adjei_b_bais = scaled_bias(adjei_b, b)
         adjei_b_prec = scaled_precision(adjei_b)
+        adjei_ld50_bias = scaled_bias(np.exp(adjei_a / np.abs(adjei_b)),
+                                    np.exp(a / np.abs(b)))
 
         like_a_bias = scaled_bias(like_a, a)
         like_a_prec = scaled_precision(like_a)
         like_b_bais = scaled_bias(like_b, b)
         like_b_prec = scaled_precision(like_b)
+        like_ld50_bias = scaled_bias(np.exp(like_a / np.abs(like_b)),
+                                    np.exp(a / np.abs(b)))
 
         estimates_w2_a.append((w2_a_bias, w2_a_prec))
         estimates_w2_b.append((w2_b_bias, w2_b_prec))
@@ -592,9 +606,11 @@ def extract_parameters(plot_vals_full_sim, a, b):
         estimates_like_a.append((like_a_bias, like_a_prec))
         estimates_like_b.append((like_b_bais, like_b_prec))
 
+        ld50_extract.append((w2_ld50_bias, adjei_ld50_bias, like_ld50_bias))
+
     return (estimates_w2_a, estimates_w2_b,
                 estimates_adjei_a, estimates_adjei_b,
-                estimates_like_a, estimates_like_b)
+                estimates_like_a, estimates_like_b, ld50_extract)
 
 
 
