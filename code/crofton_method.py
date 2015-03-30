@@ -5,6 +5,7 @@ import scipy.optimize as opt
 import pandas as pd
 import statsmodels.api as sm
 import pymc as pm
+import matplotlib.pyplot as plt
 
 
 """
@@ -315,42 +316,6 @@ def fit_glm(all_data):
     return res.params
 
 
-def infected_lost(params, all_data, full_para=True):
-    """
-    Use formula from Adjei et al to calculate percent infected lost.
-
-    Parameters
-    ----------
-    params : array-like
-        Length 2. First value is a parameter of GLM and second parameter is
-        b parameter of the GLM
-    all_data : dataframe
-        DataFrame returned from adjei_fitting_method.
-        Columns 'emp', 'pred', 'para'
-    full_para : bool
-        If the column para includes the zero class
-    """
-
-    a = params[0]
-    b = params[1]
-    surv_prob = lambda x, a, b: np.exp(a + b * np.log(x)) / \
-                                    (1 + np.exp(a + b * np.log(x)))
-    pred = np.array(all_data['pred'])
-    para = np.array(all_data['para'])
-
-    # Proportion infected lost
-    if full_para:
-
-        surv_vals = surv_prob(para[1:], a, b)
-        inf_lost = 1 - np.sum(surv_vals * pred[1:]) / np.sum(pred[1:])
-
-        numer = pred[0] + np.sum(surv_vals * pred[1:])
-        denom = np.sum(pred)
-        tot_lost = 1 - numer / denom
-        return inf_lost, tot_lost
-
-    else:
-        return (1 - np.sum(surv_prob(para, a, b) * pred) / np.sum(pred), None)
 
 
 def surv_prob(x, a, b):
@@ -360,12 +325,9 @@ def surv_prob(x, a, b):
     x = np.atleast_1d(x)
 
     probs = np.empty(len(x))
-
-    for i, val in enumerate(x):
-        if val == 0:
-            probs[i] = 1
-        else:
-            probs[i] = np.exp(a + b * np.log(val)) / (1 + np.exp(a + b * np.log(val)))
+    probs[x == 0] = 1
+    ind = x != 0
+    probs[ind] = np.exp(a + b * np.log(x[ind])) / (1 + np.exp(a + b * np.log(x[ind])))
 
     return probs
 
@@ -423,6 +385,23 @@ def scaled_precision(data):
 
     return 100 * np.std(data, ddof=1) / np.mean(data)
 
+def percent_dead(a, b, mu, k, max_num=1000):
+    """
+    Calculate percent of population killed by parasites
+
+    """
+
+    a = np.atleast_1d(a)
+    b = np.atleast_1d(b)
+
+    vals = np.arange(0, max_num + 1)
+    prob_dead_res = np.empty(len(a))
+
+    for i in xrange(len(a)):
+        prob_dead_res[i] =  1 - np.sum(surv_prob(vals, a[i], b[i]) *
+                                mod.nbinom(mu, k).pmf(vals))
+    return prob_dead_res
+
 
 def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
                 fit_bins=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -448,12 +427,13 @@ def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
     SAMP : int
         Number of samples for each test
     crof_params : bool
-        If True, uses known crof params.  If False
+        If True, uses known crof params.  If False, uses the crofton method
+        to estimate the parameters
 
     Returns
     --------
     : tuple
-        First element is a list of all W2 and Adjei results.
+        First element is a list of all W2, Adjei, and likelihood results.
         Second element is the average Ns over the samples
 
     """
@@ -480,39 +460,50 @@ def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
             # Try First alternative method
             try:
                 if crof_params:
-                    w2_params.append(w2_method(alive,
+                    tw2 = w2_method(alive,
                         fit_bins + [np.max(alive) + 0.9], crof_bins,
-                        no_bins=False, crof_params=(N, mu, k))[0][-2:])
+                        no_bins=False, crof_params=(N, mu, k))[0][-2:]
                 else:
-                    w2_params.append(w2_method(alive,
+                    tw2 = w2_method(alive,
                         fit_bins + [np.max(alive) + 0.9], crof_bins,
-                        no_bins=False, crof_params=params)[0][-2:])
+                        no_bins=False, crof_params=params)[0][-2:]
+
+                w2_convg = True
             except:
-                pass
+                w2_convg = False
 
             # Try adjei method
             try:
                 if crof_params:
-                    adjei_params.append(adjei_fitting_method(alive, [],
+                    tadjei = adjei_fitting_method(alive, [],
                                     crof_bins, no_bins=True,
-                                    crof_params=(N, mu, k))[0][-2:])
+                                    crof_params=(N, mu, k))[0][-2:]
                 else:
-                    adjei_params.append(adjei_fitting_method(alive, [],
+                    tadjei = adjei_fitting_method(alive, [],
                                         crof_bins, no_bins=True,
-                                      crof_params=params)[0][-2:])
+                                      crof_params=params)[0][-2:]
 
+                adjei_convg = True
             except:
-                pass
+                adjei_convg = False
 
             try:
                 if crof_params:
-                    like_params.append(likelihood_method(alive,
-                                    crof_params=(N, mu, k), guess=[a, b])[-2:])
+                    tlike = likelihood_method(alive,
+                                    crof_params=(N, mu, k), guess=[a, b])[-2:]
                 else:
-                    like_params.append(likelihood_method(alive,
-                                      crof_params=params, guess=[a, b])[-2:])
+                    tlike = likelihood_method(alive,
+                                      crof_params=params, guess=[a, b])[-2:]
+                like_convg = True
             except:
-                pass
+                like_convg = False
+
+            # Only add if all of them converged
+            if np.all([w2_convg, adjei_convg, like_convg]):
+
+                w2_params.append(tw2)
+                adjei_params.append(tadjei)
+                like_params.append(tlike)
 
         N_avgs_full_sim.append(np.mean(Ns))
         plot_vals_full_sim.append(((N, a, b, k, mu), w2_params, adjei_params,
@@ -521,7 +512,7 @@ def simulate_over_np(N_vals, mu, k, a, b, SAMP, crof_params=True,
     return plot_vals_full_sim, N_avgs_full_sim
 
 
-def extract_parameters(plot_vals_full_sim, a, b):
+def extract_parameters(plot_vals_full_sim, a, b, mu=None, k=None):
     """
     Extract parameters from simulations and calcuate bias and precision
 
@@ -533,12 +524,18 @@ def extract_parameters(plot_vals_full_sim, a, b):
         a parameter of survival function
     b : float
         b parameter of survival function
+    mu : float
+        mean of the pre-mortality negative binomial distribution
+    k : float
+        aggregation of the pre-mortality negative binomial distribution
 
     Returns
     -------
     : tuple
-        Tuple has four objects. 1) Bias and Precision for W2 a 2) Bias and Precision for W2 b
-        3) Bias and Precision for Adjei a 4) Bias and Precision for Adjei b
+        Tuple has 7 objects. 1) Bias and Precision for W2 a 2) Bias and Precision for W2 b
+        3) Bias and Precision for Adjei a 4) Bias and Precision for Adjei b 5) Bias and precision
+        for likelihood method a 6) Bias and precision for likelihood method b 7) Bias for
+        the LD50 (w2, adjei, like)
 
     """
 
@@ -553,6 +550,9 @@ def extract_parameters(plot_vals_full_sim, a, b):
     estimates_like_b = []
 
     ld50_extract = []
+    pd_extract = []
+
+    pred_pd = percent_dead(a, b, mu, k)
 
     for i in xrange(len(plot_vals_full_sim)):
 
@@ -561,13 +561,15 @@ def extract_parameters(plot_vals_full_sim, a, b):
         like_a, like_b = zip(*plot_vals_full_sim[i][3])
 
         # Drop the fits that didn't converge...also try not dropping: W2
-        ind_b = ~np.bitwise_or(np.array(w2_b) == -30, np.array(w2_b) == 0)
+        ind_b = ~np.bitwise_or(np.array(w2_b) == -30, np.array(w2_b) >= -0.1)
 
         # Drop for adjei
-        ind_b_adjei = np.array(adjei_b) >= 0
+        ind_b_adjei = np.array(adjei_b) >= -0.01
 
         # Drop for like
         ind_b_like = np.array(like_b) <= -100
+
+        #full_ind = np.bitwise_or(ind_b, ind_b_adjei)
 
         w2_a = np.array(w2_a)[ind_b]
         w2_b = np.array(w2_b)[ind_b]
@@ -581,7 +583,9 @@ def extract_parameters(plot_vals_full_sim, a, b):
         w2_b_bias = scaled_bias(w2_b, b)
         w2_b_prec = scaled_precision(w2_b)
         w2_ld50_bias = scaled_bias(np.exp(w2_a / np.abs(w2_b)),
-                                    np.exp(a / np.abs(b)))
+                                  np.exp(a / np.abs(b)))
+
+        # w2_pd_bias = scaled_bias(percent_dead(w2_a, w2_b, mu, k), pred_pd)
 
         adjei_a_bias = scaled_bias(adjei_a, a)
         adjei_a_prec = scaled_precision(adjei_a)
@@ -589,6 +593,8 @@ def extract_parameters(plot_vals_full_sim, a, b):
         adjei_b_prec = scaled_precision(adjei_b)
         adjei_ld50_bias = scaled_bias(np.exp(adjei_a / np.abs(adjei_b)),
                                     np.exp(a / np.abs(b)))
+        # adjei_pd_bias = scaled_bias(percent_dead(adjei_a, adjei_b, mu, k),
+        #                                 pred_pd)
 
         like_a_bias = scaled_bias(like_a, a)
         like_a_prec = scaled_precision(like_a)
@@ -596,6 +602,9 @@ def extract_parameters(plot_vals_full_sim, a, b):
         like_b_prec = scaled_precision(like_b)
         like_ld50_bias = scaled_bias(np.exp(like_a / np.abs(like_b)),
                                     np.exp(a / np.abs(b)))
+
+        # like_pd_bias = scaled_bias(percent_dead(like_a, like_b, mu, k),
+        #                                 pred_pd)
 
         estimates_w2_a.append((w2_a_bias, w2_a_prec))
         estimates_w2_b.append((w2_b_bias, w2_b_prec))
@@ -607,10 +616,193 @@ def extract_parameters(plot_vals_full_sim, a, b):
         estimates_like_b.append((like_b_bais, like_b_prec))
 
         ld50_extract.append((w2_ld50_bias, adjei_ld50_bias, like_ld50_bias))
+        #pd_extract.append((w2_pd_bias, adjei_pd_bias, like_pd_bias))
 
     return (estimates_w2_a, estimates_w2_b,
                 estimates_adjei_a, estimates_adjei_b,
                 estimates_like_a, estimates_like_b, ld50_extract)
+
+# Define plotting function
+def plot_bias(sims, a_b_vec, file_name, N_vals, ylims=(-2, 0.5),
+                ks=[1, 1, 0.5, 0.5], figsize=(12, 8), ld50=False, index=6):
+    """
+    Function plots the bais of the a parameter from the thre different PIHM
+    methods
+
+    Parameters
+    ----------
+    sims : list of length 3
+        Each element is a list containing three different ratios of LD50
+    a_b_vec : list of tuples
+        Length of three (a, b) values. Different LD50 values
+    file_name : str
+        Name of the file to which to save
+    ld50: bool
+        If True, plots the LD50 bias.  If False, plots a and b bias
+
+    """
+
+    method = ["Chi-squared Method", "Likelihood Method", "Chi-squared Method",
+             "Likelihood Method",  "Chi-squared Method", "Likelihood Method"]
+    colors = ["black", "grey", "#B8B8B8"]
+    fig, axes = plt.subplots(3, 2, figsize=figsize)
+    axes = axes.ravel()
+    for ax in axes:
+        ax.xaxis.tick_bottom()
+        ax.yaxis.tick_left()
+    alpha = 1
+    lwd = 2
+
+    for i, sim in enumerate(sims[0]):
+
+        if not ld50:
+
+            w2_a_bias_vec, w2_a_prec_vec = zip(*sim[0])
+            w2_b_bias_vec, w2_b_prec_vec = zip(*sim[1])
+
+            adjei_a_bias_vec, adjei_a_prec_vec = zip(*sim[2])
+            adjei_b_bias_vec, adjei_b_prec_vec = zip(*sim[3])
+
+            like_a_bias_vec, like_a_prec_vec = zip(*sim[4])
+            like_b_bias_vec, like_b_prec_vec = zip(*sim[5])
+
+        else:
+
+            w2_a_bias_vec, adjei_a_bias_vec, like_a_bias_vec = zip(*sim[index])
+
+
+
+        axes[0].semilogx(N_vals, adjei_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+                                     label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+        axes[1].semilogx(N_vals, adjei_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+#         axes[1].semilogx(N_vals, adjei_b_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+#                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+#         axes[0].semilogx(N_vals, adjei_b_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+#                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+
+        axes[0].semilogx(N_vals, w2_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls="-",
+                                     label=r"Chi. Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+        axes[1].semilogx(N_vals, like_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls="--" ,
+                                     label=r"Like. Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+    for i, sim in enumerate(sims[1]):
+
+        if not ld50:
+
+            w2_a_bias_vec, w2_a_prec_vec = zip(*sim[0])
+            w2_b_bias_vec, w2_b_prec_vec = zip(*sim[1])
+
+            adjei_a_bias_vec, adjei_a_prec_vec = zip(*sim[2])
+            adjei_b_bias_vec, adjei_b_prec_vec = zip(*sim[3])
+
+            like_a_bias_vec, like_a_prec_vec = zip(*sim[4])
+            like_b_bias_vec, like_b_prec_vec = zip(*sim[5])
+
+        else:
+
+            w2_a_bias_vec, adjei_a_bias_vec, like_a_bias_vec = zip(*sim[index])
+
+        axes[2].semilogx(N_vals, adjei_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+                                     label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+        axes[3].semilogx(N_vals, adjei_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+                                     label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+#         axes[2].semilogx(N_vals, adjei_b_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+#                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+#         axes[3].semilogx(N_vals, adjei_b_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+#                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+
+        axes[2].semilogx(N_vals, w2_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls="-",
+                                     label=r"Chi. Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+        axes[3].semilogx(N_vals, like_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls="--" ,
+                                     label=r"Like. Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+    for i, sim in enumerate(sims[2]):
+
+        if not ld50:
+
+            w2_a_bias_vec, w2_a_prec_vec = zip(*sim[0])
+            w2_b_bias_vec, w2_b_prec_vec = zip(*sim[1])
+
+            adjei_a_bias_vec, adjei_a_prec_vec = zip(*sim[2])
+            adjei_b_bias_vec, adjei_b_prec_vec = zip(*sim[3])
+
+            like_a_bias_vec, like_a_prec_vec = zip(*sim[4])
+            like_b_bias_vec, like_b_prec_vec = zip(*sim[5])
+
+        else:
+
+            w2_a_bias_vec, adjei_a_bias_vec, like_a_bias_vec = zip(*sim[index])
+
+        axes[4].semilogx(N_vals, adjei_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+                                     label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+        axes[5].semilogx(N_vals, adjei_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+                                     label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+#         axes[2].semilogx(N_vals, adjei_b_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+#                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+#         axes[3].semilogx(N_vals, adjei_b_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls=":",
+#                                      label=r"Adjei Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+
+        axes[4].semilogx(N_vals, w2_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls="-",
+                                     label=r"Chi. Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+        axes[5].semilogx(N_vals, like_a_bias_vec, lw=lwd, alpha=alpha, color=colors[i], ls="--" ,
+                                     label=r"Like. Method $a = %.1f$, $b = %.1f$" % a_b_vec[i], basex=10)
+
+    for i, ax in enumerate(axes):
+
+        ax.text(0.5, 0.95, method[i] + r", $k = %.2f$" % ks[i], horizontalalignment="center", transform=ax.transAxes)
+        ax.set_ylabel("Standardized Bias")
+        ax.set_xlabel(r"$\log{N_p}$")
+        ax.set_ylim(ylims)
+        ax.set_xlim((10**2, 10**4.5))
+        ax.hlines(0, 10**2, 10**4.5, linestyle="--", color="red", alpha=0.5)
+        ax.legend(loc="lower right", prop={'size' : 6})
+
+    plt.tight_layout()
+    fig.savefig("../results/" + file_name, dpi=300)
+
+# def infected_lost(params, all_data, full_para=True):
+#     """
+#     Use formula from Adjei et al to calculate percent infected lost.
+
+#     Parameters
+#     ----------
+#     params : array-like
+#         Length 2. First value is a parameter of GLM and second parameter is
+#         b parameter of the GLM
+#     all_data : dataframe
+#         DataFrame returned from adjei_fitting_method.
+#         Columns 'emp', 'pred', 'para'
+#     full_para : bool
+#         If the column para includes the zero class
+#     """
+
+#     a = params[0]
+#     b = params[1]
+#     surv_prob = lambda x, a, b: np.exp(a + b * np.log(x)) / \
+#                                     (1 + np.exp(a + b * np.log(x)))
+#     pred = np.array(all_data['pred'])
+#     para = np.array(all_data['para'])
+
+#     # Proportion infected lost
+#     if full_para:
+
+#         surv_vals = surv_prob(para[1:], a, b)
+#         inf_lost = 1 - np.sum(surv_vals * pred[1:]) / np.sum(pred[1:])
+
+#         numer = pred[0] + np.sum(surv_vals * pred[1:])
+#         denom = np.sum(pred)
+#         tot_lost = 1 - numer / denom
+#         return inf_lost, tot_lost
+
+#     else:
+#         return (1 - np.sum(surv_prob(para, a, b) * pred) / np.sum(pred), None)
 
 
 

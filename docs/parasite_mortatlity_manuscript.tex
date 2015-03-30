@@ -1,0 +1,237 @@
+% Document
+\documentclass[12pt, a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{lipsum}
+
+% Fig. and table formating
+\usepackage{epsfig}
+\usepackage{tabu}
+\usepackage{rotating}
+\usepackage{pbox}
+\usepackage{framed, multicol}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{float}
+\usepackage[left=1.25 in, right=1.25 in, top=1.25 in, bottom=1.25 in]{geometry}
+
+\usepackage{caption}
+
+% Fonts - Mathtime
+%\usepackage{txfonts}
+\usepackage{amsmath} % Add amssymb if not using Mathtime
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+% Text
+\setlength{\parindent}{0.5in}
+\frenchspacing  \tolerance = 800  \hyphenpenalty = 800
+
+\usepackage{lineno} % Line numbers
+\def\linenumberfont{\normalfont\footnotesize\ttfamily}
+\setlength\linenumbersep{0.2 in}
+
+\usepackage{setspace}
+
+% Format section and subsection headers
+\makeatletter
+\renewcommand{\section}{\@startsection
+{section}%                   % the name
+{1}%                         % the level
+{0mm}%                       % the indent
+{-\baselineskip}%            % the before skip
+{0.5\baselineskip}%          % the after skip
+{\normalfont\bf\large}} % the style
+
+\renewcommand{\subsection}{\@startsection
+{subsection}%                   % the name
+{2}%                         % the level
+{0mm}%                       % the indent
+{-\baselineskip}%            % the before skip
+{0.5\baselineskip}%          % the after skip
+{\normalfont\bf}} % the style
+\makeatother
+
+% Other
+\usepackage{graphicx}
+\usepackage[singlelinecheck=false,font=small,labelfont=bf]{caption}
+\usepackage[justification=centering]{caption}
+
+% Bibliography
+\usepackage[numbers, compress]{natbib} % Bibliography - APA
+\bibpunct{(}{)}{;}{a}{}{,}
+
+% Format the Bibliography appropriately
+% increase \bibhang to take care of the numbers
+\setlength{\bibhang}{0pc}
+\makeatletter
+%patch \@lbibitem to print the current number before the authors
+\patchcmd{\@lbibitem}
+  {]}
+  {] \theNAT@ctr. \newline }
+  {}{}
+\makeatother
+
+
+%%%%%% FRONT MATTER %%%%%%%%%
+
+\begin{document}
+
+\doublespacing
+
+\section*{Methods}
+
+
+\subsection*{Overview of PIHM approaches}
+
+We propose and two alternative approaches for estimating LD50 and PD from
+parasite intensity data.  Our two approaches, as well as the Adjei Method,
+follow the same general steps.  First, all approaches assume that the
+distribution of parasites across hosts in the pre-mortality population follows
+a negative binomial distribution and, using the Crofton Method, each approach
+starts by estimating the total number hosts  ($N_p$), the mean number of
+parasites per host ($\mu_p$), and the aggregation of the parasites across hosts
+before PIHM ($k_p$) (see Appendix X for a description of the Crofton Method).
+Second, each method assumes that the probability of host survival with $x$ parasites is given by the logistic host-survival function
+\begin{equation}
+    h(x | a, b) = h_x = \dfrac{e^{a + b \log(x)}}{1 + e^{a + b \log(x)}}
+    \label{eq:logistic}
+\end{equation}
+Using equation \ref{eq:logistic}, each method uses either a likelihood or chi-squared approach to estimate $a$ and $b$.  Finally, from the estimated parameters $a$ and $b$,
+$LD_{50}$ and $PD$ can be calculated by the equations \citep{Adjei1986}
+
+\begin{equation}
+    LD_{50} = \exp(\frac{a}{b})
+    \label{eq:ld50}
+\end{equation}
+
+and
+
+\begin{equation}
+    PD = 1 -  \dfrac{\sum_{x=0}^\infty h_x * f_x}{\sum_{x=0}^\infty f_x}
+    \label{eq:pd}
+\end{equation}
+where $f_x$ is the probability mass function for the pre-mortality distribution of parasites per hosts which follows a negative binomial distribution with mean $\mu_p$ and aggregation parameter $k_p$. For
+each method, the differences in predictions of
+$LD_{50}$ and $PD$ are a result of how a given method each calculates $a$ and $b$.
+
+\subsection*{Estimating $a$ and $b$ with the Adjei Method}
+
+To estimate $a$ and $b$, the Adjei Method proceeds as follows \citep{Adjei1986}
+
+\singlespacing
+\begin{enumerate}
+    \item Estimate $N_p$, $\mu_p$, and $k_p$ using the Crofton Method
+    \item Given $N_p$, $\mu_p$, and $k_p$, estimate the expected number of hosts in category $i$ via equation $N_p f_i$.  $i$ specifies either a given parasite intensity or some range of parasites intensities (i.e. number of hosts with 100 parasites or number of hosts with 100-150 parasites) and there are $m$ categories.
+    \item Calculate the observed number of hosts in each category $i$.  Assume that the observed number of hosts in each category $i$ is binomial distributed with the total number of ``trials'' equal to the expected number of hosts in $i$.
+    \item If observed number of hosts in category $i$ is greater than the expected number of hosts in $i$, let observed in $i$ equal to expected in $i$.
+    \item Run a generalized linear model in with a binomial random component and a logistic link to estimate $a$ and $b$.
+\end{enumerate}
+
+\doublespacing
+See \cite{Adjei1986} and Appendix X for a more thorough description of this approach and some supporting examples.
+
+\subsection*{Estimating $a$ and $b$ with chi-squared approach}
+
+The first alternative approach that we propose relies on estimating $a$ and $b$ by minimizing the $\chi^2$ statistic.  The approach proceeds as follows
+
+\singlespacing
+\begin{enumerate}
+    \item Estimate $N_p$, $\mu_p$, and $k_p$ using the Crofton Method.
+    \item Specify $m$ categories of parasite intensities where each category $i$ either contains a single parasite intensity or a range of parasite intensities.   Calculate the expected number of hosts in each category $i $ by $N_p$ times the probability that a host is category $i$ and is alive.  This can be written as $N_p * f_i * h_i$ where the appropriate summation is taken if $i$ is a range of parasite intensities.
+    \item Calculate the observed number of hosts in each category $i$.
+    \item Calculate the $\chi^2$ statistic for the observed and expected $n$ categories using the standard notation $X^2 = \sum_{i=1}^m \frac{(observed_i - expected_i)^2}{expected_i}$
+    \item Find $a$ and $b$ that minimize this $X^2$ statistic.
+\end{enumerate}
+
+\doublespacing
+
+This approach does not require any alteration of the observed data as in the Adjei approach and uses the same iterative minimization technique as the Crofton Method \citep{Lester1977}.
+
+\subsection*{Estimating $a$ and $b$ with the likelihood approach}
+
+The second alternative method relies on maximizing the likelihood of the observed data and proceeds as follows.
+
+\singlespacing
+\begin{enumerate}
+    \item Estimate $N_p$, $\mu_p$, and $k_p$ using the Crofton Method.
+    \item Specify the probability distribution that a host has $x$ parasites and is alive as
+
+    \begin{equation}
+        p(x; a, b, \mu_p, k_p) = \phi h(x; a, b) f(x; \mu_p, k_p)
+    \end{equation}
+
+    where $\phi$ is a normalizing constant. % equal to $(\sum_{x=0}^\infty h(x; a, b) * f(x; \mu_p, k_p))^{-1}$.
+
+    \item Assuming hosts are independent, the likelihood of a datasets with $n$ hosts can be written as $L(a, b | x, \mu_p, k_p) = \Pi_{i=0}^n p(x_i ; a, b, \mu_p, k_p)$.
+
+    \item Use standard optimization techniques to estimate $a$ and $b$
+
+\end{enumerate}
+
+\doublespacing
+The likelihood approach is advantageous because standard statistical techniques can then be used to assess whether parasite-induced host mortality is playing a significant role in a population [reword].
+
+\subsection*{Dataset simulation and comparison of PIHM approaches}
+
+To compare the ability of these methods to recover $LD_{50}$ and $PD$, we randomly generated data using the
+following procedure.  First, we drew $N_p$ randomly infected hosts from a
+negative binomial distribution with parameters $\mu_p$ and $k_p$.  Second, we chose values of $a$ and $b$ and calculated the probability of survival
+for all $N_p$ hosts using equation \ref{eq:logistic}.  Third, we drew $N_p$ random numbers from a uniform distribution
+between 0 and 1 and if host survival probability was less than this random
+number, the host experienced parasite-induced mortality.  The surviving
+hosts comprised the dataset that would be obtained in the field.
+
+% For a simulated datasets, we estimated the parameters $a$ and $b$ using each of the three approached outlines above. For combination of $a$ and $b$ we then estimated $LD_{50}$ and $PD$. To
+% determine the efficacy of each method, we estimated the bias and precision
+% of the resulting $LD_{50}$ and $PD$ estimates \citep{Walther2005}.  To compare
+% the bias and precision across parameter combinations we used the
+% standardized bias and the standardized precision \citep{Walther2005}.
+
+Using the simulated datasets, we devised two scenarios to test the above approaches. In the first scenario, we assumed
+that the values of $N_p$, $\mu_p$, and $k_p$ were known and tested the ability of both
+methods to recover the true values of $a$ and $b$ over increasing values of
+$N_p$.  While this first scenario is unrealistic because the parameters $N_p$,
+$\mu_p$, and $k_p$ are always unknown, we implemented this scenario as a baseline to
+establish the efficacy of the methods independent of the Crofton Method used to estimate $N_p$, $\mu_p$ and $k_p$.   If a
+method could not return unbiased [word choice] estimates of $LD_{50}$ and/or $PD$ under these
+idealized conditions, we took this as evidence for unreliability of this method. The second scenario
+proceeded exactly as the first, except that we estimated $N_p$, $mu_p$, and
+$k_p$ using the Crofton Method.
+
+For each scenario, we used two different $LD_{50}$
+values: $\exp(2) = 7.39$ parasites with $\mu_p = 10$ and $\exp(3) = 20.08$ parasites with  $\mu_p = 30$. For each $LD_{50}$ value we choose three combinations of $a$ and $b$ that
+represented three different patterns of how host survival decreased with
+parasite intensity:  gradual, moderate and a sharp decrease in host survival
+probability (Figure X).  Finally we examined three levels of parasite
+aggregation, $k_p = 0.1, 0.5, 1$, which are realistic values of parasite aggregation in
+natural populations \citep{Shaw1998}.  For each of these parameter
+combinations we simulated 150 datasets, estimated $a$, $b$, $LD_{50}$, and $PD$ and calculated the standardized bias and
+precision \citep{Walther2005} for these estimates over varying pre-mortality host population sizes  $N_p$ = [300, 500, 1000, 2000, 5000, 7500,
+10000]. $N_p$ is not technically the sample size on which the methods are being
+tested because parasite-induced mortality reduces $N_p$ for each simulated
+dataset.  We therefore used the average number of surviving hosts over all 150 simulations for a given parameter combination as our measure of sample size.
+
+% However, to facilitate comparison across parameter combinations, we
+% used $N_p$ as a proxy for sample size.  Finally, for low values of $N_p$, there
+% were some simulated datasets where the Chi-squared Method and the Likelihood
+% Method failed to converge.  These trials were discarded \dots [or should we save them
+% to see what is going on?]. The highest failure percentage we observed was X for
+% the X method with $N_p$ = 300 [need to look into this further/use a more robust
+% convergence method for the likelihood approach].
+
+\section*{Results}
+
+\subsection*{Scenario I: Known pre-mortality parameters}
+
+\subsection*{Scenario II: Unknown pre-mortality parameters}
+
+\section*{Discussion}
+
+
+\singlespacing
+\bibliographystyle{/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst}
+\bibliography{/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality}
+
+
+\end{document}
+
