@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex parasite_mortatlity_manuscript"] 1427656294 "parasite_mortatlity_manuscript.aux" "parasite_mortatlity_manuscript.bbl" "parasite_mortatlity_manuscript" 1427656321
-  "/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality.bib" 1427654581 13684 a8caf95ce7e4688dd19e2c0087d897d8 ""
+["bibtex parasite_mortatlity_manuscript"] 1427752518 "parasite_mortatlity_manuscript.aux" "parasite_mortatlity_manuscript.bbl" "parasite_mortatlity_manuscript" 1427752632
+  "/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality.bib" 1427730946 18410 d265c4960930fe5db6c51d965883d0b9 ""
   "/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst.bst" 0 -1 0 ""
-  "parasite_mortatlity_manuscript.aux" 1427656321 696 f8030accf472b674def02800654166d1 ""
+  "parasite_mortatlity_manuscript.aux" 1427752632 628 65e563a7d152f704e16175ad801b68e6 ""
   "parasite_mortatlity_manuscript.bcf" 0 -1 0 ""
   (generated)
   "parasite_mortatlity_manuscript.blg"
   "parasite_mortatlity_manuscript.bbl"
-["pdflatex"] 1427656320 "parasite_mortatlity_manuscript.tex" "parasite_mortatlity_manuscript.pdf" "parasite_mortatlity_manuscript" 1427656321
+["pdflatex"] 1427752631 "parasite_mortatlity_manuscript.tex" "parasite_mortatlity_manuscript.pdf" "parasite_mortatlity_manuscript" 1427752632
   "/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2014/texmf-dist/tex/generic/ifxetex/ifxetex.sty" 1284331290 1458 43ab4710dc82f3edeabecd0d099626b2 ""
   "/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/atbegshi.sty" 1335995445 24460 92f559a71aac869021852c227c704b38 ""
@@ -82,6 +82,7 @@
   "/usr/local/texlive/2014/texmf-dist/tex/latex/base/omsenc.dfu" 1399675188 1793 7bb4e1cf8d618812dcf05cd85cccb71d ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/base/ot1enc.dfu" 1399675188 2545 afa23f923cc3519eb0b895cbf3dadfb5 ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/base/size12.clo" 1399675188 8978 ae5f64dacfe4ff1b713dec8fd98fb590 ""
+  "/usr/local/texlive/2014/texmf-dist/tex/latex/base/t1cmtt.fd" 1399675188 2018 52162f79589c02ae9099c7e58e607a93 ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/base/t1enc.def" 1399675188 9097 3d740f5a942bdde0d974eb1398aae41c ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/base/t1enc.dfu" 1399675188 7405 c70c194719f79b7d070eeb68af109b09 ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def" 1399675188 6275 ac89e3d1c95578574b0b11f34248899e ""
@@ -138,9 +139,9 @@
   "/usr/local/texlive/2014/texmf-dist/tex/latex/tools/multicol.sty" 1399675188 29193 08a2f6b9e76c544040f9143397c0d6dc ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/varwidth/varwidth.sty" 1238697683 10894 d359a13923460b2a73d4312d613554c8 ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/xcolor/xcolor.sty" 1169481954 55224 a43bab84e0ac5e6efcaf9a98bde73a94 ""
-  "parasite_mortatlity_manuscript.aux" 1427656321 696 f8030accf472b674def02800654166d1 ""
-  "parasite_mortatlity_manuscript.bbl" 1427656295 1448 dba94cb532b0ae3eb5d16d0140714e48 "bibtex parasite_mortatlity_manuscript"
-  "parasite_mortatlity_manuscript.tex" 1427656319 11418 7f0415a5ef169e7139c67320b27d25f7 ""
+  "parasite_mortatlity_manuscript.aux" 1427752632 628 65e563a7d152f704e16175ad801b68e6 ""
+  "parasite_mortatlity_manuscript.bbl" 1427752518 1207 569c0f27fb38a8f6907f86d0dcb9fd36 "bibtex parasite_mortatlity_manuscript"
+  "parasite_mortatlity_manuscript.tex" 1427752631 14354 133cce00c061a82995ddd26ae0adea0a ""
   (generated)
   "parasite_mortatlity_manuscript.pdf"
   "parasite_mortatlity_manuscript.aux"

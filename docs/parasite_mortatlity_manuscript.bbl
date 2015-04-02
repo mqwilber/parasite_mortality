@@ -1,4 +1,4 @@
-\begin{thebibliography}{4}
+\begin{thebibliography}{3}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -10,12 +10,6 @@ Adjei, E.~L., Barnes, A. \& Lester, R. J.~G. (1986).
   illustrated using data from Caliitetrarhynchus gracilis (Cestoda:
   Trypanorhyncha) in lizardfish (Saurida spp.)}.
 \newblock \emph{Parasitology}, 92, 227--243.
-
-\bibitem[{Lester(1977)}]{Lester1977}
-Lester, R. J.~G. (1977).
-\newblock {An estimate of mortality in a population of Perca flavescens owing
-  to the trematode Diplostomum adamsi}.
-\newblock \emph{Canadian Journal of Zoology}, 55, 288--292.
 
 \bibitem[{Shaw \emph{et~al.}(1998)Shaw, Grenfell \& Dobson}]{Shaw1998}
 Shaw, D.~J., Grenfell, B.~T. \& Dobson, a.~P. (1998).

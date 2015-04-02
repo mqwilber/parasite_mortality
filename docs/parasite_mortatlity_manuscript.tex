@@ -77,20 +77,21 @@
 \begin{document}
 
 \doublespacing
+\linenumbers
 
 \section*{Methods}
 
 
 \subsection*{Overview of PIHM approaches}
 
-We propose and two alternative approaches for estimating LD50 and PD from
+We propose two alternative approaches for estimating LD50 and PD from
 parasite intensity data.  Our two approaches, as well as the Adjei Method,
 follow the same general steps.  First, all approaches assume that the
 distribution of parasites across hosts in the pre-mortality population follows
 a negative binomial distribution and, using the Crofton Method, each approach
-starts by estimating the total number hosts  ($N_p$), the mean number of
+starts by estimating the total number hosts ($N_p$), the mean number of
 parasites per host ($\mu_p$), and the aggregation of the parasites across hosts
-before PIHM ($k_p$) (see Appendix X for a description of the Crofton Method).
+before PIHM ($k_p$) (see Appendix X for a description of the Crofton Method). We discuss in the following sections that our alternative approaches do not have to start with the Crofton Method, but is a useful starting point when comparing our methods to the Adjei Method.
 Second, each method assumes that the probability of host survival with $x$ parasites is given by the logistic host-survival function
 \begin{equation}
     h(x | a, b) = h_x = \dfrac{e^{a + b \log(x)}}{1 + e^{a + b \log(x)}}
@@ -107,11 +108,11 @@ $LD_{50}$ and $PD$ can be calculated by the equations \citep{Adjei1986}
 and
 
 \begin{equation}
-    PD = 1 -  \dfrac{\sum_{x=0}^\infty h_x * f_x}{\sum_{x=0}^\infty f_x}
+    PD = 1 -  \sum_{x=0}^\infty h_x * f_x
     \label{eq:pd}
 \end{equation}
 where $f_x$ is the probability mass function for the pre-mortality distribution of parasites per hosts which follows a negative binomial distribution with mean $\mu_p$ and aggregation parameter $k_p$. For
-each method, the differences in predictions of
+each method, any differences in predictions of
 $LD_{50}$ and $PD$ are a result of how a given method each calculates $a$ and $b$.
 
 \subsection*{Estimating $a$ and $b$ with the Adjei Method}
@@ -124,7 +125,7 @@ To estimate $a$ and $b$, the Adjei Method proceeds as follows \citep{Adjei1986}
     \item Given $N_p$, $\mu_p$, and $k_p$, estimate the expected number of hosts in category $i$ via equation $N_p f_i$.  $i$ specifies either a given parasite intensity or some range of parasites intensities (i.e. number of hosts with 100 parasites or number of hosts with 100-150 parasites) and there are $m$ categories.
     \item Calculate the observed number of hosts in each category $i$.  Assume that the observed number of hosts in each category $i$ is binomial distributed with the total number of ``trials'' equal to the expected number of hosts in $i$.
     \item If observed number of hosts in category $i$ is greater than the expected number of hosts in $i$, let observed in $i$ equal to expected in $i$.
-    \item Run a generalized linear model in with a binomial random component and a logistic link to estimate $a$ and $b$.
+    \item Run a generalized linear model with a binomial random component and a logistic link to estimate $a$ and $b$.
 \end{enumerate}
 
 \doublespacing
@@ -139,17 +140,16 @@ The first alternative approach that we propose relies on estimating $a$ and $b$ 
     \item Estimate $N_p$, $\mu_p$, and $k_p$ using the Crofton Method.
     \item Specify $m$ categories of parasite intensities where each category $i$ either contains a single parasite intensity or a range of parasite intensities.   Calculate the expected number of hosts in each category $i $ by $N_p$ times the probability that a host is category $i$ and is alive.  This can be written as $N_p * f_i * h_i$ where the appropriate summation is taken if $i$ is a range of parasite intensities.
     \item Calculate the observed number of hosts in each category $i$.
-    \item Calculate the $\chi^2$ statistic for the observed and expected $n$ categories using the standard notation $X^2 = \sum_{i=1}^m \frac{(observed_i - expected_i)^2}{expected_i}$
-    \item Find $a$ and $b$ that minimize this $X^2$ statistic.
+    \item Calculate the $\chi^2$ statistic for the observed and expected $n$ categories using the standard notation $\chi^2 = \sum_{i=1}^m \frac{(observed_i - expected_i)^2}{expected_i}$
+    \item Find $a$ and $b$ that minimize this $\chi^2$ statistic.
 \end{enumerate}
 
 \doublespacing
-
-This approach does not require any alteration of the observed data as in the Adjei approach and uses the same iterative minimization technique as the Crofton Method \citep{Lester1977}.
+The advantage of this approach over the Adjei approach is that is does not require any alteration of the observed data. Moreover, this approach can theoretically be extended such that $N_p$, $k_p$ and $\mu_p$ can be estimated directly from minimization of the $\chi^2$ statistic rather than via the Crofton Method.  In practice, this minimization is difficult because host-parasite datasets are often not large enough and/or PIHM is not strong enough to uniquely estimate 5 parameters.  Therefore, the Crofton Method provides an easy way to estimate $N_p$, $k_p$, and $\mu_p$ before minimizing the $\chi^2$ statistic to find $a$ and $b$.
 
 \subsection*{Estimating $a$ and $b$ with the likelihood approach}
 
-The second alternative method relies on maximizing the likelihood of the observed data and proceeds as follows.
+The second alternative method relies on maximizing the likelihood of the observed data under a PIHM model.  This method proceeds as follows.
 
 \singlespacing
 \begin{enumerate}
@@ -157,10 +157,10 @@ The second alternative method relies on maximizing the likelihood of the observe
     \item Specify the probability distribution that a host has $x$ parasites and is alive as
 
     \begin{equation}
-        p(x; a, b, \mu_p, k_p) = \phi h(x; a, b) f(x; \mu_p, k_p)
+        p(x; a, b, \mu_p, k_p) = \phi h_x f_x
     \end{equation}
 
-    where $\phi$ is a normalizing constant. % equal to $(\sum_{x=0}^\infty h(x; a, b) * f(x; \mu_p, k_p))^{-1}$.
+    where $\phi$ is a normalizing constant. equal to $(\sum_{x=0}^\infty h(x; a, b) * f(x; \mu_p, k_p))^{-1}$.
 
     \item Assuming hosts are independent, the likelihood of a datasets with $n$ hosts can be written as $L(a, b | x, \mu_p, k_p) = \Pi_{i=0}^n p(x_i ; a, b, \mu_p, k_p)$.
 
@@ -169,7 +169,7 @@ The second alternative method relies on maximizing the likelihood of the observe
 \end{enumerate}
 
 \doublespacing
-The likelihood approach is advantageous because standard statistical techniques can then be used to assess whether parasite-induced host mortality is playing a significant role in a population [reword].
+The likelihood approach is advantageous over both of the aforementioned approaches because 1) it requires only estimating 4 parameters ($a$, $b$, $\mu_p$, and $k_p$) rather than 5 parameters 2) all 4 parameters can either be estimated jointly or $\mu_p$ and $k_p$ can first be estimated using the Crofton method and 3) standard statistical techniques, such as likelihood ratio tests or AIC, can be used to assess whether a model with PIHM is better than a model without PIHM.
 
 \subsection*{Dataset simulation and comparison of PIHM approaches}
 
@@ -223,9 +223,24 @@ dataset.  We therefore used the average number of surviving hosts over all 150 s
 
 \subsection*{Scenario I: Known pre-mortality parameters}
 
+Across all parameter combinations we examined, the two alternative approaches always provided less or equal bias when estimating $LD_{50}$ and $PD$ than the Adjei Method.  For large sample sizes, all three methods were approximately equally effective at predicting $LD_{50}$ and $PD$ (Figure X).  However, as sample size decreased the Adjei Method began to show significant bias in its predictions of $LD_{50}$ and $PD$.  As sample sized decreased, the Adjei Method tended to first show bias in host-parasite systems when the host-survival decreased sharply with increasing parasite intensity (i.e. $a = 30, b = -15$).  Approaching the smallest sample size, the Adjei Method generally showed the bias for all types of host-survival functions.
+
+For all three methods, the aggregation in the pre-mortality host population had strong effects on the bias of the $LD_{50}$ and $PD$ estimates.  As $k_p$ decreased, the bias increased for all methods.  This trend was most pronounced in the Adjei Method followed by the Chi-squared Method and was least pronounced in the Likelihood Method.  These general trend held for different $LD_{50}$s (Appendix X). [Run same analyses with a different mean]
+
+% Precision, bias in $a$ and $b$
+
 \subsection*{Scenario II: Unknown pre-mortality parameters}
 
+When the Crofton Method was first used to estimate
+
+\subsection*{Scenario III: Efficacy of alternative methods under-realistic conditions}
+
+As both alternative methods were superior to the Adjei Method for estimating the host survival function, we focused whether either of these methods would be practical under realistic field conditions.
+
 \section*{Discussion}
+
+% The chi-squared method and the Adjei Method are more sensitive to the crofton method because the rely on the estimate of N_p which the Crofton Method does not estimate well.  The likelihood approach doesn't rely on this estimate and is less sensitive to the crofton method.
+
 
 
 \singlespacing

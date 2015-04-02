@@ -1,11 +1,13 @@
 from __future__ import division
 import numpy as np
 import macroeco.models as mod
+import macroeco.compare as comp
 import scipy.optimize as opt
 import pandas as pd
 import statsmodels.api as sm
 import pymc as pm
 import matplotlib.pyplot as plt
+from scipy.stats import chisqprob
 
 
 """
@@ -189,27 +191,27 @@ def likelihood_method(data, crof_params=None, max_sum=1000, guess=[10, -5]):
     -----
 
     """
-    kern = lambda x, mu, k, a, b: surv_prob(x, a, b) * \
-                                        mod.nbinom.pmf(x, mu, k)
-    pmf = lambda x, mu, k, a, b: kern(x, mu, k, a, b) / \
-                    sum(kern(np.arange(0, max_sum), mu, k, a, b))
+    # kern = lambda x, mu, k, a, b: surv_prob(x, a, b) * \
+    #                                     mod.nbinom.pmf(x, mu, k)
+    # pmf = lambda x, mu, k, a, b: kern(x, mu, k, a, b) / \
+    #                 sum(kern(np.arange(0, max_sum), mu, k, a, b))
 
-    def likefxn1(params, x):
-        """ Likelihood fxn for all parameters """
+    # def likefxn1(params, x):
+    #     """ Likelihood fxn for all parameters """
 
-        mu, k, a, b = params
-        return -np.sum(np.log(pmf(x, mu, k, a, b)))
+    #     mu, k, a, b = params
+    #     return -np.sum(np.log(pmf(x, mu, k, a, b)))
 
-    def likefxn2(params, x, mu, k):
-        """ Likelihood fxn for just a and b """
+    # def likefxn2(params, x, mu, k):
+    #     """ Likelihood fxn for just a and b """
 
-        a, b = params
-        return -np.sum(np.log(pmf(x, mu, k, a, b)))
+    #     a, b = params
+    #     return -np.sum(np.log(pmf(x, mu, k, a, b)))
 
     if crof_params:
         N, mu, k = crof_params
 
-        params = opt.fmin(likefxn2, guess, args=(data, mu, k), disp=0)
+        params = opt.fmin(likefxn2, guess, args=(data, mu, k), disp=1)
         out_params = [mu, k] + list(params)
 
     else:
@@ -220,6 +222,24 @@ def likelihood_method(data, crof_params=None, max_sum=1000, guess=[10, -5]):
                     args=(data,))
 
     return tuple(out_params)
+
+# PMF for host mortality
+kern = lambda x, mu, k, a, b: surv_prob(x, a, b) * \
+                                    mod.nbinom.pmf(x, mu, k)
+pmf = lambda x, mu, k, a, b: kern(x, mu, k, a, b) / \
+                sum(kern(np.arange(0, 1000), mu, k, a, b))
+
+def likefxn1(params, x):
+    """ Likelihood fxn for all parameters """
+
+    mu, k, a, b = params
+    return -np.sum(np.log(pmf(x, mu, k, a, b)))
+
+def likefxn2(params, x, mu, k):
+    """ Likelihood fxn for just a and b """
+
+    a, b = params
+    return -np.sum(np.log(pmf(x, mu, k, a, b)))
 
 
 def adjei_fitting_method(data, full_bin_edges, crof_bin_edges, no_bins=True,
@@ -316,8 +336,6 @@ def fit_glm(all_data):
     return res.params
 
 
-
-
 def surv_prob(x, a, b):
     """
     Calculate survival probability given a parasite load x
@@ -347,9 +365,33 @@ def get_pred(N, mu, k, bin_edges):
     return pred, splits
 
 
-def get_alive_and_dead(num_hosts, a, b, k, mu, percent=0.5):
+def get_alive_and_dead(num_hosts, a, b, k, mu, other_death=False, percent=0.1):
     """
     Simulate hosts and get alive and get alive and dead
+
+    Parameters
+    ----------
+    num_hosts : int
+        Number of pre-mortality hosts
+    a : float
+        a parameter of host survival function
+    b : float
+        b parameter of host survival function
+    k : float
+        Clumping parameter of pre-mortality hosts
+    mu : float
+        Mean of pre-mortality hosts
+    other_death : bool
+        True if random death occurs. False is parasite mortality is the only
+        death
+    percent : float
+        Between 0 and 1.  The random mortality percentage
+
+    Return
+    ------
+    : tuple
+
+
     """
 
     init_pop = mod.nbinom.rvs(mu, k, size=num_hosts)
@@ -362,9 +404,19 @@ def get_alive_and_dead(num_hosts, a, b, k, mu, percent=0.5):
     surv = rands < survival_probs
     alive_hosts = init_pop[surv]
 
-    true_death = 1 - np.sum(surv) / float(len(surv))
+
+    # Additional random death
+    if other_death:
+        rands = np.random.rand(len(alive_hosts))
+        surv = rands > percent
+        alive_hosts = alive_hosts[surv]
+
+    true_death = 1 - len(alive_hosts) / float(len(init_pop))
+
+
 
     return alive_hosts, init_pop, true_death
+
 
 
 
@@ -552,7 +604,7 @@ def extract_parameters(plot_vals_full_sim, a, b, mu=None, k=None):
     ld50_extract = []
     pd_extract = []
 
-    pred_pd = percent_dead(a, b, mu, k)
+    # pred_pd = percent_dead(a, b, mu, k)
 
     for i in xrange(len(plot_vals_full_sim)):
 
@@ -564,10 +616,12 @@ def extract_parameters(plot_vals_full_sim, a, b, mu=None, k=None):
         ind_b = ~np.bitwise_or(np.array(w2_b) == -30, np.array(w2_b) >= -0.1)
 
         # Drop for adjei
-        ind_b_adjei = np.array(adjei_b) >= -0.01
+        ind_b_adjei = np.bitwise_or(np.array(adjei_b) <= -100,
+                        np.array(adjei_b) >= -0.1)
 
         # Drop for like
-        ind_b_like = np.array(like_b) <= -100
+        ind_b_like = np.bitwise_or(np.array(like_b) <= -100,
+                        np.array(like_b) >= -0.1)
 
         #full_ind = np.bitwise_or(ind_b, ind_b_adjei)
 
@@ -756,7 +810,7 @@ def plot_bias(sims, a_b_vec, file_name, N_vals, ylims=(-2, 0.5),
 
     for i, ax in enumerate(axes):
 
-        ax.text(0.5, 0.95, method[i] + r", $k = %.2f$" % ks[i], horizontalalignment="center", transform=ax.transAxes)
+        ax.text(0.5, 0.95, method[i] + r", $k_p = %.2f$" % ks[i], horizontalalignment="center", transform=ax.transAxes)
         ax.set_ylabel("Standardized Bias")
         ax.set_xlabel(r"$\log{N_p}$")
         ax.set_ylim(ylims)
@@ -767,117 +821,32 @@ def plot_bias(sims, a_b_vec, file_name, N_vals, ylims=(-2, 0.5),
     plt.tight_layout()
     fig.savefig("../results/" + file_name, dpi=300)
 
-# def infected_lost(params, all_data, full_para=True):
-#     """
-#     Use formula from Adjei et al to calculate percent infected lost.
 
-#     Parameters
-#     ----------
-#     params : array-like
-#         Length 2. First value is a parameter of GLM and second parameter is
-#         b parameter of the GLM
-#     all_data : dataframe
-#         DataFrame returned from adjei_fitting_method.
-#         Columns 'emp', 'pred', 'para'
-#     full_para : bool
-#         If the column para includes the zero class
-#     """
+def test_for_pihm(data, guess=[10, -5], crof_params=None):
+    """
+    Test a dataset for parasite induced host mortality
 
-#     a = params[0]
-#     b = params[1]
-#     surv_prob = lambda x, a, b: np.exp(a + b * np.log(x)) / \
-#                                     (1 + np.exp(a + b * np.log(x)))
-#     pred = np.array(all_data['pred'])
-#     para = np.array(all_data['para'])
+    Parameters
+    ----------
+    data : array
+        Hosts with a given parasite loads
 
-#     # Proportion infected lost
-#     if full_para:
+    Returns
+    -------
+    :
+    """
 
-#         surv_vals = surv_prob(para[1:], a, b)
-#         inf_lost = 1 - np.sum(surv_vals * pred[1:]) / np.sum(pred[1:])
+    # Get full nll
+    params = likelihood_method(data, crof_params=crof_params, guess=guess)
+    full_nll = likefxn1(params, data)
 
-#         numer = pred[0] + np.sum(surv_vals * pred[1:])
-#         denom = np.sum(pred)
-#         tot_lost = 1 - numer / denom
-#         return inf_lost, tot_lost
+    mle_fit = mod.nbinom.fit_mle(data, k_array=np.linspace(.1, 2, 100))
+    red_nll = comp.nll(data, mod.nbinom(*mle_fit))
 
-#     else:
-#         return (1 - np.sum(surv_prob(para, a, b) * pred) / np.sum(pred), None)
+    chi_sq = 2 * (-full_nll - (-red_nll))
+    prob = chisqprob(chi_sq, 2)
+    return chi_sq, prob, full_nll, red_nll
 
 
 
-# def full_params_method(data, full_bin_edges, crof_bin_edges, guess=(10, -2),
-#                 no_bins=False, crof_params=None):
-#     """
 
-#     This method first uses the Crofton method to find the best N, mu and k and
-#     then uses our own method to find a and b.  This seems to work much better
-#     than the adjei method and it makes a lot less assumptions!
-
-#     Parameters
-#     ----------
-#     data : array-like
-#         Full data
-#     full_bin_edges : array-like
-#         Bin edges for the full data.  The bins should over the full data
-#     crof_bin_edges : array-like
-#         The bin edges for crofton.  Should only include the data range that
-#         does not have parasite induced mortality
-#     guess : tuple
-#         Initial guess for a and b respectively
-#     no_bins : bool
-#         If True, over writes full_bin_edges with np.arange(0, max(data) + 2)
-#         This is useful when mean parasites per host is relatively low.  When
-#         mean parasites per host is high, use pre-defined bins.
-
-#     Return
-#     ------
-#     : tuple
-
-#     Notes
-#     ------
-#     Decided to minimize the chisquared statistic because that is what
-#     historically is done.  np.abs works well too
-
-#     """
-
-#     # First use the crofton method
-
-#     # if crof_params:
-#     #     N, mu, k = crof_params
-#     # else:
-#     #     crof_res = crofton_method(data, crof_bin_edges)
-#     #     N, mu, k = crof_res[0]
-
-#     if no_bins:
-#         full_bin_edges = np.arange(0, np.max(data) + 2)
-
-#     obs = np.histogram(data, bins=full_bin_edges)[0]
-
-#     splits = []
-#     for i, b in enumerate(full_bin_edges):
-
-#         if i != len(full_bin_edges) - 1:
-#             splits.append(np.arange(full_bin_edges[i], full_bin_edges[i + 1]))
-
-#     # Fix these parameters
-#     def opt_fxn(params):
-
-#         N, k, mu, a, b = params
-#         pred = np.array([N * np.sum(mod.nbinom.pmf(s, mu, k) *
-#                     surv_prob(s, a, b)) for s in splits])
-
-#         return np.sum((obs - pred)**2 / pred)
-
-#     # A bounded search seems to work better.  Though there are still problems
-#     # opt_params = opt.fmin_l_bfgs_b(opt_fxn, np.array(guess),
-#     #             bounds=[(0, 100), (-30, 0)], approx_grad=True)[0]
-#     guess = [len(data), np.mean(data), 1, 10, -2]
-#     opt_params = opt.fmin(opt_fxn, np.array(guess))
-#     # opt_params = opt.brute(opt_fxn, ((0, 30), (-30, 0)), Ns=20)
-#     N, k, mu, a, b = opt_params
-
-#     pred = [N * np.sum(mod.nbinom.pmf(s, mu, k) *
-#             surv_prob(s, a, b)) for s in splits]
-
-#     return list(opt_params), obs, pred, splits
