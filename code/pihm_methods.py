@@ -21,31 +21,67 @@ class PIHM:
     Class PIHM (parasite-induced host morality) provides an interface for
     analyzing the effect of parasite-induced host mortality on a given dataset
 
+    Description
+    ------------
+    The class PIHM has two primary functions: 1) To test whether an observed
+    host-parasite distribution is experiencing parasite induced host morality.
+
     """
 
     def __init__(self, data=None):
+
+        self.data = data  # Dataset to fit
+        self.Np = None  # Total hosts pre-mortality
+        self.mup = None  # Mean parasites per host pre-mortality
+        self.kp = None  # Aggretaion of parasites pre-moratlity
+        self.a = None  # a parameter of the survival function
+        self.b = None  # b parameter of the survival function
+
+
+    def set_premort_params(self, Np, mup, kp):
         """
+        Set the premortality parameters
         """
 
-        self.data = data
-        self.Np = None
-        self.mup = None
-        self.kp = None
-        self.a = None
-        self.b = None
+        self.Np, self.mup, self.kp = Np, mup, kp
 
-    def crofton_method(self, bin_edges, guess=None, full_output=False):
+    def set_all_params(self, Np, mup, kp, a, b):
+        """
+        Set the premortality parameters
+        """
+
+        self.Np, self.mup, self.kp, self.a, self.b = Np, mup, kp, a, b
+
+    def get_premort_params(self):
+        """
+        Return the premortality params
+        """
+
+        return self.Np, self.mup, self.kp
+
+    def get_all_params(self):
+        """
+        Return the premortality params
+        """
+
+        return self.Np, self.mup, self.kp, self.a, self.b
+
+
+    def crofton_method(self, crof_bin_edges, guess=None):
         """
         Crofton's method for estimating the pre-mortality parameters N_p
         (population size before mortality),
-        mu_p (mean parasite load before mortality), and
-        k_p (parasite aggregation before mortality)
+
+
+        mu_p (mean parasite load before mortality), and k_p (parasite
+        aggregation before mortality).  Uses the iterative technique proposed
+        by Lester (1977), which minimizes the chi-squared statistic
 
         Parameters
         ----------
         data : array
             Parasite data across hosts
-        bin_edges : list
+        crof_bin_edges : list
             List specifying upper and lower bin boundaries. Upper right most bin
             boundary is inclusive; all other upper bounds are exclusive.  Example:
             You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
@@ -53,31 +89,21 @@ class PIHM:
             bin from [0], [1], [2], you would specify [0, 1, 2, 2.9].  You have to
             be a bit careful with the upper bound because it is INCLUSIVE.
         guess : None or tuple
-            If tuple, should be a guess for mu and k of the negative binomial
-        full_output : bool
-            If full_output is False, just returns N_p, mu_p, and k_p. If True,
-            return opt_params : (N_p, mu_p, k_p)
-            obs : observed number of hosts in groups
-            pred: predicted number of hosts in groups
-            splits: the group boundaries
-            np.sum((obs - pred)**2 / pred): minimized chi-squared statistic
+            If tuple, should be a guess for mu and k of the negative binomial.
+            If None, uses fitted mu and k for a guess.
 
         Returns
         -------
-        See full_output
+        : Np, mup, kp
 
 
         """
 
         data = self.data
 
-        obs = np.histogram(data, bins=bin_edges)[0]
+        obs = np.histogram(data, bins=crof_bin_edges)[0]
 
-        splits = []
-        for i, b in enumerate(bin_edges):
-
-            if i != len(bin_edges) - 1:
-                splits.append(np.arange(bin_edges[i], bin_edges[i + 1]))
+        splits = split_data(crof_bin_edges)
 
         N_guess = len(data)
 
@@ -94,80 +120,115 @@ class PIHM:
             # Minimizing chi-squared
             return np.sum((obs - pred)**2 / pred)
 
-        # Fixing the boundary of guesses for k, can't be above 5
-
-        # bounds = [(0, 2*N_guess), (0, 2*mu_guess), (0.001, 5)]
-        # full_out = opt.fmin_l_bfgs_b(opt_fxn,
-        #                 np.array([N_guess, mu_guess, k_guess]),
-        #                 bounds=bounds, approx_grad=True, disp=0)
-        # opt_params = full_out[0]
-
         full_out = opt.fmin(opt_fxn, np.array([N_guess, mu_guess, k_guess]),
                                         disp=0)
-
+        # Calculate predicted in bins
         opt_params = full_out
-        pred = [opt_params[0] * np.sum(mod.nbinom.pmf(s, opt_params[1],
-            opt_params[2])) for s in splits]
+        # pred = [opt_params[0] * np.sum(mod.nbinom.pmf(s, opt_params[1],
+        #     opt_params[2])) for s in splits]
 
-        self.Np, self.mup, self.kp = opt_params
+        self.set_premort_params(*opt_params)
 
-        if not full_output:
-            return opt_params
-        else:
-            return opt_params, obs, pred, splits, np.sum((obs - pred)**2 / pred)
+        return self.get_premort_params()
+
+
+    def obs_pred(self, full_bin_edges):
+        """
+        Returns the observed and predicted vectors for the preset values of
+        Np, mup, and kp.  Will throw an error in Np, mup and kp are not defined.
+        You can either define these manually or run the crofton_method first.
+
+        Parameters
+        ----------
+        full_bin_edges : array-like
+            List specifying upper and lower bin boundaries. Upper right most bin
+            boundary is inclusive; all other upper bounds are exclusive.  Example:
+            You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
+            specify [0, 4, 7, 9.1]
+
+        Returns
+        --------
+        : DataFrame
+            Three columns. obs: The observed number of hosts in a given range
+            pred: the predicted number of hosts in a given range
+            range: The range of the data with the upper bound being exlusive.
+            For example, (1, 2) specifies a host with 1 parasites. (1, 3)
+            specifies a host with 1 or 2 parasites.
+
+
+        """
+
+        # Check that all parameters are assigned
+        if None in [self.Np, self.mup, self.kp]:
+            raise TypeError("Np, mup, and kp must all be assigned. See docstring")
+
+        obs, edges = np.histogram(self.data, bins=full_bin_edges)
+
+        splits = split_data(full_bin_edges)
+
+        pred = [self.Np * np.sum(mod.nbinom.pmf(s, self.mup,
+            self.kp)) for s in splits]
+
+        min_max = [str((np.min(s), np.max(s) + 1)) for s in splits]
+
+        res_df = pd.DataFrame({"observed": obs, "predicted": pred,
+                                "range": min_max})
+
+        return res_df
 
 
     def adjei_method(self, full_bin_edges, crof_bin_edges, no_bins=True,
-                    crof_params=None):
+                    run_crof=False):
         """
         Implements adjei method.  Truncated negative binomial method is fit using
         Crofton Method and Adjei method is used to estimate morality function.
 
         Parameters
         -----------
-        data : array
-            Host-parasite data
-        bin_edges : array-like
+        full_bin_edges : array-like
             List specifying upper and lower bin boundaries. Upper right most bin
             boundary is inclusive; all other upper bounds are exclusive.  Example:
             You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
             specify [0, 4, 7, 9.1].
-        bin_data : array-like
-            List specifying how you want to bin all the data. This binning is done
-            on the full data after the truncated negative binomial has been
-            estimated on the truncated data. If you don't want any binning specify
-            np.arange(0, np.max(data)  + 2) or set no_bins=True.
-        crof_params : tuple
-            Must be a tuple of (N, mu, k).  Parameters of the population before
-            mortality.
+        crof_bin_edges : list
+            List specifying upper and lower bin boundaries. Upper right most bin
+            boundary is inclusive; all other upper bounds are exclusive.  Example:
+            You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
+            specify [0, 4, 7, 9.1].  This can be a little weird, but if you want to
+            bin from [0], [1], [2], you would specify [0, 1, 2, 2.9].  You have to
+            be a bit careful with the upper bound because it is INCLUSIVE.
+        run_crof : bool
+            If True, runs the crofton method. Otherwise does not.
+
+        Returns
+        -------
+        : Np, mup, kp, a, b
+
+        Also stores the data used to fit the GLM in self.adjei_all_data
 
         """
-        data = self.data
-        num_hosts = len(data)
-        max_worms = np.max(data)
+        num_hosts = len(self.data)
+        max_worms = np.max(self.data)
 
         if no_bins:
-            full_bin_edges = np.arange(0, np.max(data) + 2)
+            full_bin_edges = np.arange(0, np.max(self.data) + 2)
 
-        # Use Crofton Method to truncate data.
+        if run_crof:
+            # Only run crofton method if necessary
+            _, _, _ = self.crofton_method(crof_bin_edges)
 
-
-        if crof_params:
-            N, mu, k = crof_params
-        else:
-            (N, mu, k), obs, pred, split, _ = crofton_method(data, crof_bin_edges)
-
-        # 2. Bin empirical data and theoretical data
-        empirical_binned = np.histogram(data, bins=full_bin_edges)[0]
-        theor_data = np.round(mod.nbinom.pmf(np.arange(0, max_worms + 1), mu, k) *
-                        N, decimals=0)
+        # 2. Bin empirical self.data and theoretical self.data
+        empirical_binned = np.histogram(self.data, bins=full_bin_edges)[0]
+        theor_data = np.round(mod.nbinom.pmf(np.arange(0, max_worms + 1),
+                        self.mup, self.kp) * self.Np, decimals=0)
         full_theor_data = np.repeat(np.arange(0, max_worms + 1),
                 theor_data.astype(int))
         theor_binned = np.histogram(full_theor_data, bins=full_bin_edges)[0]
 
-        # Put everything into dataframe
+
+        # Put everything into self.dataframe
         if no_bins:
-            para_num = np.arange(0, np.max(data) + 1)
+            para_num = np.arange(0, np.max(self.data) + 1)
 
         else:
             para_num = [np.mean((full_bin_edges[i], full_bin_edges[i + 1])) for i in
@@ -189,10 +250,250 @@ class PIHM:
         if no_bins:
             all_data = all_data.ix[all_data.index[1:]]
 
+        self.adjei_all_data = all_data
+
+        # Fit the glm model
         params = fit_glm(all_data)
+        self.a, self.b = params
         a = params[0]
         b = params[1]
 
-        return (N, mu, k, a, b), all_data
+        return self.get_all_params()
 
 
+    def likelihood_method(self, full_fit=True, max_sum=1000, guess=[10, -5]):
+        """
+        Using likelihood method to estimate parameter of truncated NBD and survival
+        fxn
+
+        Parameters
+        ----------
+        data : array-like
+            Observed host parasite data
+        full_fit : bool
+            If True, fits mup, kp, a, b. If False, used preset Np,
+        max_sum: int
+            Upper bound on normalizing constant.  Technically bounded by positive
+            infinity, but in practice a lower upper bound works fine.
+        guess : list
+            Guess for a and b of the survival function
+
+        Returns
+        -------
+        : tuple
+            (mu, k, a, b)
+
+        Notes
+        -----
+
+        """
+
+        if not full_fit:
+
+            if None in list(self.get_premort_params())[1:]:
+                raise TypeError("mup, kp must be preset")
+
+            params = opt.fmin(likefxn2, guess, args=(self.data, self.mup,
+                                    self.kp), disp=1)
+            out_params = [self.mup, self.kp] + list(params)
+
+        else:
+
+            mu_guess = np.mean(self.data)
+            k_guess = 1
+            out_params = opt.fmin(likefxn1, [mu_guess, k_guess] + guess,
+                        args=(self.data,))
+
+        self.mup, self.kp, self.a, self.b = out_params
+
+        return tuple(out_params)
+
+
+    def get_pihm_samples(self, other_death=False, percent=0.1):
+        """
+
+        Simulate parasite induced host_mortality. Uses self.Np, self.mup,
+        self.kp, self.a,  and self.b to run simulation.
+
+        These must be specified for method to run.
+        An error will be thrown otherwise.
+
+        Parameters
+        ----------
+        other_death : bool
+            True if random death occurs. False if parasite mortality is the only
+            death
+        percent : float
+            Between 0 and 1.  The random mortality percentage
+
+        Return
+        ------
+        : tuple
+            (Post-portality random sample, pre-mortality random sample)
+
+        """
+
+        if None in list(self.get_all_params()):
+            raise TypeError("Np, mup, kp, a, b must all be pre-set")
+
+        init_pop = mod.nbinom.rvs(self.mup, self.kp, size=self.Np)
+
+        survival_probs = surv_prob(init_pop, self.a, self.b)
+        survival_probs[np.isnan(survival_probs)] = 1
+
+        # Determine stochastic survival
+        rands = np.random.rand(len(survival_probs))
+        surv = rands < survival_probs
+        alive_hosts = init_pop[surv]
+
+        # Additional random death
+        if other_death:
+            rands = np.random.rand(len(alive_hosts))
+            surv = rands > percent
+            alive_hosts = alive_hosts[surv]
+
+        #true_death = 1 - len(alive_hosts) / float(len(init_pop))
+
+        return alive_hosts, init_pop
+
+
+    # def simulate(self, Nps, mups, kps, as, bs, samp_size=150, methods="both"):
+    #     """
+    #     Method for
+
+
+    #     Parameters
+    #     -----------
+    #     Nps : list
+    #         List of values of N_p to use for simulation
+    #     mups : float
+    #         List of mean of the pre-mortality NBD
+    #     kps : float
+    #         List of k of the pre-mortality NBD
+    #     as : float
+    #         List of a parameters of the survival function
+    #     bs : float
+    #         List of b parameters of the survival function
+    #     samp_size : int
+    #         Number of simlations to run or each parameter combination
+
+    #     """
+    #     pass
+
+
+
+def pihm_pmf(x, mup, kp, a, b, max_sum=1000):
+    """
+    The probability masss function for parasite induced host mortality
+
+    Parameters
+    ----------
+    x : int
+        Parasite load
+    mup : float
+        Mean parasite load pre-mortality
+    kp : float
+        Aggregation pre-mortality
+    a : float
+        a of the survival function
+    b : float
+        b of the survival function
+    max_sum : int
+        Upper bound for normalization
+
+    Returns
+    -------
+    : float or array, pmf value for x
+
+    """
+
+
+    kern = lambda x: surv_prob(x, a, b) * \
+                                    mod.nbinom.pmf(x, mup, kp)
+    return(kern(x) / sum(kern(np.arange(0, 1000))))
+
+
+
+def likefxn1(params, x):
+    """ Likelihood fxn for all parameters for pihm pmf
+    Returns negative log-likelihood
+
+    """
+
+    mu, k, a, b = params
+    return -np.sum(np.log(pihm_pmf(x, mu, k, a, b)))
+
+
+def likefxn2(params, x, mu, k):
+    """
+
+    Likelihood fxn for just a and b for pihm pmf.
+    Returns negative log-likelihood
+
+    """
+
+    a, b = params
+    return -np.sum(np.log(pihm_pmf(x, mu, k, a, b)))
+
+
+def split_data(bin_edges):
+    """
+    Given bin edges, split data in fully enumerate bins. Example: [1, 4, 8]
+    becomes [(1, 2, 3), (4, 5, 6, 8)]
+
+    """
+
+    splits = []
+    for i, b in enumerate(bin_edges):
+
+        if i != len(bin_edges) - 1:
+            splits.append(np.arange(bin_edges[i], bin_edges[i + 1]))
+
+    return splits
+
+def surv_prob(x, a, b):
+    """
+    Calculate survival probability given a parasite load x
+    """
+    x = np.atleast_1d(x)
+
+    probs = np.empty(len(x))
+    probs[x == 0] = 1
+    ind = x != 0
+    probs[ind] = np.exp(a + b * np.log(x[ind])) / (1 + np.exp(a + b * np.log(x[ind])))
+
+    return probs
+
+def fit_glm(all_data):
+    """
+    Fitting the GLM in statsmodels
+
+    Returns
+    -------
+    : a and b parameters
+    """
+
+    all_data = all_data[['emp', 'pred', 'para']].copy()
+    all_data['diff'] = np.array(all_data.pred) - np.array(all_data.emp)
+    all_data['log_para'] = np.log(all_data['para'])
+    new_data = sm.add_constant(all_data)
+    glm_fit = sm.GLM(new_data[['emp', 'diff']],
+                    new_data[['const', 'log_para']], family=sm.families.Binomial())
+    res = glm_fit.fit()
+
+    return res.params
+
+def scaled_bias(data, truth):
+    """
+    Aboluste value of scaled bias calculation from Walther and Moore 2005
+    """
+
+    return np.abs(np.sum(data - truth) / (len(data) * float(truth)))
+
+
+def scaled_precision(data):
+    """
+    Just the Coefficient of Variation
+    """
+
+    return 100 * np.std(data, ddof=1) / np.mean(data)
