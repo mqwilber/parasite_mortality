@@ -1,11 +1,13 @@
 from __future__ import division
 import numpy as np
 import macroeco.models as mod
+import macroeco.compare as comp
 import scipy.optimize as opt
 import pandas as pd
 import statsmodels.api as sm
 import pymc as pm
 import matplotlib.pyplot as plt
+from scipy.stats import chisqprob
 
 """
 Module contains the updated functions and classes for assessing
@@ -65,6 +67,13 @@ class PIHM:
         """
 
         return self.Np, self.mup, self.kp, self.a, self.b
+
+    def fit_nbd(self, k_array=np.linspace(0.01, 20, 100)):
+        """
+        Fit a NBD to the parasite data
+        """
+
+        return mod.nbinom.fit_mle(self.data, k_array=k_array)
 
 
     def crofton_method(self, crof_bin_edges, guess=None):
@@ -178,7 +187,7 @@ class PIHM:
 
 
     def adjei_method(self, full_bin_edges, crof_bin_edges, no_bins=True,
-                    run_crof=False):
+                    run_crof=False, test_sig=False):
         """
         Implements adjei method.  Truncated negative binomial method is fit using
         Crofton Method and Adjei method is used to estimate morality function.
@@ -199,6 +208,11 @@ class PIHM:
             be a bit careful with the upper bound because it is INCLUSIVE.
         run_crof : bool
             If True, runs the crofton method. Otherwise does not.
+        test_sig : bool
+            If True, returns an additional tuple with the null_deviance, the
+            deviance, the chi-squared value,  and the p-value of full model.
+            A p-value of less than 0.05 (or alpha) indicates that PIHM is
+            significant.
 
         Returns
         -------
@@ -224,7 +238,6 @@ class PIHM:
         full_theor_data = np.repeat(np.arange(0, max_worms + 1),
                 theor_data.astype(int))
         theor_binned = np.histogram(full_theor_data, bins=full_bin_edges)[0]
-
 
         # Put everything into self.dataframe
         if no_bins:
@@ -253,15 +266,23 @@ class PIHM:
         self.adjei_all_data = all_data
 
         # Fit the glm model
-        params = fit_glm(all_data)
+        params, null_deviance, deviance = fit_glm(all_data)
         self.a, self.b = params
         a = params[0]
         b = params[1]
 
-        return self.get_all_params()
+        if test_sig:
+
+            chi = null_deviance - deviance
+            p = chisqprob(chi, 1)
+            return (self.get_all_params(), (chi, p))
+
+        else:
+            return self.get_all_params()
 
 
-    def likelihood_method(self, full_fit=True, max_sum=1000, guess=[10, -5]):
+    def likelihood_method(self, full_fit=True, max_sum=1000, continuous=False,
+                guess=[10, -5], disp=True):
         """
         Using likelihood method to estimate parameter of truncated NBD and survival
         fxn
@@ -271,7 +292,7 @@ class PIHM:
         data : array-like
             Observed host parasite data
         full_fit : bool
-            If True, fits mup, kp, a, b. If False, used preset Np,
+            If True, fits mup, kp, a, b. If False, used preset mup and kp
         max_sum: int
             Upper bound on normalizing constant.  Technically bounded by positive
             infinity, but in practice a lower upper bound works fine.
@@ -294,7 +315,7 @@ class PIHM:
                 raise TypeError("mup, kp must be preset")
 
             params = opt.fmin(likefxn2, guess, args=(self.data, self.mup,
-                                    self.kp), disp=1)
+                        self.kp), disp=disp)
             out_params = [self.mup, self.kp] + list(params)
 
         else:
@@ -302,7 +323,7 @@ class PIHM:
             mu_guess = np.mean(self.data)
             k_guess = 1
             out_params = opt.fmin(likefxn1, [mu_guess, k_guess] + guess,
-                        args=(self.data,))
+                        args=(self.data,), disp=disp)
 
         self.mup, self.kp, self.a, self.b = out_params
 
@@ -356,33 +377,71 @@ class PIHM:
 
         return alive_hosts, init_pop
 
+    def test_for_pihm_w_adjei(self, full_bin_edges, crof_bin_edges,
+                        no_bins=True, run_crof=False):
+        """
+        """
 
-    # def simulate(self, Nps, mups, kps, as, bs, samp_size=150, methods="both"):
-    #     """
-    #     Method for
+        param, hypoth = self.adjei_method(full_bin_edges, crof_bin_edges,
+                            no_bins=no_bins, run_crof=run_crof, test_sig=True)
 
-
-    #     Parameters
-    #     -----------
-    #     Nps : list
-    #         List of values of N_p to use for simulation
-    #     mups : float
-    #         List of mean of the pre-mortality NBD
-    #     kps : float
-    #         List of k of the pre-mortality NBD
-    #     as : float
-    #         List of a parameters of the survival function
-    #     bs : float
-    #         List of b parameters of the survival function
-    #     samp_size : int
-    #         Number of simlations to run or each parameter combination
-
-    #     """
-    #     pass
+        return hypoth
 
 
+    def test_for_pihm_w_likelihood(self, guess=[10, -5],
+                        k_array=np.linspace(0.05, 2, 100), fixed_pre=False):
+        """
+        Test a dataset for parasite induced host mortality using the likelihood
+        method
 
-def pihm_pmf(x, mup, kp, a, b, max_sum=1000):
+        This method compares a reduced model (negative binomial distribution)
+        to a full model (Negative binomail with PIHM).  The two models are
+        nested and differ by two parameters: a and b.  This amounts to fitting
+        the model a negative binomial distribution to the data, then fitting
+        the full model to the data and comparing likelihoods using a likelihood
+        ratio test.  The likelihood ratio should be approximately chi-squared
+        with the dof equal to the difference in the parameters.
+
+        Parameters
+        ----------
+        guess : list
+            Guesses for a and b
+        k_array : array
+            Array of values over which to search to best fit k
+        fixed_pre
+
+
+        Returns
+        -------
+        : chi_squared valued, p-value, full nll, reduced nll
+        """
+
+        # No params are known
+        if not fixed_pre:
+
+            # Get full nll
+            params = self.likelihood_method(full_fit=True, guess=guess)
+            full_nll = likefxn1(params, self.data)
+
+            mle_fit = mod.nbinom.fit_mle(self.data, k_array=k_array)
+
+            red_nll = comp.nll(self.data, mod.nbinom(*mle_fit))
+
+        # Params are known
+        else:
+
+            params = self.likelihood_method(full_fit=False, guess=guess)
+            full_nll = likefxn2(params[2:], self.data, self.mup, self.kp)
+
+            red_nll = comp.nll(self.data, mod.nbinom(self.mup, self.kp))
+
+        chi_sq = 2 * (-full_nll - (-red_nll))
+        prob = chisqprob(chi_sq, 2)
+
+        return chi_sq, prob, full_nll, red_nll
+
+
+def pihm_pmf(x, mup, kp, a, b, max_sum=5000):
     """
     The probability masss function for parasite induced host mortality
 
@@ -410,7 +469,7 @@ def pihm_pmf(x, mup, kp, a, b, max_sum=1000):
 
     kern = lambda x: surv_prob(x, a, b) * \
                                     mod.nbinom.pmf(x, mup, kp)
-    return(kern(x) / sum(kern(np.arange(0, 1000))))
+    return(kern(x) / sum(kern(np.arange(0, max_sum))))
 
 
 
@@ -558,7 +617,7 @@ def fit_glm(all_data):
                     new_data[['const', 'log_para']], family=sm.families.Binomial())
     res = glm_fit.fit()
 
-    return res.params
+    return res.params, res.null_deviance, res.deviance
 
 def scaled_bias(data, truth):
     """
@@ -573,4 +632,4 @@ def scaled_precision(data):
     Just the Coefficient of Variation
     """
 
-    return 100 * np.std(data, ddof=1) / np.mean(data)
+    return np.abs(100 * np.std(data, ddof=1) / np.mean(data))
