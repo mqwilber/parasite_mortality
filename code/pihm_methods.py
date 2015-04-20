@@ -436,6 +436,83 @@ def likefxn2(params, x, mu, k):
     return -np.sum(np.log(pihm_pmf(x, mu, k, a, b)))
 
 
+def extract_simulation_results(sim_results, keys, method_name, param):
+    """
+
+    Method to extract parameters from a simulation dictionary as generated
+    by analysis scripts
+
+    Parameters
+    ----------
+    sim_results : dict
+        A dictionary with analysis results
+
+    keys : list
+        First item is a value for mup, second item is a tuple specify the
+        (a, b) pair, third iterm is kp.
+
+    method_name: str
+        Either likelihood or adjei
+
+    param: str
+        either "a", "b", or "ld50"
+
+    Returns
+    : tuple
+        samp_sizes, biases, precisions
+
+
+    """
+
+    sims = sim_results[keys[0]][keys[1]][keys[2]]
+
+    Np_vals = list(sims.viewkeys())
+
+    if method_name == "likelihood":
+        index = 0
+    else:
+        index = 1
+
+    samp_sizes = []
+    biases = []
+    precisions = []
+
+    for Np in Np_vals:
+
+        res = sims[Np]
+
+        try:
+            a_vals, b_vals = zip(*res[index])
+        except:
+            continue
+
+        N_vals = res[2]
+
+        samp_sizes.append(np.mean(N_vals))
+
+        if param == "a":
+
+            biases.append(scaled_bias(np.array(a_vals), keys[1][0]))
+            precisions.append(scaled_precision(np.array(a_vals)))
+
+        elif param == "b":
+
+            biases.append(scaled_bias(np.array(b_vals), keys[1][1]))
+            precisions.append(scaled_precision(np.array(b_vals)))
+
+        elif param == "ld50":
+
+            ld50_vals = np.exp(np.array(a_vals) / np.abs(b_vals))
+            truth = np.exp(keys[1][0] / np.abs(keys[1][1]))
+
+            biases.append(scaled_bias(ld50_vals, truth))
+            precisions.append(scaled_precision(ld50_vals))
+        else:
+            raise KeyError("Don't recognize parameter: should be a, b, or ld50")
+
+    return samp_sizes, biases, precisions
+
+
 def split_data(bin_edges):
     """
     Given bin edges, split data in fully enumerate bins. Example: [1, 4, 8]
