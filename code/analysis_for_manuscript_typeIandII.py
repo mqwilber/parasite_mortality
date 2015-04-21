@@ -7,7 +7,7 @@ import pandas as pd
 Description
 -----------
 
-Full simulation for the bias and precision section of the parasite-induced
+Full simulation for type I and type II error section of the parasite-induced
 host mortality manuscript.
 
 This script looks at all combinations of parameters that I am using in the
@@ -35,6 +35,16 @@ mu_ld50 = {10: ([(5, -2.5), (10, -5), (20, -10)], []),
 
 Nps = [300, 500, 1000, 2000, 5000, 7500, 10000]
 N_samp = 150
+
+# ks = [1]
+
+# mu_ld50 = {10: ([(5, -2.5), (10, -5), (20, -10)], [])}
+
+#             # 100: ([(5, -1.15), (10, -2.3), (20, -4.6)], []),
+#             # 500: ([(10, -1.8), (20, -3.6), (60, -10.8)], [])}
+
+# Nps = [300, 500, 1000, 2000, 5000, 7500, 10000]
+# N_samp = 1
 
 scenario_1_results = {}
 
@@ -66,21 +76,35 @@ for mup in mu_ld50.iterkeys():
         for i in xrange(N_samp):
 
           pihm.set_all_params(Np, mup, kp, ld50[0], ld50[1])
-          pihm.data = pihm.get_pihm_samples()[0]
 
-          samp_sizes.append(len(pihm.data))
+          data_post, data_pre = pihm.get_pihm_samples()
+
+          samp_sizes.append(len(data_post))
 
           try:
 
-            # Likelihood results
-            like_out = pihm.likelihood_method(full_fit=False, disp=False)[-2:]
+            # Test on pre-mort
+            pihm.data = data_pre
+
+            # Likelihood method
+            like_p_typeI = pihm.test_for_pihm_w_likelihood(fixed_pre=True,
+                                  disp=False)[1]
 
             # Adjei results
-            adjei_out = pihm.adjei_method([], [], no_bins=True,
-                                                run_crof=False)[-2:]
+            adjei_p_typeI = pihm.test_for_pihm_w_adjei([], [], no_bins=True)[1]
 
-            results_like.append(like_out)
-            results_adjei.append(adjei_out)
+            # Test on post-mort
+            pihm.data = data_post
+
+            # Likelihood method
+            like_p_typeII = pihm.test_for_pihm_w_likelihood(fixed_pre=True,
+                                disp=False)[1]
+
+            # Adjei results
+            adjei_p_typeII = pihm.test_for_pihm_w_adjei([], [], no_bins=True)[1]
+
+            results_like.append((like_p_typeI, like_p_typeII))
+            results_adjei.append((adjei_p_typeI, adjei_p_typeII))
 
           except:
             pass
@@ -89,4 +113,4 @@ for mup in mu_ld50.iterkeys():
                         (results_like, results_adjei, samp_sizes)
 
 
-pd.to_pickle(scenario_1_results, "../results/scenario1_analysis_results.pkl")
+pd.to_pickle(scenario_1_results, "../results/typeIandII_analysis_results.pkl")
