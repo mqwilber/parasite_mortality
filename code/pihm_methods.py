@@ -275,7 +275,7 @@ class PIHM:
 
             chi = null_deviance - deviance
             p = chisqprob(chi, 1)
-            return (self.get_all_params(), (chi, p))
+            return (self.get_all_params(), (null_deviance, deviance))
 
         else:
             return self.get_all_params()
@@ -380,16 +380,32 @@ class PIHM:
     def test_for_pihm_w_adjei(self, full_bin_edges, crof_bin_edges,
                         no_bins=True, run_crof=False):
         """
+
+        Test a dataset for parasite induced host mortality using the likelihood
+        method
+
+        This method compares a reduced model (negative binomial distribution)
+        to a full model (Negative binomail with PIHM).  The two models are
+        nested and differ by two parameters: a and b.  This amounts to fitting
+        the model a negative binomial distribution to the data, then fitting
+        the full model to the data and comparing likelihoods using a likelihood
+        ratio test.  The likelihood ratio should be approximately chi-squared
+        with the dof equal to the difference in the parameters.
+
         """
 
-        param, hypoth = self.adjei_method(full_bin_edges, crof_bin_edges,
+        params, (null_deviance, deviance) = self.adjei_method(full_bin_edges, crof_bin_edges,
                             no_bins=no_bins, run_crof=run_crof, test_sig=True)
 
-        return hypoth
+        chi_sq = null_deviance - deviance
+        prob = chisqprob(chi_sq, 1)
+
+        return chi_sq, prob, null_deviance, deviance
 
 
     def test_for_pihm_w_likelihood(self, guess=[10, -5],
-                        k_array=np.linspace(0.05, 2, 100), fixed_pre=False):
+                        k_array=np.linspace(0.05, 2, 100),
+                        fixed_pre=False, disp=True):
         """
         Test a dataset for parasite induced host mortality using the likelihood
         method
@@ -408,7 +424,12 @@ class PIHM:
             Guesses for a and b
         k_array : array
             Array of values over which to search to best fit k
-        fixed_pre
+        fixed_pre : bool
+            If True, the premortality parameters are fixed (mup and kp). Else,
+            they are jointly estimated from the data
+        disp : bool
+            If True, convergence message is printed.  If False, no convergence
+            method is printed
 
 
         Returns
@@ -420,7 +441,8 @@ class PIHM:
         if not fixed_pre:
 
             # Get full nll
-            params = self.likelihood_method(full_fit=True, guess=guess)
+            params = self.likelihood_method(full_fit=True, guess=guess,
+                        disp=disp)
             full_nll = likefxn1(params, self.data)
 
             mle_fit = mod.nbinom.fit_mle(self.data, k_array=k_array)
@@ -430,7 +452,8 @@ class PIHM:
         # Params are known
         else:
 
-            params = self.likelihood_method(full_fit=False, guess=guess)
+            params = self.likelihood_method(full_fit=False, guess=guess,
+                        disp=disp)
             full_nll = likefxn2(params[2:], self.data, self.mup, self.kp)
 
             red_nll = comp.nll(self.data, mod.nbinom(self.mup, self.kp))
