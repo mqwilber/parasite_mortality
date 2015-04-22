@@ -518,7 +518,8 @@ def likefxn2(params, x, mu, k):
     return -np.sum(np.log(pihm_pmf(x, mu, k, a, b)))
 
 
-def extract_simulation_results(sim_results, keys, method_name, param):
+def extract_simulation_results(sim_results, keys, method_name, param,
+                                alpha=0.05):
     """
 
     Method to extract parameters from a simulation dictionary as generated
@@ -537,7 +538,12 @@ def extract_simulation_results(sim_results, keys, method_name, param):
         Either likelihood or adjei
 
     param: str
-        either "a", "b", or "ld50"
+        either "a", "b", "ld50" or "p".  If the param is p, then the type I
+        and type II errors are extracted.  This is only applicable for
+        results from the type I and type II error simulations
+
+    alpha : float
+        The significance level.  Only used if param == "p"
 
     Returns
     : tuple
@@ -564,6 +570,8 @@ def extract_simulation_results(sim_results, keys, method_name, param):
         res = sims[Np]
 
         try:
+            # If the param is p, a_vals are type I p_vals
+            # and b_vals are type II p_vals
             a_vals, b_vals = zip(*res[index])
         except:
             continue
@@ -589,6 +597,15 @@ def extract_simulation_results(sim_results, keys, method_name, param):
 
             biases.append(scaled_bias(ld50_vals, truth))
             precisions.append(scaled_precision(ld50_vals))
+
+        elif param == "p":
+
+            # Type I error
+            biases.append(np.sum(np.array(a_vals) < alpha) / len(a_vals))
+
+            # Power
+            precisions.append(np.sum(np.array(b_vals) < alpha) / len(b_vals))
+
         else:
             raise KeyError("Don't recognize parameter: should be a, b, or ld50")
 
