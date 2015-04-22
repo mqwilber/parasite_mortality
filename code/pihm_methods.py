@@ -400,7 +400,7 @@ class PIHM:
         chi_sq = null_deviance - deviance
         prob = chisqprob(chi_sq, 1)
 
-        return chi_sq, prob, null_deviance, deviance
+        return chi_sq, prob, null_deviance, deviance, params
 
 
     def test_for_pihm_w_likelihood(self, guess=[10, -5],
@@ -461,7 +461,7 @@ class PIHM:
         chi_sq = 2 * (-full_nll - (-red_nll))
         prob = chisqprob(chi_sq, 2)
 
-        return chi_sq, prob, full_nll, red_nll
+        return chi_sq, prob, full_nll, red_nll, params
 
 
 def pihm_pmf(x, mup, kp, a, b, max_sum=5000):
@@ -652,9 +652,12 @@ def fit_glm(all_data):
     all_data = all_data[['emp', 'pred', 'para']].copy()
     all_data['diff'] = np.array(all_data.pred) - np.array(all_data.emp)
     all_data['log_para'] = np.log(all_data['para'])
-    new_data = sm.add_constant(all_data)
-    glm_fit = sm.GLM(new_data[['emp', 'diff']],
-                    new_data[['const', 'log_para']], family=sm.families.Binomial())
+
+    all_data['const'] = 1
+
+    glm_fit = sm.GLM(all_data[['emp', 'diff']],
+                    all_data[['const', 'log_para']],
+                    family=sm.families.Binomial())
     res = glm_fit.fit()
 
     return res.params, res.null_deviance, res.deviance
