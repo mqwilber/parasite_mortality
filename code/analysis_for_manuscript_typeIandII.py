@@ -27,26 +27,15 @@ Author : Mark Wilber
 
 
 # # Parameters
-# ks = [1, 0.5, .1]
+# Parameters
+ks = [1, 0.5, .1]
 
-# mu_ld50 = {10: ([(5, -2.5), (10, -5), (20, -10)], []),
-#             100: ([(5, -1.15), (10, -2.3), (20, -4.6)], []),
-#             500: ([(10, -1.8), (20, -3.6), (60, -10.8)], [])}
+mu_ld50 = {10: ([(5, -2.5), (10, -5), (20, -10)], []),
+            100: ([(5, -1.15), (10, -2.3), (20, -4.6)], []),
+            50: ([(5, -1.4), (10, -2.8), (20, -5.6)], [])}
 
-# Nps = [300, 500, 1000, 2000, 5000, 7500, 10000]
-# N_samp = 150
-
-ks = [1]
-
-mu_ld50 = {500: ([(10, -1.8), (20, -3.6), (60, -10.8)], [])}
-
-#{10: ([(5, -2.5), (10, -5), (20, -10)], [])}
-
-            # 100: ([(5, -1.15), (10, -2.3), (20, -4.6)], []),
-            # 500: ([(10, -1.8), (20, -3.6), (60, -10.8)], [])}
-
-Nps = [300] #[300, 500, 1000, 2000, 5000, 7500, 10000]
-N_samp = 5
+Nps = [50, 100, 200, 300, 400, 500] #[300, 500, 1000, 2000, 5000, 7500, 10000]
+N_samp = 150
 
 scenario_1_results = {}
 
@@ -83,44 +72,44 @@ for mup in mu_ld50.iterkeys():
 
           samp_sizes.append(len(data_post))
 
-          #try:
+          try:
 
-          # Test on pre-mort
-          pihm.data = data_pre
+            # Test on pre-mort
+            pihm.data = data_pre
 
-          # Likelihood method
-          like_res_typeI = pihm.test_for_pihm_w_likelihood(fixed_pre=True,
-                                disp=True, k_array=np.linspace(0.01, 2, 200))
+            # Likelihood method
+            like_res_typeI = pihm.test_for_pihm_w_likelihood(fixed_pre=True,
+                                  disp=False, k_array=np.linspace(0.01, 2, 200))
 
-          like_p_typeI = like_res_typeI[1] #(like_res_typeI[1], like_res_typeI[-1][-1])
+            like_p_typeI = (like_res_typeI[1], like_res_typeI[-1][-1])
 
-          # Adjei results
-          adjei_res_typeI = pihm.test_for_pihm_w_adjei([], [], no_bins=True)
+            # Adjei results
+            adjei_res_typeI = pihm.test_for_pihm_w_adjei([], [], no_bins=True)
 
-          adjei_p_typeI = adjei_res_typeI[1] #(adjei_res_typeI[1], adjei_res_typeI[-1][-1])
+            adjei_p_typeI = (adjei_res_typeI[1], adjei_res_typeI[-1][-1])
 
-          # Test on post-mort
-          pihm.data = data_post
+            # Test on post-mort
+            pihm.data = data_post
 
-          # Likelihood method
-          like_res_typeII = pihm.test_for_pihm_w_likelihood(fixed_pre=True,
-                              disp=True, k_array=np.linspace(0.01, 2, 200))
+            # Likelihood method
+            like_res_typeII = pihm.test_for_pihm_w_likelihood(fixed_pre=True,
+                                disp=False, k_array=np.linspace(0.01, 2, 200))
 
-          like_p_typeII = like_res_typeII[1] #(like_res_typeII[1], like_res_typeII[-1][-1])
+            like_p_typeII = (like_res_typeII[1], like_res_typeII[-1][-1])
 
-          # Adjei results
-          adjei_res_typeII = pihm.test_for_pihm_w_adjei([], [], no_bins=True)
+            # Adjei results
+            adjei_res_typeII = pihm.test_for_pihm_w_adjei([], [], no_bins=True)
 
-          adjei_p_typeII = adjei_res_typeII[1] #(adjei_res_typeII[1], adjei_res_typeII[-1][-1])
+            adjei_p_typeII = (adjei_res_typeII[1], adjei_res_typeII[-1][-1])
 
-          results_like.append((like_p_typeI, like_p_typeII))
-          results_adjei.append((adjei_p_typeI, adjei_p_typeII))
+            results_like.append((like_p_typeI, like_p_typeII))
+            results_adjei.append((adjei_p_typeI, adjei_p_typeII))
 
-          #except:
-          #  pass
+          except:
+            pass
 
         scenario_1_results[mup][ld50][kp][Np] = \
                         (results_like, results_adjei, samp_sizes)
 
 
-#pd.to_pickle(scenario_1_results, "../results/typeIandII_analysis_results2.pkl")
+pd.to_pickle(scenario_1_results, "../results/typeIandII_analysis_results.pkl")
