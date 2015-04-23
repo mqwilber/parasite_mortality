@@ -840,8 +840,14 @@ def test_for_pihm(data, guess=[10, -5], crof_params=None):
     params = likelihood_method(data, crof_params=crof_params, guess=guess)
     full_nll = likefxn1(params, data)
 
-    mle_fit = mod.nbinom.fit_mle(data, k_array=np.linspace(.1, 2, 100))
-    red_nll = comp.nll(data, mod.nbinom(*mle_fit))
+
+    if crof_params:
+        mu, k = np.array(crof_params)[1:]
+        red_nll = comp.nll(data, mod.nbinom(mu, k))
+
+    else:
+        mle_fit = mod.nbinom.fit_mle(data, k_array=np.linspace(.1, 2, 100))
+        red_nll = comp.nll(data, mod.nbinom(*mle_fit))
 
     chi_sq = 2 * (-full_nll - (-red_nll))
     prob = chisqprob(chi_sq, 2)
