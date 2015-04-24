@@ -146,6 +146,7 @@ class PIHM:
         Returns the observed and predicted vectors for the preset values of
         Np, mup, and kp.  Will throw an error in Np, mup and kp are not defined.
         You can either define these manually or run the crofton_method first.
+        Note that the predicted values are the predicted values WITHOUT mortality
 
         Parameters
         ----------
@@ -233,11 +234,24 @@ class PIHM:
 
         # 2. Bin empirical self.data and theoretical self.data
         empirical_binned = np.histogram(self.data, bins=full_bin_edges)[0]
-        theor_data = np.round(mod.nbinom.pmf(np.arange(0, max_worms + 1),
-                        self.mup, self.kp) * self.Np, decimals=0)
-        full_theor_data = np.repeat(np.arange(0, max_worms + 1),
-                theor_data.astype(int))
-        theor_binned = np.histogram(full_theor_data, bins=full_bin_edges)[0]
+
+        # Note that if Np is too low and mup is too high the Adjei method
+        # Won't work because the probability is too disperesed!  There won't be
+        # a complete individual in any of the classes so you can't fit the
+        # binomial. Need to try different bin sizes
+
+        split_edges = split_data(full_bin_edges)
+
+
+        theor_binned = np.array([np.round(np.sum(mod.nbinom.pmf(s, self.mup, self.kp)
+                        * self.Np), decimals=0) for s in split_edges])
+
+        # Group the theoretical data by bin edges
+
+        if np.all(theor_binned == 0):
+            raise AttributeError("With Np = %.2f and mup = %.2f,the are"  % (self.Np, self.mup) +
+                                  " no\ncomplete individuals in the given " +
+                                  "bins. Try different bin sizes")
 
         # Put everything into self.dataframe
         if no_bins:
@@ -272,9 +286,6 @@ class PIHM:
         b = params[1]
 
         if test_sig:
-
-            chi = null_deviance - deviance
-            p = chisqprob(chi, 1)
             return (self.get_all_params(), (null_deviance, deviance))
 
         else:
@@ -601,10 +612,13 @@ def extract_simulation_results(sim_results, keys, method_name, param,
         elif param == "p":
 
             # Type I error
-            biases.append(np.sum(np.array(a_vals) < alpha) / len(a_vals))
+            typeIp, typeIb = zip(*a_vals)
+            powerp, powerb = zip(*b_vals)
+
+            biases.append(np.sum(np.array(typeIp) < alpha) / len(typeIp))
 
             # Power
-            precisions.append(np.sum(np.array(b_vals) < alpha) / len(b_vals))
+            precisions.append(np.sum(np.array(powerp) < alpha) / len(powerp))
 
         else:
             raise KeyError("Don't recognize parameter: should be a, b, or ld50")
@@ -614,7 +628,7 @@ def extract_simulation_results(sim_results, keys, method_name, param,
 
 def split_data(bin_edges):
     """
-    Given bin edges, split data in fully enumerate bins. Example: [1, 4, 8]
+    Given bin edges, split data in fully enumerate bins. Example: [1, 4, 8.1]
     becomes [(1, 2, 3), (4, 5, 6, 8)]
 
     """

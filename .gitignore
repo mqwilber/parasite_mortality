@@ -1,1 +1,7 @@
 /data
+.DSstore
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.log

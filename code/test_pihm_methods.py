@@ -140,6 +140,7 @@ class TestPIHM(TestCase):
 
 
     def test_obs_pred(self):
+
         pass
 
     def test_adjei_method(self):
@@ -191,9 +192,11 @@ class TestPIHM(TestCase):
 
         pred_ld50 = np.round([ld50(f) for f in fits], decimals=1)
         adjei_ld50 = [5.7, 3.4, 3.2, 1.8]
+        exp_ld50 = [6.4, 3.7, 3.1, 1.8]
+
+        assert_array_equal(exp_ld50, pred_ld50)
 
         print(zip(pred_ld50, adjei_ld50))
-        1/0
 
     def test_likelihood_method(self):
 
@@ -260,6 +263,29 @@ class TestPIHM(TestCase):
         # Varying pre-mort values...shouldn't detect PIHM
         p = tobj.test_for_pihm_w_likelihood(fixed_pre=False)[1]
         assert_equal((p > 0.05), True)
+
+
+class TestAux(TestCase):
+
+    def test_split_data(self):
+
+        # Test boundary condition. Shouldn't return 8
+        bin_edges = [0, 3, 8]
+        pred = [np.arange(0, 3), np.arange(3, 8)]
+        obs = split_data(bin_edges)
+        [assert_array_equal(p, o) for p, o in zip(pred, obs)]
+
+        # Test upper boundary condition. Should return 8
+        bin_edges = [0, 3, 8.1]
+        pred = [np.arange(0, 3), np.arange(3, 9)]
+        obs = split_data(bin_edges)
+        [assert_array_equal(p, o) for p, o in zip(pred, obs)]
+
+        # Test full edges.  Should return all the edges
+        bin_edges = np.arange(0, 10.1)
+        pred = np.arange(0, 11)
+        obs = split_data(bin_edges)
+        [assert_array_equal(p, o) for p, o in zip(pred, obs)]
 
 
 
