@@ -106,11 +106,66 @@ needed if all 3 parameters are to be identifiable \citep{Royce1990}.
 
 We provide an implementation and unit tests of the Crofton Method Supplementary Information 3.  Figure \ref{fig:crof_test} visually shows the results of these unit tests.
 
-\section*{Appendix 2: Additional Figure}
+\section*{Appendix 2: Implementation of the Adjei Method}
+
+The Adjei Method for estimating PIHM has two steps.  The first
+step is to estimate the parameters of the pre-mortality host-parasite
+distribution using the Crofton Method.  The three parameters estimated are the
+total number of hosts before mortality $N_p$,  the mean number of parasites per
+host before mortality $\mu_p$, and the aggregation of parasites before
+mortality given by the parameter $k_p$ from a negative binomial distribution.
+When $k_p$ is small, parasites are highly aggregated among hosts and when
+$k_p$ is large parasites are more evenly spread out \citep{Wilson2002}.  The implementation of the Crofton Method has been discussed at length elsewhere \citep[e.g.][]{Royce1990,Lester1984} and we provide a tested implementation of the method in SI 3.
+
+The second step of the Adjei Method is to estimate the shape of the host survival function. \cite{Adjei1986} assume that the host survival function follows the logistic form
+
+\begin{equation}
+    h(x | a, b) = h_x = \dfrac{e^{a - b \log(x)}}{1 + e^{a - b \log(x)}}
+    \label{eq:logistic}
+\end{equation}
+where $x$ is the parasite intensity in a given host and $a$ and $b$ are the two
+parameters of the logistic function. Generally, a larger $a$ allows for hosts to
+tolerate larger parasite intensities before experiencing parasite-induced mortality
+and a larger $b$ leads to a more rapid decline in the probability of host
+survival as parasite intensity increases.  The value $\exp(a / b)$ is referred
+to as the $LD_{50}$, which gives the parasite intensity at which 50\% of hosts
+experience mortality.
+
+To estimate this function the Adjei Method proceeds as follows.  First, it
+calculates the expected number of hosts with a given parasite load $x$ by using
+the equation $g(x ; \mu_p, k_p) * N_p$, where $g(x ; \cdot)$ is the negative binomial pre-mortality distribution.  Second, the observed and predicted number of hosts
+with $x$ parasites are paired as a single data point and the method then assumes that
+this data point follows a binomial distribution with the total number of
+``trials'' equal to the predicted number of hosts and the total number of
+``successes'' equal to the observed number of hosts. In some cases, the
+observed number of hosts is greater than the expected number of hosts and the
+Adjei Method alters the data so that the observed is equal to the predicted
+\citep{Adjei1986}.  After this questionable manipulation, the (observed, predicted) pairs are fit to a standard Generalized Linear Model \citep{McCullagh1989} with a binomial response variable and a logistic link function given by equation \ref{eq:logistic}.  This model provides estimates for parameters $a$, $b$ and $LD_{50}$.
+
+While not included in the original implementation of the Adjei Method, a
+$\chi^2$ test with a degrees of freedom of 1 can be used to assess whether a GLM model that includes parasite
+intensity as a predictor of host survival probability is a ``better'' model than a
+GLM without this predictor.  This allows the Adjei Method to determine whether
+PIHM is a significant factor in a host-parasite system.
+
+The Adjei Method's most glaring deficiency is the need to alter the observed
+data in order to fit the model into the binomial GLM framework.  A second more
+subtle problem with the Adjei Method is the potential need to bin data in order
+to predict greater than one host in a given parasite intensity class.  For
+example, if the total number of hosts pre-mortality was 50, the mean number of
+parasites per host pre-mortality was 100 and the aggregation parameter was 1, applying the equation $g(x ; \mu_p=100, k_p=1) * 50$ would result in
+less than 1 individual in all parasite intensities $x$. In other words, the
+Adjei Method cannot be applied to samples with either very high mean parasite
+loads, small sample sizes, or both without some sort of binning of the data.
+While this is not a flaw \emph{per se}, it does add a certain level of
+subjectivity (i.e. which bins should you use?) to a method that already has
+serious potential issues.  In this analysis, we always assume the Adjei Method is not binning the data, though we provide code for applying the binning method in SI 4.
+
+\section*{Appendix 3: Additional Figure}
 
 See Figures 1 - 6.
 
-\section*{Appendix 3: Code and unit tests for estimating parasite-induced host mortality}
+\section*{Appendix 4: Code and unit tests for estimating parasite-induced host mortality}
 
 Python code, unit tests, and a help file for the Crofton Method, the Adjei Method and the Likelihood Method can be found in \verb*#pihm_methods.py#, \verb*#test_pihm_methods.py#, and \verb*#help_file.txt#, respectively.
 
