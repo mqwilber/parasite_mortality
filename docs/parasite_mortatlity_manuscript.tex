@@ -93,31 +93,30 @@ TODO
 \section*{Introduction}
 
 Infectious agents can have major impacts on animal populations through changing
-population dynamics and stability, altering predator-prey interactions, and
-even causing species’ decline and extinction. Accurately estimating the impact
-of these infectious agents in wildlife is critical to both understanding what
-regulates host and parasite populations and making predictions about disease
-transmission. The impact of pathogens, such as rabies(), bovine TB(), and
+population dynamics and stability \citep{Dobson1992}, altering predator-prey interactions \citep{Joly2004}, and
+even causing species' decline and extinction \citep{DeCastro2005a,McCallum2012b}. Accurately estimating the impact
+of these infectious agents in wildlife is critical to understanding what
+regulates host and parasite populations, making predictions about disease
+transmission, and managing disease outbreaks \citep{Langwig2015}. The impact of pathogens, such as rabies(), bovine TB(), and
 rinderpest(),  is typically quantified based on the presence or absence of
 disease, and does not account for the number of infectious agents present.
 Although sufficient for many bacterial and viral agents that reproduce within a
 host, for macroparasites, hosts cannot be simply categorized as infected and
-uninfected because pathology is linked to the intensity of infection (Anderson
-and May 1978).  Helminths exhibiting this intensity dependent pathology have
+uninfected because pathology is linked to the intensity of infection \citep{AndersonandMay1979}.  Helminths exhibiting this intensity dependent pathology have
 significant impacts on human health (), domestic livestock economics (),
 wildlife survival ().  And, while it is generally assumed that some fraction of
 wild host populations must succumb to parasitic infections, it is notoriously
 difficult to actually quantify parasite-induced host mortality (PIHM) in wild
-animal populations. [more]
+animal populations \citep{Lafferty2002, McCallum2000a}. [more]
 
 Ideally, parasite-induced host mortality would be
 quantified by experimentally infecting and tracking individual hosts in the
 wild population; however, for logistical and ethical reasons this method is
-rarely feasible. Data on parasite intensity is much easier to collect and has
-often been used to identify the presence PIHM (cite studies) and quantify the
-relationship between infection intensity and host mortality (cite studies).
+rarely feasible \citep{McCallum2000a}. Data on parasite intensity is much easier to collect and has
+often been used to identify the presence PIHM \citep{Crofton1971a,Lester1977,Lester1984,Lanciani1989,Royce1990,Ferguson2011} and quantify the
+relationship between infection intensity and host mortality \citep{Adjei1986} [others?].
 
-Crofton (1971) first proposed that PIHM could be identified by comparing the
+\cite{Crofton1971a} first proposed that PIHM could be identified by comparing the
 observed parasite distribution in the host population to the distribution
 predicted in the absence of parasite-induced host mortality. This method
 (“Crofton Method”) assumes that, prior to host mortality, parasites are
@@ -168,6 +167,72 @@ apply both methods to real datasets previously used in PIHM analyses and
 compare results. And, finally, we discuss the limitations of inferring PIHM
 from distributional data and whether any method for inferring PIHM has a place
 in quantitative parasitology.
+
+
+
+
+% Infectious agents can have major impacts on animal populations
+% through changing population dynamics and stability \citep{Dobson1992}, altering
+% predator-prey interactions \citep{Joly2004}, and even causing species decline
+% and extinction \citep{DeCastro2005a,McCallum2012b}. Accurate estimates of
+% parasite-induced host mortality (PIHM) in wild animals are important for
+% understanding what regulates both host and parasite populations and to make
+% predictions about disease transmission in natural systems. Although a negative
+% impact on host fitness is a fundamental component of parasitism
+% \citep{Lafferty2002} [more], it is notoriously difficult to quantify PIHM in
+% wild animal populations \citep{Lester1984,McCallum2000a}.
+
+% To conclusively identify PIHM in wild animal populations, it is necessary to
+% experimentally infect and track host populations; a method that is rarely
+% possible in most wild animal systems \citep{McCallum2000a}.  Instead, parasitologists
+% are often only able to determine the parasite intensity on some number of sampled hosts.  This snapshot, distributional data is far from the
+% ideal type of data for addressing questions regarding PIHM, but this is the type of data on which most questions regarding PIHM are asked \citep{Ferguson2011,Royce1990,Lanciani1989,Lester1984,Lester1977}.  In particular, parasitologists are often interested in asking two questions from this data: 1) Is PIHM occurring in a host-parasite system? and if PIHM is occurring 2) Can the effect of parasite intensity on host survival be quantified? While both macro and
+% microparasites have detrimental and possibly fatal effects on hosts, for the
+% remainder of this paper we limit our discussion to macroparasites that can be
+% discretely counted within a host.
+
+% The first of these PIHM questions was addressed by \cite{Crofton1971a} who developed
+% a method to test for the presence of PIHM using the truncation of the negative binomial
+% distribution.  In short, the Crofton Method assumes that the distribution of
+% parasites across hosts before mortality occurs follows a negative binomial
+% distribution \citep{AndersonandMay1978,Shaw1998}.  As heavily infected hosts
+% begin to die, the negative binomial distribution is truncated and these hosts are no longer observed in a sample. In other words, the
+% observed host-parasite distribution and the pre-mortality host-parasite
+% distribution will predict substantially different numbers of hosts with high infect intensity (because those have died due to infection), but a similar number of hosts with low infection
+% intensity (because those have survived).  \cite{Crofton1971a} noted that by
+% starting with all observed hosts and iteratively fitting a negative binomial
+% distribution to hosts with lower and lower parasite loads, one could determine
+% whether or not PIHM was occurring and estimate the parameters of the host distribution before parasite-induced mortality.  This was done
+% graphically by determining whether the parameters of the negative binomial distributions fit to different truncations of the data showed a substantial change as the truncation point moved from heavily infected hosts to lightly infected hosts.  The Crofton Method and this graphical technique are both still currently used to assess whether PIHM is a occurring in a system \citep{Ferguson2011}. We give a thorough description and implementation of the Crofton Method in \emph{Supplementary Information} (SI) 1 and discuss the validity of its assumptions in the \emph{Discussion}.
+
+% The second question regarding PIHM moves beyond a simple yes or no answer and attempts to quantify how parasite intensity affects host survival. \cite{Adjei1986} proposed a method to answer this question
+% by first using the Crofton Method to estimate the pre-mortality parameters for
+% a host-parasite distribution and then, given these
+% parameters, estimating a host survival function that described how the
+% probability of host-survival changed with increasing parasite load (see
+% \emph{Methods}).  With this host survival function, one can estimate important host-parasite quantities such as the
+% parasite intensity at which 50\% of hosts succumb to PIHM ($LD_{50}$), as well
+% as the percent of hosts in a population succumbing to PIHM \citep{Adjei1986}.
+
+% Despite these methods both being over three decades old, they are still the
+% primary means of answering questions about PIHM given distributional data
+% \citep[but see][for an alternative to the Crofton
+% Method]{Ferguson2011}. However, both methods have a few important limitations.
+% The Crofton Method, and more recent methods \citep{Ferguson2011},
+% rely on a visual test to determine whether or not PIHM is occurring in a
+% system.  With no clear decision rule, it can be difficult to consistently determine the
+% significance of PIHM across different host-parasite systems. In theory, the Adjei Method can ameliorate this problem. In addition to providing information on the host-survival function, this method can also be used to assess the significance of
+% PIHM in a system.
+% In practice, however, the Adjei Method has never been thoroughly tested and
+% relies on a number of questionable data manipulations.
+
+% In this study, we have
+% three primary goals. First we wish to test reliability of the Adjei Method for
+% answering the aforementioned questions regarding PIHM.  Second, we propose a
+% novel method for answering these questions, compare its efficacy against the Adjei Method, and test both methods' ability to detect PIHM on empirical data.  Third, we
+% discuss the limitations of inferring PIHM from distributional data alone and
+% whether any method for inferring PIHM has a place in the future of
+% parasitology.
 
 \section*{Methods}
 
