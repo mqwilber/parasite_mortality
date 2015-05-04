@@ -104,7 +104,7 @@ Although sufficient for many bacterial and viral agents that reproduce within a
 host, for macroparasites, hosts cannot be simply categorized as infected and
 uninfected because pathology is linked to the intensity of infection \citep{AndersonandMay1979}.  Helminths exhibiting this intensity dependent pathology have
 significant impacts on human health (), domestic livestock economics (),
-wildlife survival ().  And, while it is generally assumed that some fraction of
+wildlife survival ().  While it is generally assumed that some fraction of
 wild host populations must succumb to parasitic infections, it is notoriously
 difficult to actually quantify parasite-induced host mortality (PIHM) in wild
 animal populations \citep{Lafferty2002, McCallum2000a}. [more]
@@ -133,18 +133,16 @@ Method in \emph{Supplementary Information (SI)} 1 and discuss the validity of
 its assumptions in the \emph{Discussion}.
 
 The Crofton Method may be able to detect the presence of PIHM however,
-quantifying the relationship between infection intensity and survival
+quantifying the relationship between infection intensity and host survival
 probability is more complicated. \cite{Adjei1986} suggested that these values
 could be quantified by using the Crofton Method to first estimate the pre-
 mortality parasite distribution and then, using those parameters, calculate the
 probability of host survival with increasing parasite load. To do this,
-\cite{Adjei1986} modeled host survival as a logistic function and then used a
-binomial generalized linear model (GLM) to estimate the logistic parameters (see \emph{SI X for a technical description of the Adjei Method}).
+\cite{Adjei1986} modeled host survival as a logistic function and then used a generalized linear model (GLM) to estimate the logistic parameters (see \emph{SI 2} for a technical description of the Adjei Method).
 These methods appeared to provide an estimate the parasite intensity at which
 50\% of hosts exhibit PIHM (), as well as the unmeasurable fraction of the
-population that was lost (SI for adjei method details and extended discussion
-of issues?). However, to implement this method the observed data must be
-modified to fit the binomial GLM framework and subjectively binned when mean
+population that was lost (SI 2). However, to implement this method the observed data must be
+modified to fit the GLM framework and subjectively binned when mean
 infection intensity is high or sample sizes are small.
 
 After 30 years, and despite clear limitations \citep{McCallum2000a}, these
@@ -159,100 +157,34 @@ original data and has never been thoroughly tested.
 
 Estimating parasite impacts on host population using intensity data should only
 be done if methods exist to permit unbiased and accurate estimates of PIHM. In
-this study, we first propose a novel likelihood method for calculating PIHM. We
-next use simulations to compare this likelihood method with previous Adjei
-method to (1) test the ability to detect occurrence of PIHM and (2) estimate
-lethal parasite load ($LD_{50}$) and associated survival function.  We then
+this study, we first propose a novel method for calculating PIHM. We
+next use simulations to compare our method with the previous Adjei
+Method to test the ability of both methods to (1) detect occurrence of PIHM and (2) estimate the
+lethal parasite load ($LD_{50}$) [see Table?] and the associated survival function.  We then
 apply both methods to real datasets previously used in PIHM analyses and
-compare results. And, finally, we discuss the limitations of inferring PIHM
+compare results. Finally, we discuss the limitations of inferring PIHM
 from distributional data and whether any method for inferring PIHM has a place
 in quantitative parasitology.
 
-
-
-
-% Infectious agents can have major impacts on animal populations
-% through changing population dynamics and stability \citep{Dobson1992}, altering
-% predator-prey interactions \citep{Joly2004}, and even causing species decline
-% and extinction \citep{DeCastro2005a,McCallum2012b}. Accurate estimates of
-% parasite-induced host mortality (PIHM) in wild animals are important for
-% understanding what regulates both host and parasite populations and to make
-% predictions about disease transmission in natural systems. Although a negative
-% impact on host fitness is a fundamental component of parasitism
-% \citep{Lafferty2002} [more], it is notoriously difficult to quantify PIHM in
-% wild animal populations \citep{Lester1984,McCallum2000a}.
-
-% To conclusively identify PIHM in wild animal populations, it is necessary to
-% experimentally infect and track host populations; a method that is rarely
-% possible in most wild animal systems \citep{McCallum2000a}.  Instead, parasitologists
-% are often only able to determine the parasite intensity on some number of sampled hosts.  This snapshot, distributional data is far from the
-% ideal type of data for addressing questions regarding PIHM, but this is the type of data on which most questions regarding PIHM are asked \citep{Ferguson2011,Royce1990,Lanciani1989,Lester1984,Lester1977}.  In particular, parasitologists are often interested in asking two questions from this data: 1) Is PIHM occurring in a host-parasite system? and if PIHM is occurring 2) Can the effect of parasite intensity on host survival be quantified? While both macro and
-% microparasites have detrimental and possibly fatal effects on hosts, for the
-% remainder of this paper we limit our discussion to macroparasites that can be
-% discretely counted within a host.
-
-% The first of these PIHM questions was addressed by \cite{Crofton1971a} who developed
-% a method to test for the presence of PIHM using the truncation of the negative binomial
-% distribution.  In short, the Crofton Method assumes that the distribution of
-% parasites across hosts before mortality occurs follows a negative binomial
-% distribution \citep{AndersonandMay1978,Shaw1998}.  As heavily infected hosts
-% begin to die, the negative binomial distribution is truncated and these hosts are no longer observed in a sample. In other words, the
-% observed host-parasite distribution and the pre-mortality host-parasite
-% distribution will predict substantially different numbers of hosts with high infect intensity (because those have died due to infection), but a similar number of hosts with low infection
-% intensity (because those have survived).  \cite{Crofton1971a} noted that by
-% starting with all observed hosts and iteratively fitting a negative binomial
-% distribution to hosts with lower and lower parasite loads, one could determine
-% whether or not PIHM was occurring and estimate the parameters of the host distribution before parasite-induced mortality.  This was done
-% graphically by determining whether the parameters of the negative binomial distributions fit to different truncations of the data showed a substantial change as the truncation point moved from heavily infected hosts to lightly infected hosts.  The Crofton Method and this graphical technique are both still currently used to assess whether PIHM is a occurring in a system \citep{Ferguson2011}. We give a thorough description and implementation of the Crofton Method in \emph{Supplementary Information} (SI) 1 and discuss the validity of its assumptions in the \emph{Discussion}.
-
-% The second question regarding PIHM moves beyond a simple yes or no answer and attempts to quantify how parasite intensity affects host survival. \cite{Adjei1986} proposed a method to answer this question
-% by first using the Crofton Method to estimate the pre-mortality parameters for
-% a host-parasite distribution and then, given these
-% parameters, estimating a host survival function that described how the
-% probability of host-survival changed with increasing parasite load (see
-% \emph{Methods}).  With this host survival function, one can estimate important host-parasite quantities such as the
-% parasite intensity at which 50\% of hosts succumb to PIHM ($LD_{50}$), as well
-% as the percent of hosts in a population succumbing to PIHM \citep{Adjei1986}.
-
-% Despite these methods both being over three decades old, they are still the
-% primary means of answering questions about PIHM given distributional data
-% \citep[but see][for an alternative to the Crofton
-% Method]{Ferguson2011}. However, both methods have a few important limitations.
-% The Crofton Method, and more recent methods \citep{Ferguson2011},
-% rely on a visual test to determine whether or not PIHM is occurring in a
-% system.  With no clear decision rule, it can be difficult to consistently determine the
-% significance of PIHM across different host-parasite systems. In theory, the Adjei Method can ameliorate this problem. In addition to providing information on the host-survival function, this method can also be used to assess the significance of
-% PIHM in a system.
-% In practice, however, the Adjei Method has never been thoroughly tested and
-% relies on a number of questionable data manipulations.
-
-% In this study, we have
-% three primary goals. First we wish to test reliability of the Adjei Method for
-% answering the aforementioned questions regarding PIHM.  Second, we propose a
-% novel method for answering these questions, compare its efficacy against the Adjei Method, and test both methods' ability to detect PIHM on empirical data.  Third, we
-% discuss the limitations of inferring PIHM from distributional data alone and
-% whether any method for inferring PIHM has a place in the future of
-% parasitology.
-
 \section*{Methods}
 
-\subsection*{A novel, likelihood method for estimating PIHM}
+\subsection*{A novel, likelihood-based method for estimating PIHM}
 
-Here we propose an alternative approach using a likelihood method that does not
-require binning or data alteration, potentially reduces the number of
-parameters to be estimated, and allows the significance of PIHM to be estimated
+Here we propose a novel, likelihood-based method (henceforth Likelihood Method) that does not
+require binning or data alteration, reduces the number of
+parameters to be estimated, and allows the significance of PIHM to be determined
 using standard statistical techniques.
 
 As with all previously proposed methods for estimating PIHM, the
-Likelihood Method first assumes that the pre-mortality distribution follows a
-negative binomial distribution $g(x; \mu_p, k_p)$.  The second
-assumption is that the host survival function
-takes the form of a logistic curve given by
+Likelihood Method first assumes that the pre-mortality distribution of parasites across hosts follows a
+negative binomial distribution $g(x; \mu_p, k_p)$, where $\mu_p$ is the mean parasite intensity in hosts before mortality and $k_p$ is the parasite aggregation before mortality (smaller $k_p$ leads to more aggregation).   Previous methods have also required a parameter $N_p$ specifying the total number of hosts before mortality \citep{Crofton1971a,Adjei1986}, but this is not a necessary parameter in the Likelihood Method.
+
+The second assumption of the Likelihood Method is that the host survival function, the function specifying the probability of a host surviving with $x$ parasites, takes the form of a logistic curve given by
 \begin{equation}
-    h(x | a, b) = h_x = \dfrac{e^{a - b \log(x)}}{1 + e^{a - b \log(x)}}
+    h(x ; a, b) = h_x = \dfrac{e^{a - b \log(x)}}{1 + e^{a - b \log(x)}}
     \label{eq:logistic}
 \end{equation}
-With these two explicit assumptions, the Likelihood Method estimates the 4 parameters $\mu_p$, $k_p$, $a$, and $b$.
+For this equation, the parasite intensity at which 50\% of host experience PIHM ($LD_{50}$) can be calculated by $\exp{a / b}$. With these two explicit assumptions, the Likelihood Method estimates four parameters: $\mu_p$, $k_p$, $a$, and $b$.
 
 To estimate these parameters, we first define a probability distribution that gives the probability of having a parasite load of $x$ parasites conditional on host survival.  Using standard rules of conditional probability this distribution can be written as
 
@@ -270,17 +202,17 @@ One can see that $P(\text{survival} | x)$ is the survival function $h(x; a, b)$,
 
 Using this probability distribution, one can then find the parameters $\mu_p$, $k_p$, $a$, and $b$ that maximize the likelihood of an observed host-parasite dataset. Alternatively, one could apply the Crofton Method to estimate $\mu_p$ and $k_p$ and then find the maximum likelihood estimates of $a$ and $b$ and the corresponding $LD_{50}$.
 
-To estimate that significance of PIHM in a host-parasite system, a
+To estimate the significance of PIHM in a host-parasite system, a
 likelihood ratio test can be used in which the full model is given by equation
 \ref{eq:dist} and the reduced model is given by a negative binomial
 distribution.  If PIHM is not significant in the system, the resulting likelihood
 ratio statistic should approximately follow a $\chi^2$ distribution with degrees of freedom equal to 2.  We provide the code for implementing this Likelihood Method in SI 3.
 
-\subsection{Evaluating the likelihood and Adjei Methods}
+\subsection*{Evaluating the Adjei and Likelihood Methods}
 
 \emph{Question 1: Can we detect PIHM?}
 
-To test the ability of the Adjei Method and the Likelihood Method to identify whether or not PIHM was occurring in a system, we randomly generated data using the following procedure.  First, we drew $N_p$ randomly infected hosts from a
+To test the ability of the Adjei and the Likelihood Methods to identify whether or not PIHM was occurring in a system, we randomly generated data using the following procedure.  First, we drew $N_p$ randomly infected hosts from a
 negative binomial distribution with parameters $\mu_p$ and $k_p$.  This represented the dataset observed before mortality. Second, we chose values of $a$ and $b$ and calculated the probability of survival
 for all $N_p$ hosts using equation \ref{eq:logistic}.  Third, we drew $N_p$ random numbers from a uniform distribution
 between 0 and 1 and if host survival probability was less than this random
@@ -293,13 +225,14 @@ $\mu_p$, and $k_p$ are always unknown, we implemented this scenario as a baselin
 establish the efficacy of the methods independent of the estimates of $N_p$, $\mu_p$ and $k_p$.  For the Adjei Method, $N_p$, $\mu_p$, and $k_p$ are estimated using the Crofton Method, while $\mu_p$ and $k_p$ in the Likelihood Method can be estimated jointly with $a$ and $b$ or via the Crofton Method.   If a
 method could not correctly predict whether or not PIHM was occurring under these idealistic conditions, we considered this strong evidence of the unreliability of this method.
 
-We used three different values of $\mu_p$ (10, 50, 100) and for each $\mu_p$ we examined three different survival functions that had graduate, moderate, and steep decreases in host survival with increasing parasite intensity (Figure \ref{fig:surv}).  For a given $\mu_p$, each survival function had the same $LD_{50}$ ([$\mu_p = 10$, $LD_{50} = 7.39$], [$\mu_p = 50$, $LD_{50} = 35.57$], [$\mu_p = 100$, $LD_{50}= 77.3$]),  but different values of $a$ and $b$.  We examined each $\mu_p$-survival function pair at  three levels of parasite
+We used three different values of $\mu_p$ (10, 50, 100) and for each $\mu_p$ we examined three different survival functions that had graduate, moderate, and steep decreases in the host survival with increasing parasite intensity (Figure \ref{fig:surv}).  For a given $\mu_p$, each survival function had the same $LD_{50}$ ([$\mu_p = 10$, $LD_{50} = 7.39$], [$\mu_p = 50$, $LD_{50} = 35.57$], [$\mu_p = 100$, $LD_{50}= 77.3$]),  but different values of $a$ and $b$.  We examined each $\mu_p$-survival function pair at  three levels of parasite
 aggregation, $k_p = 0.1$, 0.5, and 1 --- realistic values of parasite aggregation in natural populations \citep{Shaw1998}.  For each of these parameter
 combinations we simulated 150 datasets and tested the probability of each method incorrectly identifying PIHM in the pre-mortality dataset (Type I error) and correctly identifying PIHM in the post-mortality dataset (power).  For each method, we used a likelihood ratio test to determine whether the full model with PIHM provided a significantly better fit than the reduced model without PIHM at significance level $\alpha = 0.05$.  We tested each parameter combinations for pre-mortality population sizes of $N_p$ = [50, 100, 200, 300, 400, 500]. $N_p$ is not technically the sample size on which the methods are being
 tested on the post-mortality data because PIHM reduces $N_p$ for each simulated
-dataset.  We therefore used the average number of surviving hosts over all 150 simulations for a given parameter combination as our measure of sample size in the power simulations.
+dataset.  We therefore used the average number of surviving hosts over all 150 simulations for a given parameter combination as our measure of sample size in the power simulations.\\
 
-\subsection*{Question 2: Can we estimate fatal parasite intensity and the host survival function?}
+\noindent
+\emph{Question 2: Can we estimate fatal parasite intensity and the host survival function?}
 
 To compare the ability of the Adjei Method and the Likelihood Method to recover the $LD_{50}$ and the parameters $a$ and $b$ of the survival function, we used the same simulation procedure and parameter combinations described above. For each parameter
 combination we simulated 150 datasets, estimated $a$, $b$, and $LD_{50}$ and calculated the standardized bias and
@@ -328,7 +261,7 @@ first truncated the data at 2 parasites and then fit the Crofton Method for the
 female fish of both species.  Then, following the original authors' methods, we parameterized the male pre-mortality
 distributions for each species with the results from the females.  Finally, we
 applied the Adjei Method and the Likelihood Method to determine whether or not
-PIHM was significant for these species and compared our results to those given by the authors.  All fitting to data was done with the Python code provided in SI 3.
+PIHM was significant for these species and compared our results to those given by the authors.  All fitting to data was done with the code provided in SI 3.
 
 \section*{Results}
 
@@ -337,7 +270,7 @@ PIHM was significant for these species and compared our results to those given b
 The Adjei Method showed highly inflated Type I error rates (i.e. falsely detected
 PIHM) for all parameter combinations that we
 considered (Figure \ref{fig:typeI10}; SI2 Figs 1, 2).  This method also showed the unintuitive pattern of Type I error
-rate decreasing as sample size decreased.  This pattern is due to the issue of
+rate decreasing as sample size decreased.  This pattern was due to the issue of
 binning discussed in the \emph{Introduction} and \emph{SI X}. For small samples sizes, the
 applicability of the Adjei Method is compromised without binning the observed
 data in some way.  In contrast, the Likelihood Method showed a Type I
@@ -393,40 +326,9 @@ dataset in which the Likelihood Method did not detect a significant effect of PI
 for female \emph{S. tumbil}.  For this dataset there was a marginally significant effect
 of PIHM ($\chi^2_{df=2} = 5.34; p = 0.069$).
 
-The Adjei Method detected PIHM in 9 of the 10 datasets (Table \ref{table:pihm}),  showing that the Adjei Method has a very high Type I error rate.
+The Adjei Method detected PIHM in 9 of the 10 datasets (Table \ref{table:pihm}), consistent with our simulation results that the Adjei Method has a high Type I error rate [additional data? to emphasize this point. Raccoon data?].
 
 \section*{Discussion}
-
-% Sara W Outline
-% 5 paragraph disc Outline:
-%  Describe benefits of new method (LM)
-% No data manipulation
-% Estimates fewer parameter
-% Statistical output
-%  A new method to quantitatively explore mortality using intensity data
-
-% Compare  LM with AM
-% LM always does better,
-% Detecting  PIHM: more power, less false detection
-% Ld50/survival curve: LM more precise/less biased. But these do get worse with decreasing sample size.
-% real data , consistent with original author’s results, supports AM type 1 error issues
-% AM is fundamentally flawed, LM is clearly better under ideal simulations, but can it be implemented in the real world?
-
-% 3. Data set limitations (for the LM, because no one should even try the AM):
-% a. requires large sample sizes (n>X) which may be impossible to collect from the species we would be most interested in getting this data for, eg, large mammals of conservation concern. While 50-100 is very realistic for invertebrates or fish, not so for larger verts
-% b. highly aggregated or high mean intensity increase needed sample size (is this right for LM?) which may make this difficult for many helminths with worm burdens in the 100s-1000s
-% c. low parasite induced mortality may be hard to detect- particularly an issue for worms in definitive hosts
-% d. shape of survival curve matters, although often assumed to be linear (eg Anderson may model) can’t know apriori, and method fails  for both perfectly linear and exceptionally steep survival functions
-% e. math works, but not for all parasite-host systems
-
-% 4.even when the math works, should we believe it?
-% a. All methods rely on same fundamental assumptions of the crofton method.
-% b. assume that pre mort psite dist follows a negative binomial. And this is valid because the NB is extremely flexible and lots of empirical and theoretical work says so.
-% c. but, detecting mortality requires that the observed data be significantly different than the NB but because NB is so flexible it can be fit to almost anything, making it impossible to detect pihm
-% d.assume truncation from pihm, but could be caused by lots of other things, so detecting significant pihm does not mean it occurred.
-% f. serious fundamental issues that need to be recognized and acknowledge with any use of this technique
-
-% 5.(conclusion)Does any of this have a place in quantitative parasitology?
 
 
 Quantifying the impact of parasitism on wild host populations is critical in
@@ -436,30 +338,30 @@ logistical and ethical reasons, this is often impossible \citep{McCallum2000a}.
 Looking for evidence of mortality in parasite distribution data requires the
 least amount of information, but is notoriously difficult to implement. The
 methodological flaws in the Adjei Method limit its utility, so here we propose
-an alternative, likelihood-based, method to estimated host survival and the
+an alternative, likelihood-based, method to estimate host survival and the
 $LD_{50}$ from observed parasite intensity data.  At a theoretical level this
-method is a significant improvement because it can require fewer parameters,
+method is a significant improvement over the previous methods because it requires fewer parameters,
 provides a statistical decision rule for identifying PIHM and does not require
 any data manipulation.
 
-Under simulated conditions, the likelihood method always out performs the Adjei Method. For simply detecting the presence of PIHM, the Likelihood
+Using simulated data, we found that the Likelihood Method always out performs the Adjei Method. For simply detecting the presence of PIHM, the Likelihood
 Method is both more powerful and has fewer false detection events (Type I
-errors).  When both methods were applied to published datasets previously used
+errors) [tense?].  When both methods were applied to published datasets previously used
 in PIHM analyses, the Adjei Method tended to detect PIHM where it had not previously been
 reported, consistent with the high Type I error rate observed in our
-simulations. The likelihood method is also universally more precise and less
-biased in calculations of both the parasite $LD_{50}$ and host survival curve.
+simulations. The Likelihood Method is also more precise and less
+biased in calculations of both the parasite $LD_{50}$ and host survival curve over the parameter values we considered.
 However, while only the Likelihood Method produces precise and unbiased $LD_{50}$
 estimates, neither method can provide unbiased estimates of the host survival
 function at realistic sample sizes.  These simulations demonstrate that
-the novel Likelihood Method is more powerful and precise than the previously propose Adjei Method.
+the Likelihood Method is more powerful and precise than the previously propose Adjei Method.
 
-Although superior to the Adjei Method, the LM may still not always be
+Although superior to the Adjei Method, the Likelihood Method may still not always be
 applicable to real data.  The Likelihood Method requires relatively large
 sample sizes (n>50-100) [Are these relatively large? They seem small to me], that although reasonable
 to obtain for invertebrates or small fish may be completely unfeasible for many
 vertebrates, particularly the species of conservation concern where addressing
-the impact of parasitism would be most important. An even larger sample size is
+the impact of parasitism would be most important [citation?]. An even larger sample size is
 required to capture the full parasite distribution when parasites are highly
 aggregated, mean infection intensity is high, or parasite prevalence is low [same as aggregation],
 all of which are common in many parasitic helminths.  Low parasite-induced host
@@ -476,7 +378,7 @@ substantial host mortality occurs at relatively low parasite intensity.
 
 While we have improved on the existing methods for quantifying
 PIHM from parasite intensity data, all such methods require several
-fundamental, and potentially problematic assumptions.  Nearly all methods to date derive from \cite[][but see \cite{Ferguson2011}]{Crofton1971a} and assume that, prior to any PIHM, parasites are distributed in the host population following a
+fundamental, and potentially problematic assumptions.  Nearly all current methods derive from \cite{Crofton1971a} \citep[but see][]{Ferguson2011} and assume that, prior to any PIHM, parasites are distributed in the host population following a
 negative binomial distribution. But, it is fundamentally impossible to know
 what the pre-mortality parasite distribution was in a wild host population and
 it is widely recognized that different processes can lead to a variety of
@@ -490,8 +392,8 @@ impossible to detect PIHM because there is no need for a more complex model.
 Most observed parasite distributions are well fit by the negative binomial distribution \citep{Shaw1998}, suggesting
 that systems where these methods are applicable may be more the exception than
 the rule.  Finally, even when truncation of the negative binomial distribution is detected, it may be caused by other
-processes such as density dependence, age dependent variation in host
-resistance and heterogeneous infection rates \citep{McCallum2000a,Anderson1982a,Rousset1996}.  This means that in the rare event
+processes such as within host density dependence, age dependent variation in host
+resistance and/or heterogeneous infection rates \citep{McCallum2000a,Anderson1982a,Rousset1996}.  This means that in the event
 that PIHM is detected, it may actually not be the result of PIHM.
 
 Given these numerous caveats, is the is there a place in parasitology for methods that
@@ -507,129 +409,43 @@ from distributional data is no substitute for field or laboratory experiments
 and/or in depth understanding of the natural history of the host-parasite
 system under consideration.
 
-
-
-
-
-
-
-
-
-
-% In this study we propose a novel method, the Likelihood Method, for detecting
-% and describing PIHM from parasite intensity data.  Unlike currently proposed
-% methods for estimating PIHM, the Likelihood Method does not require any
-% unnecessary data manipulation, uses fewer parameters [it can, but not always],
-% and provides a quantitative decision rule for determining whether or not PIHM
-% is occurring in a host-parasite system.
-
-% Using simulated datasets, we show that the Likelihood Method correctly detected
-% PIHM when it was occurring and correctly failed to detect PIHM when it was not
-% occurring for sample sizes below 100 hosts. When applied to real data, the
-% Likelihood Method gave results consistent with what was previously reported. In
-% contrast, the Adjei Method, the only currently proposed method to estimate the
-% host survival function and the $LD_{50}$ from parasite intensity data, consistently
-% detected PIHM even when it was not present and behaved erratically for small sample sizes (< 200
-% hosts); a consequence of the need to
-% subjectively bin the data to predict parasite intensity classes with
-% at least one host.  Finally, when applied to real data, the Adjei Method overestimated the occurrence of PIHM relative to what was previously reported.
-
-% In addition to accurately detecting PIHM, the Likelihood Method also provided
-% unbiased and precise estimates of a host survival function's $LD_{50}$ across
-% all sample sizes we considered.  While the Likelihood Method did produce
-% unbiased estimates of the host survival function ($a$ and $b$) for
-% unrealistically large sample sizes, it gave severely biased estimates of the
-% host survival function for realistic samples sizes. The bias was most severe
-% for steep host survival functions due to large changes in the values of $a$ and
-% $b$ only slightly changing an already steep survival function. The Adjei
-% Method, on the other hand, gave biased predictions of the $LD_{50}$ and host
-% survival function across all parameter combinations, with bias increasing with
-% increasing parasite aggregation and increasing mean parasite intensity.  Taken
-% together, these results show that Adjei Method is fundamentally flawed and the
-% Likelihood Method may offer a potential alternative for estimating PIHM.
-
-% While we have improved upon the previously existing methods for answering
-% questions about PIHM, we cannot belie the fact that estimating PIHM from
-% observational data alone is ladened with assumptions and difficulties
-% \citep{McCallum2000a}. The most fundamental assumption of all methods for
-% estimating PIHM is that the shape of the pre-mortality host-parasite
-% distribution is known and follows a negative binomial distribution. While there
-% is substantial empirical and theoretical evidence to justify the use of the
-% negative binomial distribution as the pre-mortality distribution for
-% macroparasites across hosts \citep{Calabrese2011,Anderson1982a,Shaw1998}, it is
-% widely recognized that different processes can lead to a variety of
-% distributions of parasites across hosts
-% \citep{Isham1995,Grenfell1995b,Wilson2002, Duerr2003}.  However, the critical
-% assumption of the pre-mortality distribution is not that the processes leading
-% to the pre-mortality distribution generate a negative binomial distribution,
-% but rather that the pre-mortality distribution is well-fit by a negative
-% binomial distribution. The extreme flexibility of the negative binomial
-% distribution makes it a reasonable candidate distribution for the pre-mortality
-% distributions.  Therefore, we do not see this assumption as central problem in
-% any of the proposed methods.
-
-% However, to use the pre-mortality distribution to infer whether or not the PIHM
-% is occurring in a system requires an explicit assumption about the host
-% survival function and the shape of the post-mortality distribution.  Regarding
-% the host-survival function, all currently proposed methods of PIHM assume that
-% the host-survival function is such that uninfected individuals and individuals
-% with low parasite intensity experience essentially no PIHM. \cite{Lanciani1989}
-% illustrated the importance of this assumption by showing that when hosts
-% experienced a linear decrease in survival probability the Crofton Method could
-% not detect PIHM.   As the most fundamental models of host-parasite dynamics
-% assume a linear decrease in host survival probability with increasing parasite
-% intensity \citep{AndersonandMay1978}, the failure of these methods to detect
-% this relationship is a significant disconnect between empirical and theoretical
-% disease ecology.  However, empirical work has shown that non-linear functions
-% of host survival are not uncommon in host-parasite systems \citep{Benesh2011},
-% so this assumption alone does not preclude the use of PIHM methods on empirical data.
-
-% Regarding the shape of the post-mortality distribution, all of these methods
-% require that the post-mortality distribution be significantly different from a
-% negative binomial distribution.  This is necessary because none of the above
-% methods will be able to detect PIHM if a negative binomial distribution is an
-% adequate fit to the post-mortality distribution.  This is simply because there
-% will be no need for a more complex model (either truncation of the negative
-% binomial or the model given in equation \ref{eq:dist}) if a negative binomial
-% distribution already fits the data. As many observed host-parasite
-% distributions are not significantly different from a negative binomial
-% distribution, there may be limited cases where these PIHM methods can even be
-% considered.
-
-% Finally, all of these methods assume that the truncation of a negative binomial
-% distribution is due to PIHM, but previous studies have shown that a variety of
-% other processes can lead to the truncation of a negative binomial distribution
-% such as within host parasite density-dependence, age- dependent variation in
-% host resistance and heterogeneous rate of infection
-% \citep{McCallum2000a,Anderson1982a,Rousset1996}.  Therefore, even detecting
-% ``significant'' PIHM in a dataset does not mean that PIHM is cause of the
-% truncation.
-
-% Given these numerous caveats, is the is there a place in parasitology for methods that
-% estimate PIHM from distributional data?  We are in agreement with
-% \cite{Lester1984} that, at the very least, methods for estimating PIHM can
-% provide preliminary insight into whether or not PIHM is worth further
-% exploration.  However, we stress that these methods should only be used as an
-% exploratory tool when assessing the role of PIHM in a system and potential
-% users should critically evaluate whether they think they have a large enough
-% sample sizes and an appropriate host survival function/post-mortality distribution for the methods developed
-% in this paper to be applicable.  Even if they are applicable, inferring PIHM
-% from distributional data is no substitute for field or laboratory experiments
-% and/or in depth understanding of the natural history of the host-parasite
-% system under consideration.
-
 \section*{Acknowledgments}
 
-TODO
+We thank X for their useful comments. This work was supported by X.
 
 \singlespacing
 \bibliographystyle{/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst}
 \bibliography{/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality}
 
+\newpage
+
+\renewcommand{\arraystretch}{1.2}
+
+\begin{table}
+
+    \caption{Definition of parameters and functions used in the main text}
+    \begin{tabular}{c c}
+    \hline
+    Parameter & Definition \\
+    \hline\hline
+    $\mu_p$ & Pre-mortality mean parasite intensity \\
+    $k_p$   & Pre-mortality parasite aggregation \\
+    $N_p$   & Pre-mortality host population size \\
+    $x$     & Number of parasites in a given host \\
+    $g(x; \mu_p, k_p)$ & Pre-mortality negative binomial distribution parasites distribution \\
+    $a$ & Parameter of the logistic host survival function \\
+    $b$ & Parameter of the logistic host survival function \\
+    $h(x; a, b)$ & The host survival function \\
+    $LD_{50}$ & $\exp(a / b)$, Parasite intensity at which 50\% of hosts die \\
+
+    \end{tabular}
+    \label{tab:params}
+\end{table}
+
 \renewcommand{\arraystretch}{1.2}
 \begin{sidewaystable}
 
-    \caption{Comparison of the PIHM predictions of previously used host-parasite datasets to those given by the Adjei Method and the Likelihood Method. The first column specifies the identity of the dataset, the second column specifies whether or not the author indicated that PIHM was occurring in the system, the third column indicates whether or not the Likelihood Method with parameters from the Crofton Method detects significant PIHM, and the final column indicates whether the Adjei Method with pre-mortality parameters estimated from the Crofton Method detects PIHM.  If a method detected significant PIHM the predicted $LD_{50}$ is given in parentheses}
+    \caption{Comparison of the PIHM predictions of previously used host-parasite datasets to those given by the Adjei Method and the Likelihood Method. The first column specifies the identity of the dataset, the second column specifies whether or not the author indicated that PIHM was occurring in the system, the third column indicates whether or not the Likelihood Method with pre-mortality parameters estimated from the Crofton Method detects significant PIHM, and the final column indicates whether the Adjei Method with pre-mortality parameters estimated from the Crofton Method detects PIHM.  If a method detected significant PIHM the predicted $LD_{50}$ is given in parentheses}
 
     \centering
     \begin{tabular}{l  p{3cm} p{3cm} l}
@@ -691,9 +507,6 @@ TODO
     \label{fig:biasa}
 
 \end{figure}
-
-
-
 
 \end{document}
 
