@@ -13,9 +13,6 @@ from scipy.stats import chisqprob
 Module contains the updated functions and classes for assessing
 parasite-induced host mortality (PIHM)
 
-Functions
----------
-
 """
 
 class PIHM:

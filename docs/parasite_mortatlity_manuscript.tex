@@ -1,26 +1,38 @@
 % Document
+% Document
 \documentclass[12pt, a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{authblk}
 \usepackage{lipsum}
+\usepackage{tikz}
 
-% Fig. and table formating
+% Figure and table formating
 \usepackage{epsfig}
 \usepackage{tabu}
 \usepackage{rotating}
 \usepackage{pbox}
 \usepackage{framed, multicol}
 \usepackage[framemethod=TikZ]{mdframed}
-\usepackage{float}
-\usepackage[left=1.25 in, right=1.25 in, top=1.25 in, bottom=1.25 in]{geometry}
 
-\usepackage{caption}
+% Set up Frame
+\mdfdefinestyle{MyFrame}{%
+    linecolor=black,
+    skipabove=10pt,
+    outerlinewidth=2pt,
+    roundcorner=20pt,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,%\baselineskip,
+    innerrightmargin=20pt,
+    innerleftmargin=20pt,
+    backgroundcolor=gray!50!white}
+
+\usepackage{float}
+\usepackage[left=1 in, right=1 in, top=1.25 in, bottom=1.25 in]{geometry}
 
 % Fonts - Mathtime
 %\usepackage{txfonts}
 \usepackage{amsmath} % Add amssymb if not using Mathtime
-\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 % Text
 \setlength{\parindent}{0.5in}
@@ -28,7 +40,7 @@
 
 \usepackage{lineno} % Line numbers
 \def\linenumberfont{\normalfont\footnotesize\ttfamily}
-\setlength\linenumbersep{0.2 in}
+\setlength\linenumbersep{0.1 in}
 
 \usepackage{setspace}
 
@@ -54,7 +66,6 @@
 % Other
 \usepackage{graphicx}
 \usepackage[singlelinecheck=false,font=small,labelfont=bf]{caption}
-\usepackage[justification=centering]{caption}
 
 % Bibliography
 \usepackage[numbers, compress]{natbib} % Bibliography - APA
@@ -64,7 +75,7 @@
 % increase \bibhang to take care of the numbers
 \setlength{\bibhang}{0pc}
 \makeatletter
-%patch \@lbibitem to print the current number before the authors
+% patch \@lbibitem to print the current number before the authors
 \patchcmd{\@lbibitem}
   {]}
   {] \theNAT@ctr. \newline }
@@ -107,7 +118,7 @@ significant impacts on human health (), domestic livestock economics (),
 wildlife survival ().  While it is generally assumed that some fraction of
 wild host populations must succumb to parasitic infections, it is notoriously
 difficult to actually quantify parasite-induced host mortality (PIHM) in wild
-animal populations \citep{Lafferty2002, McCallum2000a}. [more]
+animal populations \citep{Lafferty2002, McCallum2000a}.
 
 Ideally, parasite-induced host mortality would be
 quantified by experimentally infecting and tracking individual hosts in the
@@ -140,7 +151,7 @@ mortality parasite distribution and then, using those parameters, calculate the
 probability of host survival with increasing parasite load. To do this,
 \cite{Adjei1986} modeled host survival as a logistic function and then used a generalized linear model (GLM) to estimate the logistic parameters (see \emph{SI 2} for a technical description of the Adjei Method).
 These methods appeared to provide an estimate the parasite intensity at which
-50\% of hosts exhibit PIHM (), as well as the unmeasurable fraction of the
+50\% of hosts exhibit PIHM ($LD_{50}$), as well as the unmeasurable fraction of the
 population that was lost (SI 2). However, to implement this method the observed data must be
 modified to fit the GLM framework and subjectively binned when mean
 infection intensity is high or sample sizes are small.
@@ -160,7 +171,7 @@ be done if methods exist to permit unbiased and accurate estimates of PIHM. In
 this study, we first propose a novel method for calculating PIHM. We
 next use simulations to compare our method with the previous Adjei
 Method to test the ability of both methods to (1) detect occurrence of PIHM and (2) estimate the
-lethal parasite load ($LD_{50}$) [see Table?] and the associated survival function.  We then
+lethal parasite load ($LD_{50}$) and the associated survival function.  We then
 apply both methods to real datasets previously used in PIHM analyses and
 compare results. Finally, we discuss the limitations of inferring PIHM
 from distributional data and whether any method for inferring PIHM has a place
@@ -305,6 +316,18 @@ produced biased estimates of $LD_{50}$ across all sample sizes, with bias
 increasing as sample size decreased (SI2 Fig 3, 4). The $LD_{50}$ estimates from the Adjei
 Method showed large decreases in precision occurring
 for the steepest survival function across all values of $\mu_p$ (Figure \ref{fig:biasld50}, SI2 Fig 3, 4).
+
+% Change statistical alpha to something else so I don't confuse it with pathogenecity alpha.
+
+% Set sample size to be small. (50 or 100) and then vary k and mu, Make some sort of heat map to show this?
+
+% What figures do we want to show?  Represent figures in a single frame? Pick one that shows the general pattern? Maybe drop the a figure to the Supplement?
+
+% Crop Figure 2 and merge Fig 3-4 to have 4 panels.
+
+% Fiddle with Figure 1 to make it a plate in The new figure 2? Inset it in some way.
+
+% Figure 3: Just focus on small (100) size and vary mu and k and see what happens. (Chose steep survival function for LD50)
 
 In terms of the host survival function, the Likelihood Method gave
 asymptotically unbiased estimates of $a$ as sample size increased for
@@ -472,41 +495,72 @@ We thank X for their useful comments. This work was supported by X.
 \end{sidewaystable}
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/conceptual_fig.pdf}
 
-    \caption{Five potential shapes for a host-survival functions. PIHM should be easier to detect for steeper host survival functions \citep{Lanciani1989}, but we may expect the bias in the parameter estimates to increase as it becomes increasingly difficult to distinguish between steep survival functions.}
-    \label{fig:surv}
-\end{figure}
-
-\begin{figure}
-
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/typeIpower_figure_for_mu10}
-
-    \caption{The Type I error rate and the power of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$.  The first column gives the Type I error rate of each method for falsely detecting PIHM when none is present.  The red line gives the the pre-set Type I error rate of $\alpha = 0.05$.  The second column gives the power of a given method to detect PIHM when it is actually occurring. }
-    \label{fig:typeI10}
-
-\end{figure}
+\begin{tikzpicture}
 
 
-\begin{figure}
+    \node at (0, 0) (pic) {\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure1_partII_for_manuscript50}};
 
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/bais_prec_figure_for_ld50_mu10}
+    \node[above=0.1cm] at (pic.north) (concept) {\includegraphics[width=0.6\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure1_partI_for_manuscript}};
 
-    \caption{The bias and the precision of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$ when estimating $LD_{50}$.  The first column gives the bias of each method's $LD_{50}$ estimate over 150 simulations. The second column gives the precision of each method's $LD_{50}$ estimate over 150 simulations.}
+    \draw[->] (0, 4.2)--(-1.5, 3.1);
+    \draw[->] (0, 4.2)--(1.5, 3.1);
 
-    \label{fig:biasld50}
+    \node at (-3.2, 4.9) {A.};
+    \node at (-6.5, 2.7) {B.};
+    \node at (1.4, 2.7) {C.};
+
+\end{tikzpicture}
+
+\caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I Error and Power of the Likelihood Method and Adjei Method. B) gives the Type I Error of each method over a range of pre-mortality sample sizes with $\mu_p = 50$ and $k_p = 0.5$. The red line shows the pre-set significance level of 0.05. C) gives the Power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I Error than the Adjei Method.  See the SI X Fig X - X for Type I Error and Power results for all parameter combinations.}
 
 \end{figure}
 
 \begin{figure}
+    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure2_for_manuscript.pdf}
 
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/bais_prec_figure_for_a_mu10}
+    \caption{Bias and precision (coefficient of variation) for the Likelihood Method and Adjei Method estimates of the $a$ parameter and the $LD_{50}$ of the host survival function based on simulated PIHM data over a range of post-mortality sample sizes. The pre-mortality parameters for this simulation were $\mu_p = 50$ and $k_p = 0.5$.  The figure shows the simulations for three different host survival functions (gradual, moderate, and steep) with the same $LD_{50}$.  Bias and precision results for all other parameter combinations can be found in Fig X - X in SI X.}
 
-    \caption{The bias and the precision of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$ when estimating the $a$ parameter of the host survival function.  The first column gives the bias of each method's $a$ estimate over 150 simulations. The second column gives the precision of each method's $a$ estimate over 150 simulations.}
-
-    \label{fig:biasa}
-
+    \label{fig:question2}
 \end{figure}
+
+
+% \begin{figure}
+%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/conceptual_fig.pdf}
+
+%     \caption{Five potential shapes for a host-survival functions. PIHM should be easier to detect for steeper host survival functions \citep{Lanciani1989}, but we may expect the bias in the parameter estimates to increase as it becomes increasingly difficult to distinguish between steep survival functions.}
+%     \label{fig:surv}
+% \end{figure}
+
+% \begin{figure}
+
+%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/typeIpower_figure_for_mu10}
+
+%     \caption{The Type I error rate and the power of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$.  The first column gives the Type I error rate of each method for falsely detecting PIHM when none is present.  The red line gives the the pre-set Type I error rate of $\alpha = 0.05$.  The second column gives the power of a given method to detect PIHM when it is actually occurring. }
+%     \label{fig:typeI10}
+
+% \end{figure}
+
+
+% \begin{figure}
+
+%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/bais_prec_figure_for_ld50_mu10}
+
+%     \caption{The bias and the precision of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$ when estimating $LD_{50}$.  The first column gives the bias of each method's $LD_{50}$ estimate over 150 simulations. The second column gives the precision of each method's $LD_{50}$ estimate over 150 simulations.}
+
+%     \label{fig:biasld50}
+
+% \end{figure}
+
+% \begin{figure}
+
+%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/bais_prec_figure_for_a_mu10}
+
+%     \caption{The bias and the precision of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$ when estimating the $a$ parameter of the host survival function.  The first column gives the bias of each method's $a$ estimate over 150 simulations. The second column gives the precision of each method's $a$ estimate over 150 simulations.}
+
+%     \label{fig:biasa}
+
+% \end{figure}
 
 \end{document}
 
