@@ -307,6 +307,7 @@ class PIHM:
         guess : list
             Guess for a and b of the survival function
 
+
         Returns
         -------
         : tuple
@@ -314,6 +315,12 @@ class PIHM:
 
         Notes
         -----
+        When dealing with small sample sizes and trying to fit the full
+        distribution (i.e., not using the Crofton Method), the convergence of
+        the likelihood method will often fail or multiple likelihood peaks
+        might exist.  One way around this is to use the approach of Ferguson
+        and fix k and then just try to estimate
+
 
         """
 
@@ -466,6 +473,7 @@ class PIHM:
 
             red_nll = comp.nll(self.data, mod.nbinom(self.mup, self.kp))
 
+        # Approximately chi-squared...though this is a large sample size approx
         chi_sq = 2 * (-full_nll - (-red_nll))
         prob = chisqprob(chi_sq, 2)
 
@@ -501,6 +509,14 @@ def pihm_pmf(x, mup, kp, a, b, max_sum=5000):
     kern = lambda x: surv_prob(x, a, b) * \
                                     mod.nbinom.pmf(x, mup, kp)
     return(kern(x) / sum(kern(np.arange(0, max_sum))))
+
+def likefxn_def(mu, k, a, b, x):
+    """ Likelihood fxn for all parameters for pihm pmf
+    Returns negative log-likelihood
+
+    """
+
+    return -np.sum(np.log(pihm_pmf(x, mu, k, a, b)))
 
 
 
@@ -619,6 +635,81 @@ def extract_simulation_results(sim_results, keys, method_name, param,
 
         else:
             raise KeyError("Don't recognize parameter: should be a, b, or ld50")
+
+    return samp_sizes, biases, precisions
+
+def extract_full_likelihood_simulation(sim_results, keys, param,
+                                alpha=0.05):
+    """
+
+    Method to extract parameters from the simulation dicationary from the full
+    likelihood simulation
+
+    Parameters
+    ----------
+    sim_results : dict
+        A dictionary with analysis results
+
+    keys : list
+        First item is a value for mup, second item is a tuple specify the
+        (a, b) pair, third iterm is kp.
+
+    param: str
+        either "ld50" or "p".  If the param is p, then the type I error is
+        extracted. If the parameter is ld50 than the bias and precision for the
+        ld50 estimates are extracted.
+
+    alpha : float
+        The significance level.  Only used if param == "p"
+
+    Returns
+    : tuple
+        samp_sizes, results
+
+        Results could contain either type I errors of a tuple (bias, precision)
+        depending on the value of param
+
+
+    """
+
+    sims = sim_results[keys[0]][keys[1]][keys[2]]
+
+    Np_vals = list(sims.viewkeys())
+
+    samp_sizes = []
+    biases = []
+    precisions = []
+
+    for Np in Np_vals:
+
+        res = sims[Np]
+
+        p_vals, ab_vals = zip(*res[0])
+        a_vals, b_vals  = zip(*ab_vals)
+
+        N_vals = res[1]
+
+        samp_sizes.append(np.mean(N_vals))
+
+        if param == "ld50":
+
+            ld50_vals = np.exp(np.array(a_vals) / np.abs(b_vals))
+            truth = np.exp(keys[1][0] / np.abs(keys[1][1]))
+
+            biases.append(scaled_bias(ld50_vals, truth))
+            precisions.append(scaled_precision(ld50_vals))
+
+        elif param == "p":
+
+            powerp = p_vals
+
+            # Power
+            precisions.append(np.sum(np.array(powerp) < alpha) / len(powerp))
+            biases.append(np.nan)
+
+
+        else:
+            raise KeyError("Don't recognize parameter: should be p or ld50")
 
     return samp_sizes, biases, precisions
 

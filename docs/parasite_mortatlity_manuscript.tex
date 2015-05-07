@@ -231,14 +231,21 @@ number, the host experienced parasite-induced mortality.  The surviving
 hosts comprised the dataset that would be obtained in the field, after PIHM.
 
 Using both the pre-mortality and post-mortality simulated datasets,  we assumed
-that the values of $N_p$, $\mu_p$, and $k_p$ were known and tested the ability of both methods to correctly determine whether or not PIHM was occurring.  While this scenario is unrealistic because the parameters $N_p$,
-$\mu_p$, and $k_p$ are always unknown, we implemented this scenario as a baseline to
-establish the efficacy of the methods independent of the estimates of $N_p$, $\mu_p$ and $k_p$.  For the Adjei Method, $N_p$, $\mu_p$, and $k_p$ are estimated using the Crofton Method, while $\mu_p$ and $k_p$ in the Likelihood Method can be estimated jointly with $a$ and $b$ or via the Crofton Method.   If a
-method could not correctly predict whether or not PIHM was occurring under these idealistic conditions, we considered this strong evidence of the unreliability of this method.
+that the values of $N_p$, $\mu_p$, and $k_p$ were known and tested the ability
+of both methods to correctly determine whether or not PIHM was occurring.
+While this scenario is unrealistic because the parameters $N_p$, $\mu_p$, and
+$k_p$ are always unknown, we implemented this scenario as a baseline to
+establish the efficacy of the methods independent of the estimates of $N_p$,
+$\mu_p$ and $k_p$.  If a method could not correctly predict whether or not PIHM
+was occurring under these idealistic conditions, we considered this strong
+evidence of the unreliability of this method.  For the Adjei Method, $N_p$,
+$\mu_p$, and $k_p$ are estimated using the Crofton Method, while $\mu_p$ and
+$k_p$ in the Likelihood Method can be estimated jointly with $a$ and $b$ or via
+the Crofton Method (SI X).
 
 We used three different values of $\mu_p$ (10, 50, 100) and for each $\mu_p$ we examined three different survival functions that had graduate, moderate, and steep decreases in the host survival with increasing parasite intensity (Figure \ref{fig:surv}).  For a given $\mu_p$, each survival function had the same $LD_{50}$ ([$\mu_p = 10$, $LD_{50} = 7.39$], [$\mu_p = 50$, $LD_{50} = 35.57$], [$\mu_p = 100$, $LD_{50}= 77.3$]),  but different values of $a$ and $b$.  We examined each $\mu_p$-survival function pair at  three levels of parasite
 aggregation, $k_p = 0.1$, 0.5, and 1 --- realistic values of parasite aggregation in natural populations \citep{Shaw1998}.  For each of these parameter
-combinations we simulated 150 datasets and tested the probability of each method incorrectly identifying PIHM in the pre-mortality dataset (Type I error) and correctly identifying PIHM in the post-mortality dataset (power).  For each method, we used a likelihood ratio test to determine whether the full model with PIHM provided a significantly better fit than the reduced model without PIHM at significance level $\alpha = 0.05$.  We tested each parameter combinations for pre-mortality population sizes of $N_p$ = [50, 100, 200, 300, 400, 500]. $N_p$ is not technically the sample size on which the methods are being
+combinations we simulated 150 datasets and tested the probability of each method incorrectly identifying PIHM in the pre-mortality dataset (Type I error) and correctly identifying PIHM in the post-mortality dataset (power).  For each method, we used a likelihood ratio test to determine whether the full model with PIHM provided a significantly better fit than the reduced model without PIHM at significance level of 0.05.  We tested each parameter combinations for pre-mortality population sizes of $N_p$ = [50, 100, 200, 300, 400, 500]. $N_p$ is not technically the sample size on which the methods are being
 tested on the post-mortality data because PIHM reduces $N_p$ for each simulated
 dataset.  We therefore used the average number of surviving hosts over all 150 simulations for a given parameter combination as our measure of sample size in the power simulations.\\
 
@@ -249,6 +256,10 @@ To compare the ability of the Adjei Method and the Likelihood Method to recover 
 combination we simulated 150 datasets, estimated $a$, $b$, and $LD_{50}$ and calculated the standardized bias and
 precision \citep{Walther2005} for these estimates over varying pre-mortality host population sizes  $N_p$ = [300, 500, 1000, 2000, 5000, 7500,
 10000]. We used the average number of surviving hosts over all 150 simulations for a given parameter combination as our measure of sample size.  Because parameters $a$ and $b$ showed similar patterns of bias and precision, we only show the results for $a$.
+
+\subsection*{Efficacy of the Likelihood Method with unknown pre-mortality parameters}
+
+In the above simulations, we tested the power of the Likelihood Method in the ideal scenario when the pre-mortality parameters were known (or estimated independently via the Crofton Method).  In this simulation, test the ability of the Likelihood Method to correctly identify PIHM and estimate $LD_50$ when the pre-mortality parameters are not known. The simulations in the previous sections showed that the Likelihood method was highly effective at identifying PIHM and the $LD_{50}$ when $\mu_p = 10$ and $k_p = 1$, and as an illustrative example of the limitations of the Likelihood Method, we only use these pre-mortality values when simulating the dataset.
 
 \subsection*{Application to real data}
 
@@ -317,17 +328,8 @@ increasing as sample size decreased (SI2 Fig 3, 4). The $LD_{50}$ estimates from
 Method showed large decreases in precision occurring
 for the steepest survival function across all values of $\mu_p$ (Figure \ref{fig:biasld50}, SI2 Fig 3, 4).
 
-% Change statistical alpha to something else so I don't confuse it with pathogenecity alpha.
 
 % Set sample size to be small. (50 or 100) and then vary k and mu, Make some sort of heat map to show this?
-
-% What figures do we want to show?  Represent figures in a single frame? Pick one that shows the general pattern? Maybe drop the a figure to the Supplement?
-
-% Crop Figure 2 and merge Fig 3-4 to have 4 panels.
-
-% Fiddle with Figure 1 to make it a plate in The new figure 2? Inset it in some way.
-
-% Figure 3: Just focus on small (100) size and vary mu and k and see what happens. (Chose steep survival function for LD50)
 
 In terms of the host survival function, the Likelihood Method gave
 asymptotically unbiased estimates of $a$ as sample size increased for
@@ -349,7 +351,7 @@ dataset in which the Likelihood Method did not detect a significant effect of PI
 for female \emph{S. tumbil}.  For this dataset there was a marginally significant effect
 of PIHM ($\chi^2_{df=2} = 5.34; p = 0.069$).
 
-The Adjei Method detected PIHM in 9 of the 10 datasets (Table \ref{table:pihm}), consistent with our simulation results that the Adjei Method has a high Type I error rate [additional data? to emphasize this point. Raccoon data?].
+The Adjei Method detected PIHM in 9 of the 10 datasets (Table \ref{table:pihm}), consistent with our simulation results that the Adjei Method has a high Type I error rate.
 
 \section*{Discussion}
 
@@ -367,37 +369,44 @@ method is a significant improvement over the previous methods because it require
 provides a statistical decision rule for identifying PIHM and does not require
 any data manipulation.
 
-Using simulated data, we found that the Likelihood Method always out performs the Adjei Method. For simply detecting the presence of PIHM, the Likelihood
-Method is both more powerful and has fewer false detection events (Type I
-errors) [tense?].  When both methods were applied to published datasets previously used
+Using simulated data, we found that the Likelihood Method always out performed the Adjei Method. For simply detecting the presence of PIHM, the Likelihood
+Method was both more powerful and had fewer false detection events (Type I
+errors).  When both methods were applied to published datasets previously used
 in PIHM analyses, the Adjei Method tended to detect PIHM where it had not previously been
 reported, consistent with the high Type I error rate observed in our
-simulations. The Likelihood Method is also more precise and less
+simulations. The Likelihood Method was also more precise and less
 biased in calculations of both the parasite $LD_{50}$ and host survival curve over the parameter values we considered.
-However, while only the Likelihood Method produces precise and unbiased $LD_{50}$
-estimates, neither method can provide unbiased estimates of the host survival
+However, while only the Likelihood Method produced precise and unbiased $LD_{50}$
+estimates, neither method could provide unbiased estimates of the host survival
 function at realistic sample sizes.  These simulations demonstrate that
 the Likelihood Method is more powerful and precise than the previously propose Adjei Method.
 
-Although superior to the Adjei Method, the Likelihood Method may still not always be
-applicable to real data.  The Likelihood Method requires relatively large
-sample sizes (n>50-100) [Are these relatively large? They seem small to me], that although reasonable
-to obtain for invertebrates or small fish may be completely unfeasible for many
-vertebrates, particularly the species of conservation concern where addressing
-the impact of parasitism would be most important [citation?]. An even larger sample size is
-required to capture the full parasite distribution when parasites are highly
-aggregated, mean infection intensity is high, or parasite prevalence is low [same as aggregation],
-all of which are common in many parasitic helminths.  Low parasite-induced host
-mortality, as might be predicted in many definitive hosts, may also be very
-difficult to detect and require impossibly large sample sizes. And, even
-when sample size is sufficient, these methods can only detect PIHM is the host
-survival curve is non-linear \citep{Lanciani1989}. Most host-parasite models assume a linear
-relationship between survival and infection intensity \citep{AndersonandMay1978,McCallum2000a}, however
-nonlinear survival functions are not uncommon in empirical host-parasite
-systems \citep{Benesh2011}.  And, while linear functions make PIHM undetectable, at the other extreme, steep, non-linear survival curves produce severely biased estimates of the survival function. Even the Likelihood Method is probably limited to
-detecting PIHM and estimating $LD_{50}$ in systems where greater than 50 hosts can be
-collected, parasites are common and only moderately aggregated, and
-substantial host mortality occurs at relatively low parasite intensity.
+Although superior to the Adjei Method, the Likelihood Method may still not
+always be applicable to real data.  Our simulations showed when the when pre-
+mortality parameters were not set a priori, the Likelihood Method needed at
+least X samples to have 80\% power and for steep survival functions and even
+more as the survival function became more gradual. While these sample sizes are
+reasonable for hosts such as invertebrates or small fish, they are completely
+unfeasible for many vertebrates, particularly the species of conservation
+concern where addressing the impact of parasitism would be most important. An
+even larger sample size would be required to capture the full parasite
+distribution when parasites are highly aggregated, mean infection intensity is
+high, or parasite prevalence is low [same as aggregation], all of which are
+common in many parasitic helminths.  Low parasite-induced host mortality, as
+might be predicted in many definitive hosts, may also be very difficult to
+detect and require impossibly large sample sizes. And, even when sample size is
+sufficient, these methods can only detect PIHM when the host survival curve is
+non-linear \citep{Lanciani1989}. Most host-parasite models assume a linear
+relationship between survival and infection intensity
+\citep{AndersonandMay1978,McCallum2000a}, however non-linear survival functions
+are not uncommon in empirical host-parasite systems \citep{Benesh2011}.  And,
+while linear functions make PIHM undetectable, at the other extreme, steep,
+non-linear survival curves produce severely biased estimates of the survival
+function. Give the interaction between all of these different factors, the
+Likelihood Method is probably limited to detecting PIHM and estimating
+$LD_{50}$ in systems where greater 100 hosts can be collected, parasites are
+common and only moderately aggregated, and substantial host mortality occurs at
+relatively low parasite intensity.
 
 While we have improved on the existing methods for quantifying
 PIHM from parasite intensity data, all such methods require several
@@ -512,55 +521,19 @@ We thank X for their useful comments. This work was supported by X.
 
 \end{tikzpicture}
 
-\caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I Error and Power of the Likelihood Method and Adjei Method. B) gives the Type I Error of each method over a range of pre-mortality sample sizes with $\mu_p = 50$ and $k_p = 0.5$. The red line shows the pre-set significance level of 0.05. C) gives the Power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I Error than the Adjei Method.  See the SI X Fig X - X for Type I Error and Power results for all parameter combinations.}
+\caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes that we do not include in the simulations. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I Error and Power of the Likelihood Method and Adjei Method. B) Gives the Type I Error of each method over a range of pre-mortality sample sizes with a pre-mortality mean parasite intensity ($\mu_p$) of 50 and pre-mortality parasite aggregation ($k_p$) at 0.5. The red line shows the pre-set significance level of 0.05. C) Gives the Power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I Error than the Adjei Method.  See the SI 3 Fig 1 - 3 for Type I Error and Power results for all parameter combinations.}
 
 \end{figure}
 
 \begin{figure}
     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure2_for_manuscript.pdf}
 
-    \caption{Bias and precision (coefficient of variation) for the Likelihood Method and Adjei Method estimates of the $a$ parameter and the $LD_{50}$ of the host survival function based on simulated PIHM data over a range of post-mortality sample sizes. The pre-mortality parameters for this simulation were $\mu_p = 50$ and $k_p = 0.5$.  The figure shows the simulations for three different host survival functions (gradual, moderate, and steep) with the same $LD_{50}$.  Bias and precision results for all other parameter combinations can be found in Fig X - X in SI X.}
+    \caption{Bias (\textbf{A}) and precision (\textbf{B}) (coefficient of variation) for the Likelihood Method and Adjei Method estimates of the $a$ parameter and the $LD_{50}$ of the host survival function based on simulated PIHM data over a range of post-mortality sample sizes. The pre-mortality parameters for this simulation were $\mu_p = 50$ and $k_p = 0.5$.  The figure shows the simulations for three different host survival functions (gradual, moderate, and steep), each with the same $LD_{50}$.  Bias and precision results of $LD_{50}$ and $a$ for all other parameter combinations can be found in SI 3 Fig 4 - 9.}
 
     \label{fig:question2}
+
 \end{figure}
 
-
-% \begin{figure}
-%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/conceptual_fig.pdf}
-
-%     \caption{Five potential shapes for a host-survival functions. PIHM should be easier to detect for steeper host survival functions \citep{Lanciani1989}, but we may expect the bias in the parameter estimates to increase as it becomes increasingly difficult to distinguish between steep survival functions.}
-%     \label{fig:surv}
-% \end{figure}
-
-% \begin{figure}
-
-%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/typeIpower_figure_for_mu10}
-
-%     \caption{The Type I error rate and the power of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$.  The first column gives the Type I error rate of each method for falsely detecting PIHM when none is present.  The red line gives the the pre-set Type I error rate of $\alpha = 0.05$.  The second column gives the power of a given method to detect PIHM when it is actually occurring. }
-%     \label{fig:typeI10}
-
-% \end{figure}
-
-
-% \begin{figure}
-
-%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/bais_prec_figure_for_ld50_mu10}
-
-%     \caption{The bias and the precision of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$ when estimating $LD_{50}$.  The first column gives the bias of each method's $LD_{50}$ estimate over 150 simulations. The second column gives the precision of each method's $LD_{50}$ estimate over 150 simulations.}
-
-%     \label{fig:biasld50}
-
-% \end{figure}
-
-% \begin{figure}
-
-%     \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/bais_prec_figure_for_a_mu10}
-
-%     \caption{The bias and the precision of the Likelihood Method (solid line) and the Adjei Method (dashed lines) when $\mu_p = 10$ for various shapes of the host survival function and levels of aggregation $k_p$ when estimating the $a$ parameter of the host survival function.  The first column gives the bias of each method's $a$ estimate over 150 simulations. The second column gives the precision of each method's $a$ estimate over 150 simulations.}
-
-%     \label{fig:biasa}
-
-% \end{figure}
 
 \end{document}
 
