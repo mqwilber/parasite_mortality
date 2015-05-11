@@ -21,7 +21,7 @@ ks = [1]
 mu_ld50 = {10: ([(5, -2.5), (10, -5), (20, -10)], [])}
 
 Nps = np.round(np.logspace(1.8, 3.5, 10, base=10)).astype(np.int)#[50, 100, 200, 300, 400, 500] #[300, 500, 1000, 2000, 5000, 7500, 10000]
-N_samp = 150
+N_samp = 300
 
 scenario_1_results = {}
 
@@ -68,4 +68,9 @@ for mup in mu_ld50.iterkeys():
 
         scenario_1_results[mup][ld50][kp][Np] = (results_like, samp_sizes)
 
-pd.to_pickle(scenario_1_results, "../results/full_likelihood_analysis_results.pkl")
+
+# This saves the likelihood results with different means
+#pd.to_pickle(scenario_1_results, "../results/full_likelihood_analysis_results.pkl")
+
+# This saves the likelihood results with different means
+pd.to_pickle(scenario_1_results, "../results/full_likelihood_analysis_results_just_10.pkl")
