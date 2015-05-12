@@ -85,9 +85,9 @@
 
 The algorithm for fitting the Crofton Method \citep{Crofton1971a} proceeds as follows. First, obtain a dataset
 with $n$ hosts where each host has some parasite intensity 0 to $p_{max}$. Starting
-with the full dataset, guess a vector of pre-mortality parameters $(N_p, \mu_p, k_p)$ and given
-these parameters calculate the predicted number of hosts with $0, 1, 2, \dots
-p_{max}$.  Compare the expected number of hosts with $0, 1, 2, \dots  p_{max}$ parasites
+with the full dataset, guess a vector of pre-mortality parameters $(N_p, \mu_p, k_p)$ where $N_p$ is the total number of hosts before mortality, $\mu_p$ is the parasite intensity before mortality, and $k_p$ is the parasite aggregation before mortality. Given
+these parameters, use a negative binomial distribution to calculate the predicted number of hosts with $0, 1, 2, \dots
+p_{max}$ parasites.  Compare the expected number of hosts with $0, 1, 2, \dots  p_{max}$ parasites
 to the observed number hosts with $0, 1, 2, \dots p_{max}$ parasites and calculate
 the $\chi^2$-squared statistic associated with your observed and predicted vectors. In reality, one often has to bin the parasite intensity data because all
 parasite intensities are not represented in the dataset. Continue to guess $(N_p,
@@ -95,15 +95,15 @@ mu_p, k_p)$ vectors until a set of parameters is found that minimizes the $\chi^
 squared statistic.
 
 Second, choose a truncation value ($t_1$) such that $t_1 <
-p_{max}$. Truncate the data such that $\text{data}_\text{truncated} <= t$ and repeat the above
+p_{max}$. Truncate the data such that $\text{data}_\text{truncated} <= t_1$ and repeat the above
 iterative procedure to calculate another set of parameters $(N_{p2}, \mu_{p2}, k_{p2})$
 that minimizes the $\chi^2$-squared statistic on the truncated data. Choose a new
-truncated value $t_2 < t_1$ and repeat the first two steps. Continue to truncated
+truncated value $t_2 < t_1$ and repeat the first two steps. Continue to truncate
 the dataset until it only contains hosts with 0, 1, and 2 parasites (or 3 bins).
-As the method attempts to estimate three parameters, at least 3 classes are
-needed if all 3 parameters are to be identifiable \citep{Royce1990}.
+Because the method attempts to estimate three parameters, at least 3 classes are
+needed for all 3 parameters to be identifiable \citep{Royce1990}.  Parasite-induced host mortality is traditionally identified by then plotting your truncation values $t_i$ against your different values of $N_{po}$ and looking for a distinct kink in the resulting plot.
 
-We provide an implementation and unit tests of the Crofton Method Supplementary Information 4.  Figure \ref{fig:crof_test} visually shows that our implementation of the Crofton Method agrees with results previously published by \cite{Crofton1971a}.
+We provide an implementation and unit tests of the Crofton Method in  Supplementary Information 4.  Figure \ref{fig:crof_test} visually shows that our implementation of the Crofton Method agrees with results previously published by \cite{Crofton1971a}.
 
 \section*{Appendix 2: Implementation of the Adjei Method}
 
@@ -132,7 +132,7 @@ experience mortality.
 
 To estimate this function, the Adjei Method first
 calculates the expected number of hosts with a given parasite load $x$ by using
-the equation $g(x ; \mu_p, k_p) * N_p$, where $g(x ; \cdot)$ is the negative binomial pre-mortality distribution.  Second, the observed and predicted number of hosts
+the equation $g(x ; \mu_p, k_p) * N_p$, where $g(x ; \mu_p, k_p)$ is the negative binomial pre-mortality distribution.  Second, the observed and predicted number of hosts
 with $x$ parasites are paired as a single data point and the method then assumes that
 this data point follows a binomial distribution with the total number of
 ``trials'' equal to the predicted number of hosts and the total number of
@@ -194,7 +194,10 @@ See Figures 1 - 9.
 
 Python code, unit tests, and a help file for the Crofton Method, the Adjei Method and the Likelihood Method can be found in \verb*#pihm_methods.py#, \verb*#test_pihm_methods.py#, and \verb*#help_file.txt#, respectively.
 
-% These can be in the supplementary in later drafts!
+
+\singlespacing
+\bibliographystyle{/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst}
+\bibliography{/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality}
 
 \begin{figure}
 
@@ -291,11 +294,6 @@ Python code, unit tests, and a help file for the Crofton Method, the Adjei Metho
 
 \end{figure}
 
-
-
-\singlespacing
-\bibliographystyle{/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst}
-\bibliography{/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality}
 
 \end{document}
 
