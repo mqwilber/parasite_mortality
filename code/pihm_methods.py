@@ -9,6 +9,7 @@ import pymc as pm
 import matplotlib.pyplot as plt
 from scipy.stats import chisqprob
 
+
 """
 Module contains the updated functions and classes for assessing
 parasite-induced host mortality (PIHM)
@@ -329,9 +330,11 @@ class PIHM:
             if None in list(self.get_premort_params())[1:]:
                 raise TypeError("mup, kp must be preset")
 
-            params = opt.fmin(likefxn2, guess, args=(self.data, self.mup,
-                        self.kp), disp=disp)
-            out_params = [self.mup, self.kp] + list(params)
+            cons = lambda x: x[1] - x[0]
+            params = opt.fmin_cobyla(likefxn2, guess, cons, args=(self.data,
+                self.mup, self.kp), consargs=(self.data, self.mup, self.kp),
+            maxfun=3)
+            out_params = [self.mup, self.kp] + list(params['x'])
 
         else:
 
@@ -505,10 +508,10 @@ def pihm_pmf(x, mup, kp, a, b, max_sum=5000):
 
     """
 
-
     kern = lambda x: surv_prob(x, a, b) * \
                                     mod.nbinom.pmf(x, mup, kp)
     return(kern(x) / sum(kern(np.arange(0, max_sum))))
+
 
 def likefxn_def(mu, k, a, b, x):
     """ Likelihood fxn for all parameters for pihm pmf
@@ -517,7 +520,6 @@ def likefxn_def(mu, k, a, b, x):
     """
 
     return -np.sum(np.log(pihm_pmf(x, mu, k, a, b)))
-
 
 
 def likefxn1(params, x):
@@ -685,7 +687,7 @@ def extract_full_likelihood_simulation(sim_results, keys, param,
         res = sims[Np]
 
         p_vals, ab_vals = zip(*res[0])
-        a_vals, b_vals  = zip(*ab_vals)
+        a_vals, b_vals = zip(*ab_vals)
 
         N_vals = res[1]
 
@@ -706,7 +708,6 @@ def extract_full_likelihood_simulation(sim_results, keys, param,
             # Power
             precisions.append(np.sum(np.array(powerp) < alpha) / len(powerp))
             biases.append(np.nan)
-
 
         else:
             raise KeyError("Don't recognize parameter: should be p or ld50")
@@ -731,16 +732,42 @@ def split_data(bin_edges):
 
 def surv_prob(x, a, b):
     """
-    Calculate survival probability given a parasite load x
+    Calculate survival probability given a parasite load x.  Using a piece-wise
+    function to calculate survival probability in which a represents the level
+    at which parasite-induced host mortality starts occuring and b is how much
+    the probability of host survival decreases
+
+    Let a = the truncation value. Greater than PIHM occurs
+    Let b = the parasite load at which all hosts are dead
     """
+
+    #assert(b >= a)
     x = np.atleast_1d(x)
 
     probs = np.empty(len(x))
-    probs[x == 0] = 1
-    ind = x != 0
-    probs[ind] = np.exp(a + b * np.log(x[ind])) / (1 + np.exp(a + b * np.log(x[ind])))
+    probs[x <= a] = 1
+
+    ind = x > a
+
+    probs[ind] = (1 / (a - b)) * x[ind] - (b / (a - b))
+
+    probs[probs < 0] = 0
+    probs[probs > 1] = 1
 
     return probs
+
+# def surv_prob(x, a, b):
+#     """
+#     Calculate survival probability given a parasite load x
+#     """
+#     x = np.atleast_1d(x)
+
+#     probs = np.empty(len(x))
+#     probs[x == 0] = 1
+#     ind = x != 0
+#     probs[ind] = np.exp(a + b * np.log(x[ind])) / (1 + np.exp(a + b * np.log(x[ind])))
+
+#     return probs
 
 def fit_glm(all_data):
     """
