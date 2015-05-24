@@ -11,3 +11,10 @@ May 7, 2015
 4. Add in Sara's changes
 5. Fill out citations
 6. <s>Edit supplementary material</s>
+
+**May 23, 2015**
+
+1. Add in Cherie's comment 
+2. Look over Kevin's comments
+3. Re phrase a and b in terms of something actually meaningful
+    - Though that being said
