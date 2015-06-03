@@ -73,7 +73,8 @@ class PIHM:
         return mod.nbinom.fit_mle(self.data, k_array=k_array)
 
 
-    def crofton_method(self, crof_bin_edges, guess=None):
+    def crofton_method(self, crof_bin_edges, guess=None, bounded=False,
+        upper=[2, 2, 5]):
         """
         Crofton's method for estimating the pre-mortality parameters N_p
         (population size before mortality),
@@ -85,8 +86,6 @@ class PIHM:
 
         Parameters
         ----------
-        data : array
-            Parasite data across hosts
         crof_bin_edges : list
             List specifying upper and lower bin boundaries. Upper right most bin
             boundary is inclusive; all other upper bounds are exclusive.  Example:
@@ -98,6 +97,12 @@ class PIHM:
             If tuple, should be a guess for mu and k of the negative binomial.
             If None, uses fitted mu and k for a guess.
 
+        bounded : bool
+            If True, uses a bounded minimizer.  Else uses an unbounded
+        upper : list
+            A list of multipliers/upper bounds. The first multiplies the N upper
+            bound, the second item multiplies the mu upper bound, and the third
+            item specifies the k upper bound.
         Returns
         -------
         : Np, mup, kp
@@ -126,10 +131,24 @@ class PIHM:
             # Minimizing chi-squared
             return np.sum((obs - pred)**2 / pred)
 
-        full_out = opt.fmin(opt_fxn, np.array([N_guess, mu_guess, k_guess]),
-                                        disp=0)
+        if not bounded:
+
+            full_out = opt.fmin(opt_fxn, np.array([N_guess, mu_guess, k_guess]),
+                                            disp=0)
+
+            opt_params = full_out
+
+        else:
+
+            bounds = [(0, upper[0]*N_guess), (0, upper[1]*mu_guess),
+                                (0.001, upper[2])]
+            full_out = opt.fmin_l_bfgs_b(opt_fxn,
+                            np.array([N_guess, mu_guess, k_guess]),
+                            bounds=bounds, approx_grad=True, disp=0)
+            opt_params = full_out[0]
+
+
         # Calculate predicted in bins
-        opt_params = full_out
         # pred = [opt_params[0] * np.sum(mod.nbinom.pmf(s, opt_params[1],
         #     opt_params[2])) for s in splits]
 
@@ -330,7 +349,7 @@ class PIHM:
                 raise TypeError("mup, kp must be preset")
 
             params = opt.fmin(likefxn2, guess, args=(self.data, self.mup,
-                        self.kp), disp=disp)
+                        self.kp), disp=disp, maxiter=10000, maxfun=10000)
             out_params = [self.mup, self.kp] + list(params)
 
         else:
@@ -338,7 +357,7 @@ class PIHM:
             mu_guess = np.mean(self.data)
             k_guess = 1
             out_params = opt.fmin(likefxn1, [mu_guess, k_guess] + guess,
-                        args=(self.data,), disp=disp)
+                        args=(self.data,), disp=disp, maxiter=10000, maxfun=10000)
 
         self.mup, self.kp, self.a, self.b = out_params
 
