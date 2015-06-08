@@ -112,7 +112,7 @@ analyses and wrote the manuscript, CB designed research and contributed to revis
 
 \textbf{Affiliations:} &
 1) Department of Ecology, Evolution and Marine Biology, University of California,
-Santa Barbara, Santa Barbara California \\
+Santa Barbara, Santa Barbara California, United States of America \\
 
 \textbf{Email addresses:} &
 Mark Wilber: mark.wilber@lifesci.ucsb.edu \newline
@@ -164,9 +164,20 @@ that limit their applicability in the real world. Due to these limitations,
 these methods should only be used as an exploratory tool to inform more
 rigorous studies of parasite-induced host mortality.
 
-\textbf{Keywords}: parasite aggregation, negative binomial distribution, Crofton Method, host survival function, $LD_{50}$
+\textbf{Keywords}: parasite aggregation, negative binomial distribution, Crofton Method, host survival function, lethal dose
 
 }
+
+\bigskip
+
+\noindent
+\textbf{Highlights}
+\begin{itemize}
+    \item We develop and test a novel method for detecting and quantifying parasite-induced host mortality from parasite intensity data.
+    \item Our method outperforms previous methods for detecting parasite-induced host mortality.
+    \item Our method correctly quantifies parasite-induced host mortality in empirical data where mortality has been qualitatively reported
+    \item  All current methods for detecting parasite-induced host mortality have fundamental and untestable assumptions that limit their applicability to many datasets.
+\end{itemize}
 
 \doublespacing
 
@@ -274,7 +285,7 @@ theoretical models of parasite-induced host mortality assume that the parasite-i
 To compare the Likelihood Method and the previously proposed Adjei Method, we adopt the non-linear, logistic host-survival function used in the earlier study given by
 
 \begin{equation}
-    h(\text{survival}; x, a, b) = \dfrac{e^{a - b \log(x)}}{1 + e^{a - b \log(x)}}
+    h(\text{survival}; x, a, b) = \dfrac{\exp{(a - b \log(x))}}{1 + \exp{(a - b \log(x))}}
     \label{eq:logistic}
 \end{equation}
 
@@ -446,7 +457,7 @@ Most observed parasite distributions are well fit by the negative binomial distr
 that systems where these methods are applicable may be more the exception than
 the rule.  Furthermore, even when truncation of the negative binomial distribution is detected, it may be caused by other
 processes such as within host density dependence, age dependent variation in host
-resistance and/or heterogeneous infection rates \citep{McCallum2000a,Anderson1982a,Rousset1996}.  This means that in the event
+resistance and/or heterogeneous infection rates \citep{Anderson1982a,Rousset1996, McCallum2000a}.  This means that in the event
 that PIHM is detected, it may actually not be the result of PIHM.
 
 Given these numerous caveats, is there a place in parasitology for methods that
@@ -468,8 +479,8 @@ We thank Hamish McCallum for discussions on the inadequacy of estimating PIHM fr
 
 
 \singlespacing
-\bibliographystyle{/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst}
-\bibliography{/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality}
+\bibliographystyle{int_j_para.bst}
+\bibliography{parasite_host_mortality}
 
 \newpage
 
@@ -557,7 +568,7 @@ We thank Hamish McCallum for discussions on the inadequacy of estimating PIHM fr
 
     \end{tikzpicture}
 
-    \caption{A schematic representation of the iterative approach of the Crofton Method. \textbf{A)} The light gray shows the pre-mortality distribution that the Crofton Method is trying to estimate from the dark grey post-mortality distribution.  The Crofton Method proceeds by truncating the post-mortality data at different levels ($t_i$, e.g. $i= 0, \dots, 5$) and finding the parameters pre-mortality host population size ($N_p$), pre-mortality mean parasite intensity ($\mu_p$), and pre-mortality parasite aggregation ($k_p$) that best fit the truncated data. \textbf{B)} The parameter $N_p$ is then plotted against the truncation level $t_i$ to determine if a ``kink'' occurs in the parameter values  \citep{Lester1984}. This ``kink'' indicates that PIHM is occurring in the system. In the above example, PIHM is occurring in the system as visualized by the distinct ``kink'' at $t_3$.}
+    \caption{A schematic representation of the iterative approach of the Crofton Method. \textbf{A)} The light gray shows the pre-mortality distribution that the Crofton Method is trying to estimate from the dark grey post-mortality distribution.  The Crofton Method proceeds by truncating the post-mortality data at different levels ($t_i$, e.g. $i= 0, \dots, 5$) and finding the pre-mortality host population size ($N_p$), pre-mortality mean parasite intensity ($\mu_p$), and pre-mortality parasite aggregation ($k_p$) that best fit the truncated data. \textbf{B)} The parameter $N_p$ is then plotted against the truncation level $t_i$ to determine if a ``kink'' occurs in the parameter values  \citep{Lester1984}. This ``kink'' indicates that PIHM is occurring in the system. In the above example, PIHM is occurring in the system as visualized by the distinct ``kink'' at $t_3$.}
     \label{fig:crofton}
 
 \end{figure}
