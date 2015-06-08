@@ -18,3 +18,13 @@ May 7, 2015
 2. Look over Kevin's comments
 3. Re phrase a and b in terms of something actually meaningful
     - Though that being said
+
+**June, 8 , 2015**
+
+1. <s>Decide on journal (International Journal of Parasitology)</s>
+2. Set-up citation style for IJP
+3. Fix citation order in text
+4. Fix typos in references
+5. Read through and edit thoroughly
+6. Get EEID grant number
+7. SUBMIT!
