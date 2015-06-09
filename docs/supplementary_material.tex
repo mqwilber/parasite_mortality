@@ -118,12 +118,12 @@ total number of hosts before mortality $N_p$,  the mean number of parasites per
 host before mortality $\mu_p$, and the aggregation of parasites before
 mortality given by the parameter $k_p$ from a negative binomial distribution.
 When $k_p$ is small, parasites are highly aggregated among hosts and when
-$k_p$ is large parasites are more evenly distributed across hosts \citep{Wilson2002}.  The implementation of the Crofton Method has been discussed at length elsewhere \citep[e.g.][ and in \emph{SI} 4]{Royce1990,Lester1984} and we provide a tested implementation of the method in SI 4.
+$k_p$ is large parasites are more evenly distributed across hosts \citep{Wilson2002}.  The implementation of the Crofton Method has been discussed at length elsewhere \citep[e.g.][ and in \emph{SI} 1]{Royce1990,Lester1984} and we provide a tested implementation of the method in \emph{SI} 4.
 
-The second step of the Adjei Method is to make the assumption that infection, host mortality, and sampling occur in that order and are temporally \cite{Adjei1986}. Next, the \citeauthor{Adjei1986} assume that the host survival function follows the logistic form
+The second step of the Adjei Method is to make the assumption that infection, host mortality, and sampling occur in that order and are temporally \cite{Adjei1986}. Next, \citeauthor{Adjei1986} assume that the host survival function follows the logistic form
 
 \begin{equation}
-    h(x | a, b) = h_x = \dfrac{e^{a - b \log(x)}}{1 + e^{a - b \log(x)}}
+    h(\text{survival}; x, a, b) = \dfrac{\exp{(a - b \log(x))}}{1 + \exp{(a - b \log(x))}}
     \label{eq:logistic}
 \end{equation}
 where $x$ is the parasite intensity in a given host and $a$ and $b$ are the two
@@ -184,8 +184,8 @@ Python code, unit tests, and a help file for the Crofton Method, the Adjei Metho
 
 
 \singlespacing
-\bibliographystyle{/Users/mqwilber/Dropbox/Documents/Bibformats/ecology_letters.bst}
-\bibliography{/Users/mqwilber/Dropbox/Documents/Bibfiles/Projects_and_Permits-parasite_host_mortality}
+\bibliographystyle{int_j_para.bst}
+\bibliography{parasite_host_mortality}
 
 \begin{figure}
 
@@ -277,7 +277,7 @@ Python code, unit tests, and a help file for the Crofton Method, the Adjei Metho
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/compare_crofton.pdf}
-    \caption{A comparison of this papers implementation (solid line, circles) of the Crofton Method with the results given in \cite{Crofton1971a} (dashed line, diamonds).  Figure A compares the predicted number of hosts in a population pre-mortality ($N_p$). Figure B compares the predicted parasite aggregation pre-mortality ($k_p$).  Figure C compares the $\chi^2$ statistic for each implementation.  Three of the 6 stations fit by \citeauthor{Crofton1971a} are shown here and all show that our implementation gives very similar results to those given by \citeauthor{Crofton1971a}.}
+    \caption{A comparison of this paper's implementation (solid line, circles) of the Crofton Method with the results given in \cite{Crofton1971a} (dashed line, diamonds).  Figure A compares the predicted number of hosts in a population pre-mortality ($N_p$). Figure B compares the predicted parasite aggregation pre-mortality ($k_p$).  Figure C compares the $\chi^2$ statistic for each implementation.  Three of the 6 stations fit by \citeauthor{Crofton1971a} are shown here and all show that our implementation gives very similar results to those given by \citeauthor{Crofton1971a}.}
     \label{fig:crof_test}
 
 \end{figure}

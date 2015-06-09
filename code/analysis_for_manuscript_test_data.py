@@ -1,5 +1,4 @@
 import pihm_methods as pm
-reload(pm)
 import numpy as np
 import pandas as pd
 
@@ -13,6 +12,8 @@ A couple different tests
 
 1. Run Crofton Method and then test for PIHM (Adjei and Likelihood)
 2. For Likelihood, fit with all parameters
+
+These results are given in Table 2 in the manuscript
 
 """
 

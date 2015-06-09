@@ -11,6 +11,13 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import macroeco.models as mod
 
+"""
+Dsecription
+------------
+Unittests for methods given in pihm_methods
+
+"""
+
 class TestPIHM(TestCase):
 
     def test_crofton_method(self):
@@ -133,7 +140,8 @@ class TestPIHM(TestCase):
 
         assert_array_almost_equal(crof_st3_ks, our_st3_ks, decimal=1)
 
-        # Close to equal but not quite
+        # Close to equal but not quite.  Which is ok.  We don't expect them
+        # to be exactly equal
         # Uncomment and run nosetests to see
 
         # assert_array_equal(crof_st3_N, our_st3_N)

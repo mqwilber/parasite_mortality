@@ -394,7 +394,7 @@ FUNCTION {format.names}
   numnames 'namesleft :=
     { namesleft #0 > }
     { s nameptr
-      "{vv~}{ll}{, jj}{, f.}" format.name$
+      "{v }{ll}{, f{.}.}" format.name$
     't :=
       nameptr #1 >
         {
@@ -507,13 +507,6 @@ FUNCTION {format.title}
   if$
 }
 
-FUNCTION {format.titleincollection}
-{ title empty$
-    { "" }
-    { title ". " * word.in *
-    }
-  if$
-}
 
 FUNCTION {format.journal}
 { journal empty$
@@ -1092,7 +1085,7 @@ FUNCTION {incollection}
   format.title "title" output.check
   new.block
   crossref missing$
-    { format.in.ed.booktitle "booktitle" output.check
+    { word.in * format.in.ed.booktitle "booktitle" output.check
       new.sentence
       format.publisher.address output
     }
@@ -1297,15 +1290,15 @@ FUNCTION {format.lab.names}
   s num.names$ duplicate$
   #2 >
     { pop$
-      " " * bbl.etal emphasize *
+      " " * bbl.etal *
     }
     { #2 <
         'skip$
         { s #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
             {
-              " " * bbl.etal emphasize *
+              " " * bbl.etal *
             }
-            { " \& " * s #2 "{vv~}{ll}" format.name$
+            { " and " * s #2 "{vv~}{ll}" format.name$
               * }
           if$
         }

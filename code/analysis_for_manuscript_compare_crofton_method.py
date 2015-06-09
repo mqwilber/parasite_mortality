@@ -1,6 +1,5 @@
 import numpy as np
-import crofton_method as cm
-reload(cm)
+import pihm_methods as pm
 
 """
 Description
@@ -71,12 +70,15 @@ crof_st1_compare_ss = []
 for i in trunc:
 
     bin_edges = list(np.arange(0, i + 1)) + [i + 0.9]
-    our_meth = cm.crofton_method(st1_raw, bin_edges)
-    N, mu, k = our_meth[0]
+    pm_obj = pm.PIHM(st1_raw)
+
+
+
+    N, mu, k = pm_obj.crofton_method(bin_edges)
     our_st1_ks.append(k)
     our_st1_N.append(N)
 
-    our_pred = cm.get_pred(N, mu, k, np.arange(0, 10))[0]
+    our_pred = pm_obj.obs_pred(np.arange(0, 10))['predicted']
     crof_ss = chi_sq(st1_pred[i], st1_obs)
     our_ss = chi_sq(our_pred, st1_obs)
     crof_st1_compare_ss.append((crof_ss, our_ss))
@@ -92,12 +94,13 @@ crof_st2_compare_ss = []
 for i in trunc:
 
     bin_edges = list(np.arange(0, i + 1)) + [i + 0.9]
-    our_meth = cm.crofton_method(st2_raw, bin_edges)
-    N, mu, k = our_meth[0]
+    pm_obj = pm.PIHM(st2_raw)
+
+    N, mu, k = pm_obj.crofton_method(bin_edges)
     our_st2_ks.append(k)
     our_st2_N.append(N)
 
-    our_pred = cm.get_pred(N, mu, k, np.arange(0, 10))[0]
+    our_pred = pm_obj.obs_pred(np.arange(0, 10))['predicted']
     crof_ss = chi_sq(st2_pred[i], st2_obs)
     our_ss = chi_sq(our_pred, st2_obs)
     crof_st2_compare_ss.append((crof_ss, our_ss))
@@ -115,12 +118,13 @@ crof_st3_compare_ss = []
 for i in trunc:
 
     bin_edges = list(np.arange(0, i + 1)) + [i + 0.9]
-    our_meth = cm.crofton_method(st3_raw, bin_edges)
-    N, mu, k = our_meth[0]
+    pm_obj = pm.PIHM(st3_raw)
+
+    N, mu, k = pm_obj.crofton_method(bin_edges)
     our_st3_ks.append(k)
     our_st3_N.append(N)
 
-    our_pred = cm.get_pred(N, mu, k, np.arange(0, 10))[0]
+    our_pred = pm_obj.obs_pred(np.arange(0, 10))['predicted']
     crof_ss = chi_sq(st3_pred[i], st3_obs)
     our_ss = chi_sq(our_pred, st3_obs)
     crof_st3_compare_ss.append((crof_ss, our_ss))
