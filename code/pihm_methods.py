@@ -11,7 +11,8 @@ from scipy.stats import chisqprob
 
 """
 Module contains the updated functions and classes for assessing
-parasite-induced host mortality (PIHM)
+parasite-induced host mortality (PIHM).  For examples of use see the
+analysis*.py files in this same directory.
 
 """
 
@@ -20,10 +21,22 @@ class PIHM:
     Class PIHM (parasite-induced host morality) provides an interface for
     analyzing the effect of parasite-induced host mortality on a given dataset
 
-    Description
-    ------------
-    The class PIHM has two primary functions: 1) To test whether an observed
-    host-parasite distribution is experiencing parasite induced host morality.
+    There are 5 key paramters:
+
+    Np : Pre-mortality host population/sample size
+    mup : Premortality mean parasite intensity
+    kp : Premortality parasite aggregation.
+    a : Parameter of the host survival function.
+    b : Parameter of the host survival function.
+
+    See ../doc/parasite_mortality_manuscript.tex for a more thorough Description
+    of these parameters.
+
+    Examples
+    --------
+
+    For examples of use see the analysis*.py files in this same directory.
+
 
     """
 
@@ -40,6 +53,13 @@ class PIHM:
     def set_premort_params(self, Np, mup, kp):
         """
         Set the premortality parameters
+
+        Parameters
+        ----------
+        Np : Pre-mortality host population/sample size
+        mup : Premortality mean parasite intensity
+        kp : Premortality parasite aggregation
+
         """
 
         self.Np, self.mup, self.kp = Np, mup, kp
@@ -47,6 +67,15 @@ class PIHM:
     def set_all_params(self, Np, mup, kp, a, b):
         """
         Set the premortality parameters
+
+        Parameters
+        ----------
+
+        Np : Pre-mortality host population/sample size
+        mup : Premortality mean parasite intensity
+        kp : Premortality parasite aggregation.
+        a : Parameter of the host survival function.
+        b : Parameter of the host survival function.
         """
 
         self.Np, self.mup, self.kp, self.a, self.b = Np, mup, kp, a, b
@@ -67,7 +96,13 @@ class PIHM:
 
     def fit_nbd(self, k_array=np.linspace(0.01, 20, 100)):
         """
-        Fit a NBD to the parasite data
+        Fit a negative binomial distribution to the parasite data
+
+        Parameters
+        ----------
+        k_array : array-like
+            Array of values over which to fit
+
         """
 
         return mod.nbinom.fit_mle(self.data, k_array=k_array)
@@ -76,13 +111,12 @@ class PIHM:
     def crofton_method(self, crof_bin_edges, guess=None, bounded=False,
         upper=[2, 2, 5]):
         """
+
         Crofton's method for estimating the pre-mortality parameters N_p
-        (population size before mortality),
-
-
-        mu_p (mean parasite load before mortality), and k_p (parasite
-        aggregation before mortality).  Uses the iterative technique proposed
-        by Lester (1977), which minimizes the chi-squared statistic
+        (population size before mortality), mu_p (mean parasite load before
+        mortality), and k_p (parasite aggregation before mortality).  Uses the
+        iterative technique proposed by Lester (1977), which minimizes the chi-
+        squared statistic
 
         Parameters
         ----------
@@ -103,6 +137,7 @@ class PIHM:
             A list of multipliers/upper bounds. The first multiplies the N upper
             bound, the second item multiplies the mu upper bound, and the third
             item specifies the k upper bound.
+
         Returns
         -------
         : Np, mup, kp
@@ -160,7 +195,7 @@ class PIHM:
     def obs_pred(self, full_bin_edges):
         """
         Returns the observed and predicted vectors for the preset values of
-        Np, mup, and kp.  Will throw an error in Np, mup and kp are not defined.
+        Np, mup, and kp.  Will throw an error if Np, mup and kp are not defined.
         You can either define these manually or run the crofton_method first.
         Note that the predicted values are the predicted values WITHOUT mortality
 
@@ -175,8 +210,8 @@ class PIHM:
         Returns
         --------
         : DataFrame
-            Three columns. obs: The observed number of hosts in a given range
-            pred: the predicted number of hosts in a given range
+            Three columns. observed: The observed number of hosts in a given range
+            predicted: the predicted number of hosts in a given range
             range: The range of the data with the upper bound being exlusive.
             For example, (1, 2) specifies a host with 1 parasites. (1, 3)
             specifies a host with 1 or 2 parasites.
@@ -206,8 +241,12 @@ class PIHM:
     def adjei_method(self, full_bin_edges, crof_bin_edges, no_bins=True,
                     run_crof=False, test_sig=False):
         """
-        Implements adjei method.  Truncated negative binomial method is fit using
-        Crofton Method and Adjei method is used to estimate morality function.
+        Implements Adjei Method given in Adjei et al. (1986).
+        Truncated negative binomial method is fit using
+        Crofton Method and Adjei Method is used to estimate the host survival
+        function.  A thorough description of this method can be found at
+        ../doc/parasite_mortality_manuscript.tex and
+        ../doc/supplementary_material.tex.
 
         Parameters
         -----------
@@ -224,12 +263,14 @@ class PIHM:
             bin from [0], [1], [2], you would specify [0, 1, 2, 2.9].  You have to
             be a bit careful with the upper bound because it is INCLUSIVE.
         run_crof : bool
-            If True, runs the crofton method. Otherwise does not.
+            If True, runs the crofton method. Otherwise does not. If False, the
+            crofton parameters Np, mup, and kp must already be set. This can
+            be done either via running the crofton method or setting them
+            manually.
         test_sig : bool
-            If True, returns an additional tuple with the null_deviance, the
-            deviance, the chi-squared value,  and the p-value of full model.
-            A p-value of less than 0.05 (or alpha) indicates that PIHM is
-            significant.
+            If True, returns an additional tuple with the null_deviance and the
+            deviance.  These can be used to test for significance of PIHM. See
+            test_for_pihm_w_adjei method below.
 
         Returns
         -------
@@ -308,11 +349,12 @@ class PIHM:
             return self.get_all_params()
 
 
-    def likelihood_method(self, full_fit=True, max_sum=1000, continuous=False,
+    def likelihood_method(self, full_fit=True, max_sum=1000,
                 guess=[10, -5], disp=True):
         """
-        Using likelihood method to estimate parameter of truncated NBD and survival
-        fxn
+        Using likelihood method to estimate the parameters of the
+        truncated negative binomial (mup and kp) and the host survival fxn
+        (a, b)
 
         Parameters
         ----------
@@ -325,6 +367,9 @@ class PIHM:
             infinity, but in practice a lower upper bound works fine.
         guess : list
             Guess for a and b of the survival function
+        disp : bool
+            If True minimization convergence results are printed. If False,
+            they are not printed.
 
 
         Returns
@@ -336,9 +381,10 @@ class PIHM:
         -----
         When dealing with small sample sizes and trying to fit the full
         distribution (i.e., not using the Crofton Method), the convergence of
-        the likelihood method will often fail or multiple likelihood peaks
-        might exist.  One way around this is to use the approach of Ferguson
-        and fix k and then just try to estimate
+        the likelihood method will often fail and/or multiple likelihood peaks
+        will exist.  One way around this is to use the approach of
+        Ferguson et al. 2011 who essentailly assume a fixed k (e.g. k = 1 in
+            Ferguson et al. 2011).
 
 
         """
@@ -368,10 +414,12 @@ class PIHM:
         """
 
         Simulate parasite induced host_mortality. Uses self.Np, self.mup,
-        self.kp, self.a,  and self.b to run simulation.
+        self.kp, self.a, and self.b to run simulation.  This method allows
+        you to simulate parasite-induced host mortality.  The assumptions are
+        that sampling of hosts occurs after infection and mortality have
+        occurred. You can also include additional random death into this
+        simulation.
 
-        These must be specified for method to run.
-        An error will be thrown otherwise.
 
         Parameters
         ----------
@@ -415,16 +463,39 @@ class PIHM:
                         no_bins=True, run_crof=False):
         """
 
-        Test a dataset for parasite induced host mortality using the likelihood
-        method
+        Test a dataset for parasite induced host mortality using the adjei
+        method.  This method compares the null deviance and the deviance from
+        the GLM fit using the Adjei method to determine if including the
+        predictor parasite intensity is important for detecting morality. Uses
+        a likelihood ratio test which, for large sample sizes will be
+        approximately chi-squared witha  degrees of freedom of one.
 
-        This method compares a reduced model (negative binomial distribution)
-        to a full model (Negative binomail with PIHM).  The two models are
-        nested and differ by two parameters: a and b.  This amounts to fitting
-        the model a negative binomial distribution to the data, then fitting
-        the full model to the data and comparing likelihoods using a likelihood
-        ratio test.  The likelihood ratio should be approximately chi-squared
-        with the dof equal to the difference in the parameters.
+        Parameters
+        ----------
+        full_bin_edges : array-like
+            List specifying upper and lower bin boundaries. Upper right most bin
+            boundary is inclusive; all other upper bounds are exclusive.  Example:
+            You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
+            specify [0, 4, 7, 9.1].
+        crof_bin_edges : list
+            List specifying upper and lower bin boundaries. Upper right most bin
+            boundary is inclusive; all other upper bounds are exclusive.  Example:
+            You want to group as follows [0, 1, 3], [4, 5, 6], [7, 8, 9] you would
+            specify [0, 4, 7, 9.1].  This can be a little weird, but if you want to
+            bin from [0], [1], [2], you would specify [0, 1, 2, 2.9].  You have to
+            be a bit careful with the upper bound because it is INCLUSIVE.
+        run_crof : bool
+            If True, runs the crofton method. Otherwise does not. If False, the
+            crofton parameters Np, mup, and kp must already be set. This can
+            be done either via running the crofton method or setting them
+            manually.
+
+        Returns
+        -------
+        : tuple
+            chi_sq statistic, p-value, null_deviance, deviance, (Np, mup, kp, a, b)
+
+
 
         """
 
@@ -468,7 +539,7 @@ class PIHM:
 
         Returns
         -------
-        : chi_squared valued, p-value, full nll, reduced nll
+        : chi_squared valued, p-value, full nll, reduced nll,
         """
 
         # No params are known
@@ -496,7 +567,7 @@ class PIHM:
         chi_sq = 2 * (-full_nll - (-red_nll))
         prob = chisqprob(chi_sq, 2)
 
-        return chi_sq, prob, full_nll, red_nll, params
+        return chi_sq, prob, full_nll, red_nll, params, (mup, kp, a, b)
 
 
 def pihm_pmf(x, mup, kp, a, b, max_sum=5000):
@@ -763,11 +834,13 @@ def surv_prob(x, a, b):
 
 def fit_glm(all_data):
     """
-    Fitting the GLM in statsmodels
+    Fitting the GLM with a Binomial random component and a logistic
+    link function in statsmodels
 
     Returns
     -------
-    : a and b parameters
+    : tuple
+        a and b parameters, null deviance and deviance
     """
 
     all_data = all_data[['emp', 'pred', 'para']].copy()
