@@ -14,20 +14,20 @@ May 7, 2015
 
 **May 23, 2015**
 
-1. Add in Cherie's comment 
-2. Look over Kevin's comments
-3. Re phrase a and b in terms of something actually meaningful
-    - Though that being said
+1. <s>Add in Cherie's comment</s>
+2. <s>Look over Kevin's comments</s>
+3. <s>Re phrase a and b in terms of something actually meaningful</s>
 
 **June, 8 , 2015**
 
 1. <s>Decide on journal (International Journal of Parasitology)</s>
 2. Set-up citation style for IJP
-    - Almost! I am struggling to get the "In"
+    - <s>Almost! I am struggling to get the "In"</s>
 3. <s>Fix citation order in text</s>
 4. <s>Fix typos in references</s>
-5. Read through and edit thoroughly
+5. <s>Read through and edit thoroughly</s>
 6. Get EEID grant number
-7. Set up help file on on github site where all the code will be
-8. Write Cover letter
+7. <s>Set up help file on on github site where all the code will be</s>
+8. <s>Write Cover letter</s>
+9. Graphical abstract
 8. SUBMIT!

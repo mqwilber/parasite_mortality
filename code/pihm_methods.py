@@ -5,8 +5,6 @@ import macroeco.compare as comp
 import scipy.optimize as opt
 import pandas as pd
 import statsmodels.api as sm
-import pymc as pm
-import matplotlib.pyplot as plt
 from scipy.stats import chisqprob
 
 """
