@@ -74,21 +74,17 @@
 
 % Format the Bibliography appropriately
 % increase \bibhang to take care of the numbers
-\setlength{\bibhang}{0pc}
-\makeatletter
-% patch \@lbibitem to print the current number before the authors
-\patchcmd{\@lbibitem}
-  {]}
-  {] \theNAT@ctr. \newline }
-  {}{}
-\makeatother
+% \setlength{\bibhang}{0pc}
+% \makeatletter
+% % patch \@lbibitem to print the current number before the authors
+% \patchcmd{\@lbibitem}
+%   {]}
+%   {] \theNAT@ctr. \newline }
+%   {}{}
+% \makeatother
 
 
 %%%%%% FRONT MATTER %%%%%%%%%
-
-\title{Detecting and quantifying parasite-induced host mortality from intensity data: method comparisons and limitations}
-\author{Mark Wilber, Sara Weinstein, and Cherie Briggs}
-
 
 \begin{document}
 
@@ -229,7 +225,7 @@ apply both methods to real datasets previously used in PIHM analyses and
 compare the results. Finally, we discuss the limitations of inferring PIHM
 from intensity data and how these methods fit in modern quantitative parasitology.
 
-\section{Methods}
+\section{Materials and methods}
 
 \subsection{A novel, likelihood-based method for estimating PIHM}
 
@@ -279,7 +275,7 @@ To compare the Likelihood Method and the previously proposed Adjei Method, we ad
     \label{eq:logistic}
 \end{equation}
 
-Generally, a larger $b$ leads to a more rapid decline in the probability of host survival as parasite intensity increases, with the maximum rate of decline having a value of $b / 4$ (\emph{SI} 2). $b$ is in many ways analogous to the the pathogenicity parameter ($\alpha$) in classic macroparasite models that gives the parasite intensity dependent host death rate. \citep{AndersonandMay1978,Isham1995}. When $b$ is held constant, a larger $a$ allows for hosts to tolerate larger parasite intensities before experiencing parasite-induced mortality. More specifically, for every one unit increase in $a$ the log parasite intensity at which any percent of hosts survive (e.g. 99\% of hosts survive) increases by $ 1 / b$ (\emph{SI} 2).
+Generally, a larger $b$ leads to a more rapid decline in the probability of host survival as parasite intensity increases, with the maximum rate of decline having a value of $b / 4$ (\emph{SI} 2). $b$ is in many ways analogous to the the pathogenicity parameter ($\alpha$) in classic macroparasite models that gives the parasite intensity dependent host death rate. \citep{AndersonandMay1978,Isham1995}. When $b$ is held constant, a larger $a$ allows for hosts to tolerate larger parasite intensities before experiencing parasite-induced mortality. More specifically, for every one unit increase in $a$ the log parasite intensity at which any percent of hosts survive (e.g. 99\% of hosts survive) increases by $1 / b$ (\emph{SI} 2).
 
 The equation $\exp(a
 / b)$ can also be used to calculate the parasite $LD_{50}$, here defined as the
@@ -464,7 +460,7 @@ system under consideration.
 
 \section*{Acknowledgments}
 
-We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful feedback.  This work was supported by National Science Foundation Graduate Research Fellowship (Grant No. DGE 1144085) and X.
+We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful feedback.  MW was supported by National Science Foundation Graduate Research Fellowship (Grant No. DGE 1144085) and the UC Regents CB was supported by X.
 
 % We thank Hamish McCallum for discussions on the inadequacy of estimating PIHM from intensity data and Kevin Lafferty for manuscript comments.
 
@@ -475,30 +471,30 @@ We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful 
 
 \newpage
 
-\renewcommand{\arraystretch}{1.2}
+% \renewcommand{\arraystretch}{1.2}
 
-\begin{table}
-    \centering
-    \caption{Definition of parameters and functions used in the main text}
-    \begin{tabular}{c p{12cm}}
-    \hline
-    Parameter & Definition \\
-    \hline\hline
-    $\mu_p$ & Pre-mortality mean parasite intensity \\
-    $k_p$   & Pre-mortality parasite aggregation \\
-    $N_p$   & Pre-mortality host sample size \\
-    $x$     & Number of parasites in a given host \\
-    $g(x; \mu_p, k_p)$ & Pre-mortality negative binomial parasite distribution \\
+% \begin{table}
+%     \centering
+%     \caption{Definition of parameters and functions used in the main text}
+%     \begin{tabular}{c p{12cm}}
+%     \hline
+%     Parameter & Definition \\
+%     \hline\hline
+%     $\mu_p$ & Pre-mortality mean parasite intensity \\
+%     $k_p$   & Pre-mortality parasite aggregation \\
+%     $N_p$   & Pre-mortality host sample size \\
+%     $x$     & Number of parasites in a given host \\
+%     $g(x; \mu_p, k_p)$ & Pre-mortality negative binomial parasite distribution \\
 
-    $h(\text{survival}; x, a, b)$ & The probability of host survival given a parasite load $x$ and logistic parameters $a$ and $b$\\
+%     $h(\text{survival}; x, a, b)$ & The probability of host survival given a parasite load $x$ and logistic parameters $a$ and $b$\\
 
-    $b / 4$ & The maximum rate of decline in host survival probability with increasing parasite intensity  \\
-    $a$ & When $b$ is held constant a one unit increase in $a$ leads to a $1 / b$ increase in the log parasite intensity at which some percent of hosts survive\\
-    $LD_{50}$ & $\exp(a / b)$, parasite intensity above which a host has a greater than 50\% chance of dying \\
+%     $b / 4$ & The maximum rate of decline in host survival probability with increasing parasite intensity  \\
+%     $a$ & When $b$ is held constant a one unit increase in $a$ leads to a $1 / b$ increase in the log parasite intensity at which some percent of hosts survive\\
+%     $LD_{50}$ & $\exp(a / b)$, parasite intensity above which a host has a greater than 50\% chance of dying \\
 
-    \end{tabular}
-    \label{tab:params}
-\end{table}
+%     \end{tabular}
+%     \label{tab:params}
+% \end{table}
 
 \renewcommand{\arraystretch}{1.2}
 \begin{sidewaystable}
@@ -529,48 +525,33 @@ We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful 
 
 \end{sidewaystable}
 
-\newpage
 
 \begin{figure}
 
-    \begin{tikzpicture}
-        \node at (0, 0) (hist) {\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/concept_crofton_method}};
-
-    \end{tikzpicture}
+    %\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/concept_crofton_method}
+    \captionsetup{justification=raggedright, singlelinecheck=false}
 
     \caption{A schematic representation of the iterative approach of the Crofton Method. \textbf{A)} The light gray shows the pre-mortality distribution that the Crofton Method is trying to estimate from the dark grey post-mortality distribution.  The Crofton Method proceeds by truncating the post-mortality data at different levels ($t_i$, e.g. $i= 0, \dots, 5$) and finding the pre-mortality host population size ($N_p$), pre-mortality mean parasite intensity ($\mu_p$), and pre-mortality parasite aggregation ($k_p$) that best fit the truncated data. \textbf{B)} The parameter $N_p$ is then plotted against the truncation level $t_i$ to determine if a ``kink'' occurs in the parameter values  \citep{Lester1984}. This ``kink'' indicates that PIHM is occurring in the system. In the above example, PIHM is occurring in the system as visualized by the distinct ``kink'' at $t_3$.}
     \label{fig:crofton}
 
 \end{figure}
 
-\newpage
-
 \begin{figure}
 
-\begin{tikzpicture}
+    \captionsetup{justification=raggedright, singlelinecheck=false}
 
 
-    \node at (0, 0) (pic) {\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure1_partII_for_manuscript50}};
-
-    \node[above=0.1cm] at (pic.north) (concept) {\includegraphics[width=0.6\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure1_partI_for_manuscript}};
-
-    \draw[->] (0, 4.2)--(-1.5, 3.2);
-    \draw[->] (0, 4.2)--(1.5, 3.2);
-
-    \node at (-3.2, 4.9) {A.};
-    \node at (-6.7, 2.9) {B.};
-    \node at (1.15, 2.9) {C.};
-
-\end{tikzpicture}
-
-\caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes that we do not include in the simulations. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I error and power of the Likelihood (Like.) Method and Adjei Method. B) Gives the Type I error of each method over a range of pre-mortality sample sizes with a pre-mortality mean parasite intensity ($\mu_p$) of 50 and pre-mortality parasite aggregation ($k_p$) at 0.5. The red line shows the pre-set significance level of 0.05. C) Gives the power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I error than the Adjei Method.  See the \emph{SI} 3 Fig 1 - 3 for Type I Error and power results for all parameter combinations.}
+    \caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes that we do not include in the simulations. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I error and power of the Likelihood (Like.) Method and Adjei Method. B) Gives the Type I error of each method over a range of pre-mortality sample sizes with a pre-mortality mean parasite intensity ($\mu_p$) of 50 and pre-mortality parasite aggregation ($k_p$) at 0.5. The red line shows the pre-set significance level of 0.05. C) Gives the power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I error than the Adjei Method.  See the \emph{SI} 3 Fig 1 - 3 for Type I Error and power results for all parameter combinations.}
 
 \label{fig:question1}
 
 \end{figure}
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure2_for_manuscript.pdf}
+
+    %\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure2_for_manuscript.pdf}
+
+    \captionsetup{justification=raggedright, singlelinecheck=false}
 
     \caption{Bias and precision (coefficient of variation) for the Likelihood Method (Like.) and Adjei Method estimates of the $a$ parameter and the $LD_{50}$ of the host survival function based on simulated PIHM data over a range of post-mortality sample sizes.  As the coefficient of variation increases, precision decreases. The pre-mortality parameters for this simulation were $\mu_p = 50$ and $k_p = 0.5$.  The figure shows the simulations for three different host survival functions (gradual, moderate, and steep), each with the same $LD_{50}$.  Bias and precision results of $LD_{50}$ and $a$ for all other parameter combinations can be found in \emph{SI} 3 Fig 4 - 9.}
 
@@ -579,7 +560,9 @@ We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful 
 \end{figure}
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure3_for_manuscript.pdf}
+    %\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/figure3_for_manuscript.pdf}
+
+    \captionsetup{justification=raggedright, singlelinecheck=false}
 
     \caption{The power of the Likelihood Method (Like.) to detect PIHM for gradual, moderate, and steep survival functions when all four parameters $\mu_p$, $k_p$, $a$, and $b$ were jointly estimated. The curves were generated from 500 simulations for 10 pre-mortality sample sizes, $N_p$.}
 
