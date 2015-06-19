@@ -26,8 +26,9 @@ May 7, 2015
 3. <s>Fix citation order in text</s>
 4. <s>Fix typos in references</s>
 5. <s>Read through and edit thoroughly</s>
-6. Get EEID grant number
+6. <s>Get EEID grant number</s>
 7. <s>Set up help file on on github site where all the code will be</s>
 8. <s>Write Cover letter</s>
 9. Graphical abstract
+10. <s>Add in Cherie's changes</s>
 8. SUBMIT!

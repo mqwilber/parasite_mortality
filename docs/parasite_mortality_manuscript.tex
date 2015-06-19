@@ -178,7 +178,7 @@ even causing species' decline and extinction \citep{DeCastro2005a,McCallum2012b}
 of these infectious agents in wildlife is critical to understanding what
 regulates host and parasite populations, making predictions about disease
 transmission, and managing disease outbreaks \citep{Langwig2015}. The impact of pathogens, such as rabies \citep{Coyne1989}, bovine tuberculosis \citep{Cox2005}, and
-rinderpest \citep{Tille1991}, are typically modeled based on the presence or absence of disease, such that host survival is not a function of the number of infectious agents present within the host.  In contrast, for macroparasites, pathology increases with parasite burden and host survival probability must be treated as a function of infection intensity. Helminths exhibiting this intensity-dependent pathology have significant impacts on human health \citep{Brooker2004}, domestic livestock economics \citep{Roeber2013}, and wildlife survival \citep{Kirk2003,Logiudice2003}. While it is generally assumed that some fraction of wild host populations succumb to parasitic infection, it is notoriously difficult to actually quantify parasite-induced host mortality (PIHM) in wild animal populations because it is difficult to observe the dead or dying hosts most impacted by parasitism \citep{McCallum2000a}.
+rinderpest \citep{Tille1991}, are typically modeled based on the presence or absence of disease, such that host survival is not typically considered to be a function of the number of infectious agents present within the host.  In contrast, models of macroparasites generally assume that pathology increases with parasite burden and host survival probability must be treated as a function of infection intensity. Helminths exhibiting this intensity-dependent pathology have significant impacts on human health \citep{Brooker2004}, domestic livestock economics \citep{Roeber2013}, and wildlife survival \citep{Kirk2003,Logiudice2003}. While it is generally assumed that some fraction of wild host populations succumb to parasitic infection, it is notoriously difficult to actually quantify parasite-induced host mortality (PIHM) in wild animal populations because it is difficult to observe the dead or dying hosts most impacted by parasitism \citep{McCallum2000a}.
 
 Ideally, parasite-induced host mortality is
 quantified by experimentally infecting and tracking individual hosts in the
@@ -232,7 +232,7 @@ from intensity data and how these methods fit in modern quantitative parasitolog
 Our method (henceforth the Likelihood Method) begins with the same assumptions as the Adjei Method: namely that infection has occurred and hosts with fatal parasite loads have died prior to the population sampling. As discussed by
 \citeauthor{Adjei1986}, this is not necessarily an unrealistic as some parasite infections occur primarily in younger hosts with parasite-induced mortality occurring soon after infection \citep[e.g.][]{Schotthoefer2003,Johnson2008}.
 
-The Likelihood Method then assumes that prior to mortality the parasite distribution can be described by the distribution $g(x; \boldsymbol{\phi})$, which specifies the probability of a host having $x$ parasites when it is observed.  $\boldsymbol{\phi}$ is a vector of parameters that describes the shape of this distribution. The probability of a host surviving with $x$ parasites from infection until sampling is given by the host survival function $h(\text{survival} ; x, \boldsymbol{\theta})$ where $\boldsymbol{\theta}$ specifies any additional parameters needed to define the host survival function.
+The Likelihood Method then assumes that prior to mortality the parasite distribution can be described by the distribution $g(x; \boldsymbol{\phi})$, which specifies the probability of a host having $x$ parasites before mortality occurs.  $\boldsymbol{\phi}$ is a vector of parameters that describes the shape of this distribution. The probability of a host surviving with $x$ parasites from infection until sampling is given by the host survival function $h(\text{survival} ; x, \boldsymbol{\theta})$ where $\boldsymbol{\theta}$ specifies any additional parameters needed to define the host survival function.
 
 With these two assumptions, we can define a distribution that gives the probability of having a parasite load of $x$ parasites conditional on host survival, $P(x | \text{survival})$.  Using standard rules of conditional probability this distribution can be written as
 
@@ -275,7 +275,7 @@ To compare the Likelihood Method and the previously proposed Adjei Method, we ad
     \label{eq:logistic}
 \end{equation}
 
-Generally, a larger $b$ leads to a more rapid decline in the probability of host survival as parasite intensity increases, with the maximum rate of decline having a value of $b / 4$ (\emph{SI} 2). $b$ is in many ways analogous to the the pathogenicity parameter ($\alpha$) in classic macroparasite models that gives the parasite intensity dependent host death rate. \citep{AndersonandMay1978,Isham1995}. When $b$ is held constant, a larger $a$ allows for hosts to tolerate larger parasite intensities before experiencing parasite-induced mortality. More specifically, for every one unit increase in $a$ the log parasite intensity at which any percent of hosts survive (e.g. 99\% of hosts survive) increases by $1 / b$ (\emph{SI} 2).
+Generally, a larger $b$ leads to a more rapid decline in the probability of host survival as parasite intensity increases, with the maximum rate of decline having a value of $b / 4$ (\emph{SI} 2). $b$ is in many ways analogous to the pathogenicity parameter ($\alpha$) in classic macroparasite models that gives the parasite intensity dependent host death rate. \citep{AndersonandMay1978,Isham1995}. When $b$ is held constant, a larger $a$ allows for hosts to tolerate larger parasite intensities before experiencing parasite-induced mortality. More specifically, for every one unit increase in $a$ the log parasite intensity at which any percent of hosts survive (e.g. 99\% of hosts survive) increases by $1 / b$ (\emph{SI} 2).
 
 The equation $\exp(a
 / b)$ can also be used to calculate the parasite $LD_{50}$, here defined as the
@@ -460,7 +460,7 @@ system under consideration.
 
 \section*{Acknowledgments}
 
-We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful feedback.  MW was supported by National Science Foundation Graduate Research Fellowship (Grant No. DGE 1144085) and the UC Regents CB was supported by X.
+We thank the Briggs Lab group and Theoretical Ecology group at UCSB for helpful feedback.  MW was supported by National Science Foundation Graduate Research Fellowship (Grant No. DGE 1144085) and the UC Regents CB was supported by NIH grant 1R01GM109499 from the Ecology of Infectious Disease program.
 
 % We thank Hamish McCallum for discussions on the inadequacy of estimating PIHM from intensity data and Kevin Lafferty for manuscript comments.
 
