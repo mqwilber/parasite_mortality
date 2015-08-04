@@ -120,7 +120,7 @@ mortality given by the parameter $k_p$ from a negative binomial distribution.
 When $k_p$ is small, parasites are highly aggregated among hosts and when
 $k_p$ is large parasites are more evenly distributed across hosts \citep{Wilson2002}.  The implementation of the Crofton Method has been discussed at length elsewhere \citep[e.g.][ and in \emph{SI} 1]{Royce1990,Lester1984} and we provide a tested implementation of the method in \emph{SI} 4.
 
-The second step of the Adjei Method is to make the assumption that infection, host mortality, and sampling occur in that order and are temporally \cite{Adjei1986}. Next, \citeauthor{Adjei1986} assume that the host survival function follows the logistic form
+The second step of the Adjei Method is to make the assumption that infection, host mortality, and sampling occur in that order and are temporally separate \citep{Adjei1986}. Next, \citeauthor{Adjei1986} assume that the host survival function follows the logistic form
 
 \begin{equation}
     h(\text{survival}; x, a, b) = \dfrac{\exp{(a - b \log(x))}}{1 + \exp{(a - b \log(x))}}
@@ -137,7 +137,7 @@ By taking the first and second derivatives of equation \ref{eq:logistic}, one ca
 
 \begin{align*}
     \log{\frac{p}{1 - p}} &= a_1 - b \log{x_1}\\
-    - \log{\frac{p}{1 - p}} &= a_1 - b \log{x_2}\\
+    - \log{\frac{p}{1 - p}} &= a_2 - b \log{x_2}\\
     0 &= a_1 - a_2 - b\log{x_1} + b\log{x_2}\\
     a_2 - a_1 &= b(\log{x_2} - \log{x_1})
 \end{align*}
