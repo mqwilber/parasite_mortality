@@ -631,7 +631,7 @@ def likefxn2(params, x, mu, k):
 
 
 def extract_simulation_results(sim_results, keys, method_name, param,
-                                alpha=0.05):
+                                alpha=0.05, get_std=False):
     """
 
     Method to extract parameters from a simulation dictionary as generated
@@ -656,6 +656,10 @@ def extract_simulation_results(sim_results, keys, method_name, param,
 
     alpha : float
         The significance level.  Only used if param == "p"
+
+    get_std : bool
+        If True calculates the standard deviation of the post-mortality samples
+        rather than the mean.
 
     Returns
     : tuple
@@ -690,7 +694,10 @@ def extract_simulation_results(sim_results, keys, method_name, param,
 
         N_vals = res[2]
 
-        samp_sizes.append(np.mean(N_vals))
+        if not get_std:
+            samp_sizes.append(np.mean(N_vals))
+        else:
+            samp_sizes.append(np.std(N_vals, ddof=1))
 
         if param == "a":
 

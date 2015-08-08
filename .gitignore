@@ -6,3 +6,7 @@
 *.fdb_latexmk
 *.log
 *.pyc
+*.synctex.gz
+response_to_reviewers*
+reviewer_comments.txt
+sara_and_cherie.md
