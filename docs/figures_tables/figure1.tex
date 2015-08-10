@@ -1,64 +1,14 @@
-% Document
-% Document
-\documentclass[12pt, a4paper]{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{authblk}
-\usepackage{lipsum}
+\documentclass[tikz]{standalone}
+
+\usepackage{amsmath}
 \usepackage{tikz}
-\usepackage{hyperref}
-
-% Figure and table formating
-\usepackage{epsfig}
-\usepackage{tabu}
-\usepackage{rotating}
-\usepackage{pbox}
-\usepackage{framed, multicol}
-\usepackage[framemethod=TikZ]{mdframed}
-
-% Set up Frame
-\mdfdefinestyle{MyFrame}{%
-    linecolor=black,
-    skipabove=10pt,
-    outerlinewidth=2pt,
-    roundcorner=20pt,
-    innertopmargin=10pt,
-    innerbottommargin=10pt,%\baselineskip,
-    innerrightmargin=20pt,
-    innerleftmargin=20pt,
-    backgroundcolor=gray!50!white}
-
-\usepackage{float}
-\usepackage[left=1 in, right=1 in, top=1.25 in, bottom=1.25 in]{geometry}
-
-% Fonts - Mathtime
-%\usepackage{txfonts}
-\usepackage{amsmath} % Add amssymb if not using Mathtime
-
-% Text
-\setlength{\parindent}{0.5in}
-\frenchspacing  \tolerance = 800  \hyphenpenalty = 800
-
-\usepackage{lineno} % Line numbers
-\def\linenumberfont{\normalfont\footnotesize\ttfamily}
-\setlength\linenumbersep{0.1 in}
-
-\usepackage{setspace}
-
-% Other
-\usepackage{graphicx}
-\usepackage[singlelinecheck=false,font=small,labelfont=bf]{caption}
+\usetikzlibrary{matrix}
+\usetikzlibrary{backgrounds}
 
 \begin{document}
-\thispagestyle{empty}
-\begin{figure}
 
-    \includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/concept_crofton_method}
-
-\end{figure}
-
-\centering
-
-\textbf{Figure 1}
+\begin{tikzpicture}
+    \node at (0, 0) {\includegraphics[width=\textwidth]{/Users/mqwilber/Repos/parasite_mortality/results/concept_crofton_method}};
+\end{tikzpicture}
 
 \end{document}

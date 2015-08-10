@@ -161,7 +161,7 @@ data that are consistent with previously published qualitative estimates.
 However, this method, and all techniques that estimate parasite-induced
 mortality from intensity data alone, have several important assumptions that
 must be scrutinized before applying them to real-world data. Given that these
-assumptions are met, our method is new exploratory tool that can help inform
+assumptions are met, our method is a new exploratory tool that can help inform
 more rigorous studies of parasite-induced host mortality.
 
 \textbf{Keywords}: parasite aggregation, negative binomial distribution, Crofton Method, host survival function, lethal dose
@@ -441,9 +441,9 @@ a negative binomial can be fit to the observed post-mortality parasite
 distribution then, regardless of how lethal the parasite was, it will be
 impossible to detect PIHM because there is no need for a more complex model.
 Many observed parasite distributions are well-fit by the negative binomial distribution \citep{Shaw1998}, suggesting
-that systems where these methods are applicable without any a prior knowledge may be uncommon. However, if one has a prior knowledge about some aspect of the pre-mortality distribution \citep[e.g. assumes/knows the value of $k_p$,][]{Ferguson2011}, then the Likelihood Method could be applicable even if the the post-mortality distribution was well-fit by a negative binomial.
+that systems where these methods are applicable without any \emph{a priori} knowledge may be uncommon. However, if one has \emph{a priori} knowledge about some aspect of the pre-mortality distribution \citep[e.g. assumes/knows the value of $k_p$,][]{Ferguson2011}, then the Likelihood Method could be applicable even if the the post-mortality distribution was well-fit by a negative binomial.
 
-If one has evidence that the pre-mortality is not negative binomial, the generality of our method easily allows another distribution to be specified for $g(x, \boldsymbol{\phi})$. In particular, one could use the
+If one has evidence that the pre-mortality is not negative binomial, the generality of our method easily allows another distribution to be specified for $g(x, \boldsymbol{\phi})$. For example, one could use the
 resulting stationary host-parasite distribution from a stochastic host-parasite
 model without parasite-induced host mortality \citep{Anderson1982a} to specify
 the form of $g(x, \boldsymbol{\phi})$ and then apply the techniques discussed
@@ -453,10 +453,9 @@ is that the stationary distribution of the process with
 mortality is significantly different than the stationary distribution without mortality.
 It is widely recognized that parasite-induced host mortality decreases the
 aggregation of host-parasite distributions relative to those without mortality
-\citep{Barbour2000}, suggesting that Likelihood Method could be applicable for
-detecting PIHM in host-parasite systems experiencing stochastic parasite births, deaths, and immigrations in addition to host mortality.
+\citep{Barbour2000}, suggesting that the Likelihood Method could be generally applicable to host-parasite systems that follow the assumptions of many stochastic host-parasite models.  This is an intriguing area for further research.
 
-If the Likelihood Method is applicable and the truncation of the negative binomial distribution is detected, one must be aware that the pattern may be caused by other
+If the Likelihood Method is applicable and the truncation of the negative binomial distribution is detected, one must be aware that the truncation pattern may be caused by other
 processes such as within host density dependence, age dependent variation in host
 resistance and/or heterogeneous infection rates \citep{Anderson1982a,Rousset1996, McCallum2000a}. This means that in the event
 that PIHM is detected, it may actually not be the result of PIHM.  Moreover, if host mortality depends on parasite intensity and additional variables (e.g. host sex, host size), failure to identify these important confounding variables could significantly affect the ability of these methods to correctly identify PIHM. However, both of these issues -- inferring process from pattern and confounding variables -- are well-recognized limitations of most statistical inference and are addressed via judicious model specification and selection \citep{Seber2003}.
@@ -555,7 +554,7 @@ We thank the Briggs Lab group, Kuris/Lafferty Lab group, Theoretical Ecology gro
     \captionsetup{justification=raggedright, singlelinecheck=false}
 
 
-    \caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes that we do not include in the simulations. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I error and power of the Likelihood (Like.) Method and Adjei Method. B) Gives the Type I error of each method over a range of pre-mortality sample sizes with a pre-mortality mean parasite intensity ($\mu_p$) of 50 and pre-mortality parasite aggregation ($k_p$) at 0.5. The red line shows the pre-set significance level of 0.05. C) Gives the power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I error than the Adjei Method.  See the \emph{SI} 3 Fig 1 - 3 for Type I Error and power results for all parameter combinations.}
+    \caption{A) Five potential shapes for a host-survival functions. In the simulations we used a gradual survival function (dotted line), and moderate survival function (dashed line), and a steep survival function (solid line). The linear and immediate survival functions represent two potential extremes that we do not include in the simulations. For each of these survival functions and the parameter combinations described in the main text, we tested the Type I error and power of the Likelihood (Like.) Method and Adjei Method. B) Gives the Type I error of each method over a range of pre-mortality sample sizes with a pre-mortality mean parasite intensity ($\mu_p$) of 50 and pre-mortality parasite aggregation ($k_p$) at 0.5. The red line shows the pre-set significance level of 0.05. C) Gives the power of each method for detecting PIHM over a range of post-mortality sample sizes for $\mu_p = 50$ and $k_p = 0.5$.  In general, the Likelihood Method has higher power and lower Type I error than the Adjei Method.  See the \emph{SI} 3 Fig 1 - 3 for Type I error and power results for all parameter combinations.}
 
 \label{fig:question1}
 
@@ -566,7 +565,7 @@ We thank the Briggs Lab group, Kuris/Lafferty Lab group, Theoretical Ecology gro
 
     \captionsetup{justification=raggedright, singlelinecheck=false}
 
-    \caption{The power of the Likelihood Method (Like.) to detect PIHM for gradual, moderate, and steep survival functions when all four parameters $\mu_p$, $k_p$, $a$, and $b$ were jointly estimated. The curves were generated from 500 simulations for 10 pre-mortality sample sizes, $N_p$. The vertical, dotted-dashed lines indicate the sample size at which the power the for the Likelihood Method with steep and moderate survival functions is 0.8 (75 hosts for steep functions and 402 for moderate functions). The Likelihood Method with a gradual survival function never has a power above 0.8.}
+    \caption{The power of the Likelihood Method (Like.) to detect PIHM for gradual, moderate, and steep survival functions when all four parameters $\mu_p$, $k_p$, $a$, and $b$ were jointly estimated. The curves were generated from 500 simulations for 10 pre-mortality sample sizes, $N_p$. The vertical, dotted-dashed lines indicate the sample size at which the power for the Likelihood Method with steep and moderate survival functions is 0.8 (75 hosts for steep functions and 408 for moderate functions). The Likelihood Method with a gradual survival function never has a power above 0.8.}
 
     \label{fig:real_power}
 
