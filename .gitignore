@@ -7,6 +7,7 @@
 *.log
 *.pyc
 *.synctex.gz
+*.out
 response_to_reviewers*
 reviewer_comments.txt
 sara_and_cherie.md
