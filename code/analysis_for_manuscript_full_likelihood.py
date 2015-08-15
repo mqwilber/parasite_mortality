@@ -8,7 +8,7 @@ Description
 -----------
 
 The analysis looks at the Power of the Likelihood Method for detecting PIHM
-when all the parameters (a, b, mu_, and k_p) must be esitmated from parasite
+when all the parameters (a, b, mu_p, and k_p) must be esitmated from parasite
 intensity data.  Just looks at the best case scenario when k_p=1 and mu_p=10.
 
 A thorough description of this analysis can be found in
