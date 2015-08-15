@@ -107,18 +107,18 @@ needed for all 3 parameters to be identifiable \citep{Royce1990}.
 
 Once the iterative procedure has been completed, parasite-induced host mortality is traditionally identified by plotting the different truncation values $t_{i}$ against the different values of $N_{pi}$ and looking for a distinct ``kink'' in the resulting plot.   Once the ``kink'' as occurred, the values of $N_{pi}$ will typically remain close to constant as $t_i$ is decreased further.  The ``true'' pre-mortality parameters $N_{pt}$, $\mu_{pt}$, and $k_{pt}$ are taken to be at the point where the ``kink'' occurs.
 
-We provide an implementation and unit tests of the Crofton Method in  Supplementary Information 4.  Figure S\ref{fig:crof_test} visually shows that our implementation of the Crofton Method agrees with results previously published by \cite{Crofton1971a}.
+We provide an implementation and unit tests of the Crofton Method in  Supplementary Data S3.  Figure S10 visually shows that our implementation of the Crofton Method agrees with results previously published by \cite{Crofton1971a}.
 
 \section{Implementation of the Adjei Method}
 
 The Adjei Method for estimating PIHM has two steps \citep{Adjei1986}.  The first
 step is to estimate the parameters of the pre-mortality host-parasite
-distribution using the Crofton Method (see \emph{SI} 1).  The three parameters estimated are the
+distribution using the Crofton Method (see Supplementary Data S1).  The three parameters estimated are the
 total number of hosts before mortality $N_p$,  the mean number of parasites per
 host before mortality $\mu_p$, and the aggregation of parasites before
 mortality given by the parameter $k_p$ from a negative binomial distribution.
 When $k_p$ is small, parasites are highly aggregated among hosts and when
-$k_p$ is large parasites are more evenly distributed across hosts \citep{Wilson2002}.  The implementation of the Crofton Method has been discussed at length elsewhere \citep[e.g.][ and in \emph{SI} 1]{Royce1990,Lester1984} and we provide a tested implementation of the method in \emph{SI} 4.
+$k_p$ is large parasites are more evenly distributed across hosts \citep{Wilson2002}.  The implementation of the Crofton Method has been discussed at length elsewhere \citep[e.g.][ and in Supplementary Data S1]{Royce1990,Lester1984} and we provide a tested implementation of the method in Supplementary Data S3.
 
 The second step of the Adjei Method is to make the assumption that infection, host mortality, and sampling occur in that order and are temporally separate \citep{Adjei1986}. Next, \citeauthor{Adjei1986} assume that the host survival function follows the logistic form
 
