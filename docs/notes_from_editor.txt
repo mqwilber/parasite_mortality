@@ -1,0 +1,35 @@
+Dear Mr. Wilber,
+
+Your submission entitled "Detecting and quantifying parasite-induced host mortality from intensity data: method comparisons and limitations" has been received by International Journal for Parasitology.
+
+However, before we can proceed with the review process we ask you to make the following changes to your submission:
+
+(1)  As mentioned in the e-mail asking you to revise this paper, the manuscript reference number should be included in all filenames.
+
+(2)  The graphical abstract is unsuitable.  As mentioned in the IJP Guide for Authors, the final size is 5 cm x 5 cm.  None of the detail will be visible/legible at that size.  It is generally best to use a simple image or a single graph with minimal text/numerals.  Before submitting a new image, reduce it to the final size on your computer screen to check its suitability.  Graphical abstracts appear on-line beside text abstracts and the intention is that those help to draw attention to papers. [Check]
+
+(3)  Line numbers should begin from the top of the manuscript title page. [Check]
+
+(4)  Remove 'running title', 'statement of authorship' and 'email addresses' from the manuscript title page.  Only the corresponding author's contact details are required. [Check]
+
+(5)  Abstract and keyword text should be double-line spaced. [Check]
+
+(6)  In the acknowledgements, all organisation/institution abbreviations need to be defined and countries provided for each of those. [Check]
+
+(7)  Figure legends.  Use double-line spacing.  Each legend should begin with a sentence summarising the figure before you describe the parts (A, B, etc). [check]
+
+(8)  Use consistent formatting if figures eg in Fig. 1B X axis 'Truncation Level...'.  Fig. 2 - 'Key for Host Survival Functions' (title case and no hyphyen). [Check]
+
+(9)  Figure panel labels should all be uppercase letters (either A, B, etc (ie no '.') or (A), (B), etc) in the top left of the panels (or just outside if necessary for graphs). [Check]
+
+(10)  On the file upload page in the web system, update the 'description' field with the relevant figure number for each figure file.
+
+(11)  Supplementary files should be formatted in the same way as regular files:
+
+i)  The supplementary text file should be labelled and referred to within the text as Supplementary Data S1.  Format and number section headings the same as regular text ie 1, 2, 2.2., etc. [Check]
+
+ii)  Supplementary figures should be submitted in a separate file containing figures only (leave the figure number label ie Supplementary Fig. S1, Supplementary Fig. S2, etc). [Check]
+
+iii)  Supplementary figure legends should be included in the main text file after the regular figure legends.  If any legend includes a reference, then a separate reference list must be added after the figure legend (this only applies to supplementary figure legends). [Check]
+
+iv)  Check for consistent formatting as in the regular figures.[Check]
