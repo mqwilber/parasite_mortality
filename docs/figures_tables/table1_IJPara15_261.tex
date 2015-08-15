@@ -1,0 +1,60 @@
+% Document
+\documentclass[12pt, a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{hyperref}
+
+% Figure and table formating
+\usepackage{tabu}
+\usepackage{rotating}
+\usepackage{pbox}
+
+\usepackage{float}
+\usepackage[left=0.75 in, right=0.75 in, top=1.25 in, bottom=1.25 in]{geometry}
+
+% Fonts - Mathtime
+%\usepackage{txfonts}
+
+\usepackage[singlelinecheck=false,font=small,labelfont=bf]{caption}
+
+% Bibliography
+\usepackage[numbers, compress]{natbib} % Bibliography - APA
+\bibpunct{(}{)}{;}{a}{}{,}
+
+%%%%%% FRONT MATTER %%%%%%%%%
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\begin{table}
+
+    \caption{Comparison of the PIHM predictions of previously used host-parasite datasets to those given by the Adjei Method and the Likelihood Method. The first column specifies the identity of the dataset, the second column specifies whether or not the authors indicated that PIHM was occurring in the system based on a qualitative assessment, the third column indicates whether or not the Likelihood Method with pre-mortality parameters estimated from the Crofton Method detects significant PIHM, and the final column indicates whether the Adjei Method with pre-mortality parameters estimated from the Crofton Method detects PIHM.  If a method detected significant PIHM the predicted $LD_{50}$ is given in parentheses.}
+
+    \centering
+    \begin{tabular}{l  p{3cm} p{3cm} l}
+
+    \hline\hline
+    Data Set (sample size) & Author detected PIHM? & Likelihood Method?  & Adjei Method? \\
+
+    \hline
+    Crofton, Station 1 ($n=538$) & Yes & Yes (7.27) & Yes (9.33) \\
+    Crofton, Station 2 ($n=507$) & Yes & Yes (6.92) &  Yes (14.95)\\
+    Crofton, Station 3 ($n=633$) & Yes & Yes (5.93) &  Yes (5.98) \\
+    Crofton, Station 4 ($n=486$) & No & No &  Yes (7.99) \\
+    Crofton, Station 5 ($n=276$) & No & No & Yes (10.58) \\
+    Crofton, Station 6 ($n=191$) & No & No & No \\
+    Adjei, \emph{S. tumbil} female ($n=446$) & Yes (5.7) & No & Yes (6.37) \\
+    Adjei, \emph{S. tumbil} male ($n=452$) & Yes (3.4) & Yes (3.42) & Yes (3.66)  \\
+    Adjei, \emph{S. undosquamis} female ($n=2573$) & Yes (3.2) & Yes (3.04) & Yes (3.11) \\
+    Adjei, \emph{S. undosquamis} male ($n=2440$) & Yes (1.8) & Yes (1.83) & Yes (1.78) \\
+
+
+    \end{tabular}
+    \label{table:pihm}
+
+\end{table}
+
+\end{document}
+
