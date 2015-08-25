@@ -78,11 +78,9 @@
 \doublespacing
 
 \noindent
-\Large{\textbf{Supplementary Data}}
+\textbf{Supplementary Data}
 
-\normalsize
-
-\section{Implementation of the Crofton Method}
+\textbf{1 Implementation of the Crofton Method}
 
 The algorithm for fitting the Crofton Method \citep{Crofton1971a} proceeds as follows. First, obtain a dataset
 with $n$ hosts where each host has some parasite intensity 0 to $p_{max}$. Starting
@@ -96,7 +94,7 @@ parasite intensities are not represented in the dataset. Continue to guess $(N_{
 squared statistic.
 
 Second, choose a truncation value ($t_2$) such that $t_2 <
-p_{max}$. Truncate the data such that $\text{data}_\text{truncated} <= t_2$ and repeat the above
+p_{max}$. Truncate the data such that $\text{data}_\text{truncated} \leq t_2$ and repeat the above
 iterative procedure to calculate another set of parameters $(N_{p2}, \mu_{p2}, k_{p2})$
 that minimizes the $\chi^2$-squared statistic on the truncated data. Choose a new
 truncated value $t_3 < t_2$ and repeat the first two steps. Continue to truncate
@@ -109,7 +107,7 @@ Once the iterative procedure has been completed, parasite-induced host mortality
 
 We provide an implementation and unit tests of the Crofton Method in  Supplementary Data S3.  Figure S10 visually shows that our implementation of the Crofton Method agrees with results previously published by \cite{Crofton1971a}.
 
-\section{Implementation of the Adjei Method}
+\textbf{2 Implementation of the Adjei Method}
 
 The Adjei Method for estimating PIHM has two steps \citep{Adjei1986}.  The first
 step is to estimate the parameters of the pre-mortality host-parasite
@@ -133,17 +131,17 @@ and a larger $b$ leads to a more rapid decline in the probability of host
 survival as parasite intensity increases. The value $\exp(a / b)$ is referred
 to as the $LD_{50}$. Individuals with loads higher than this will have a greater than 50\% chance of death.
 
-By taking the first and second derivatives of equation \ref{eq:logistic}, one can easily find that the maximum rate of decline in host survival probability with increasing parasite intensity occurs at the $LD_{50}$ and has a value of $b / 4$.  This is in many ways analogous to the parasite pathogenicity parameter $\alpha$ given in classic macroparasite models, which specifies the slope of the linear relationship between between host death rate and parasite intensity \citep{AndersonandMay1978, Isham1995}.  The parameter $a$ is easily interpreted by holding $b$ constant and looking at how a one unit change in $a$ affects the log parasite intensity at which some percentage $p$ of hosts experience mortality.  Letting $a_1$ and $a_2$ be two different values of $a$ and $x_1$ and $x_2$ be two different parasite intensities, a bit of rearranging of equation \ref{eq:logistic} gives.
+By taking the first and second derivatives of equation 1, one can easily find that the maximum rate of decline in host survival probability with increasing parasite intensity occurs at the $LD_{50}$ and has a value of $b / 4$.  This is in many ways analogous to the parasite pathogenicity parameter $\alpha$ given in classic macroparasite models, which specifies the slope of the linear relationship between between host death rate and parasite intensity \citep{AndersonandMay1978, Isham1995}.  The parameter $a$ is easily interpreted by holding $b$ constant and looking at how a one unit change in $a$ affects the log parasite intensity at which some percentage $p$ of hosts experience mortality.  Letting $a_1$ and $a_2$ be two different values of $a$ and $x_1$ and $x_2$ be two different parasite intensities, a bit of rearranging of equation 1 gives
 
-\begin{align*}
-    \log{\frac{p}{1 - p}} &= a_1 - b \log{x_1}\\
-    - \log{\frac{p}{1 - p}} &= a_2 - b \log{x_2}\\
-    0 &= a_1 - a_2 - b\log{x_1} + b\log{x_2}\\
-    a_2 - a_1 &= b(\log{x_2} - \log{x_1})
-\end{align*}
+
+$$\log{\frac{p}{1 - p}} = a_1 - b \log{x_1}$$
+$$- \log{\frac{p}{1 - p}} = a_2 - b \log{x_2}$$
+$$0 = a_1 - a_2 - b\log{x_1} + b\log{x_2}$$
+$$a_2 - a_1 = b(\log{x_2} - \log{x_1})$$
+
 If $a_2 - a_1 = 1$, then the change in log parasite intensity at which $p$ percentage of hosts survive is $1 / b$.
 
-To estimate the parameters in equation \ref{eq:logistic}, the Adjei Method first
+To estimate the parameters in equation 1, the Adjei Method first
 calculates the expected number of hosts with a given parasite load $x$ by using
 the equation $g(x ; \mu_p, k_p) * N_p$, where $g(x ; \mu_p, k_p)$ is the negative binomial pre-mortality distribution.  Second, the observed and predicted number of hosts
 with $x$ parasites are paired as a single data point and the method then assumes that
@@ -152,7 +150,7 @@ this data point follows a binomial distribution with the total number of
 ``successes'' equal to the observed number of hosts. In some cases, the
 observed number of hosts is greater than the expected number of hosts and the
 Adjei Method alters the data so that the observed is equal to the predicted
-\citep{Adjei1986}.  After this questionable manipulation, the (observed, predicted) pairs are fit to a standard Generalized Linear Model \citep{McCullagh1989} with a binomial response variable and a logistic link function given by equation \ref{eq:logistic}.  This model provides estimates for parameters $a$, $b$ and $LD_{50}$.
+\citep{Adjei1986}.  After this questionable manipulation, the (observed, predicted) pairs are fit to a standard Generalized Linear Model \citep{McCullagh1989} with a binomial response variable and a logistic link function given by equation 1.  This model provides estimates for parameters $a$, $b$ and $LD_{50}$.
 
 While not included in the original implementation of the Adjei Method, a
 $\chi^2$ test with a degrees of freedom of 1 can be used to assess whether a GLM model that includes parasite
@@ -174,14 +172,15 @@ subjectivity (i.e. which bins should you use?) to a method that already has
 serious potential issues.  In this analysis, we always assume the Adjei Method is not binning the data, though we provide code for applying the binning method in Supplementary Data S3.
 
 
-\section{Code and unit tests for estimating parasite-induced host mortality}
+\textbf{3 Code and unit tests for estimating parasite-induced host mortality}
 
 Python code, unit tests, and a help file for the Crofton Method, the Adjei Method and the Likelihood Method can be found at \url{https://github.com/mqwilber/parasite_mortality}
 
+\textbf{References}
 
-\singlespacing
-\bibliographystyle{int_j_para.bst}
-\bibliography{parasite_host_mortality}
+% \singlespacing
+% \bibliographystyle{int_j_para.bst}
+% \bibliography{parasite_host_mortality}
 
 % \renewcommand\thefigure{S\arabic{figure}}
 
