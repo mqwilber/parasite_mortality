@@ -1,7 +1,0 @@
-## Highlights
-
-- We develop a novel method for detecting parasite-induced host mortality.
-
-- Our method outperforms previous methods for detecting parasite-induced host mortality.
-
-- Our method correctly detects parasite-induced host mortality in empirical data.
